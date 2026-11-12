@@ -575,18 +575,18 @@ class PRLClassroomApp {
           style="left: ${item.rect.left}%; top: ${item.rect.top}%;"
           title="Toca para evaluar: ${item.name}"
         >
-          <!-- Etiqueta compacta con número e información completa sin cortar -->
-          <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-xl shadow-xl border backdrop-blur-md transition-all ${
+          <!-- Etiqueta compacta con letra más estilizada para no tapar elementos adyacentes -->
+          <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg shadow-lg border backdrop-blur-md transition-all ${
             isSelected 
               ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-105' 
               : 'bg-slate-950/90 border-slate-700/80 hover:border-amber-400 hover:bg-slate-900 text-slate-100'
           }">
-            <span class="w-6 h-6 rounded-lg ${
+            <span class="w-5 h-5 rounded-md ${
               isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
-            } text-xs flex items-center justify-center shrink-0 shadow">
+            } text-[10px] flex items-center justify-center shrink-0 shadow">
               ${isSelected ? '⚠️' : item.num}
             </span>
-            <span class="text-[11px] sm:text-xs font-bold leading-tight px-1 whitespace-normal max-w-[170px] sm:max-w-[220px]">
+            <span class="text-[9.5px] sm:text-[10.5px] font-semibold sm:font-bold leading-tight px-0.5 whitespace-normal max-w-[135px] sm:max-w-[170px]">
               ${item.name}
             </span>
           </div>
@@ -914,21 +914,21 @@ class PRLClassroomApp {
             style="left: ${left}%; top: ${top}%;"
             title="Haz clic para ver resolución técnica: ${item.name}"
           >
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl shadow-xl border backdrop-blur-md ${
+            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg shadow-lg border backdrop-blur-md ${
               isHazard
                 ? 'bg-red-950/95 border-red-500 text-red-200 ring-2 ring-red-500/30'
                 : 'bg-emerald-950/95 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
             }">
-              <span class="w-6 h-6 rounded-lg ${
+              <span class="w-5 h-5 rounded-md ${
                 isHazard ? 'bg-red-600 text-white font-black' : 'bg-emerald-600 text-white font-black'
-              } text-xs flex items-center justify-center shrink-0 shadow">
+              } text-[10px] flex items-center justify-center shrink-0 shadow">
                 #${item.num}
               </span>
               <div class="flex flex-col text-left">
-                <span class="text-[11px] sm:text-xs font-bold leading-tight whitespace-normal max-w-[160px] sm:max-w-[210px] text-white">
+                <span class="text-[9.5px] sm:text-[10.5px] font-semibold sm:font-bold leading-tight whitespace-normal max-w-[135px] sm:max-w-[170px] text-white">
                   ${item.name}
                 </span>
-                <span class="text-[10px] ${isHazard ? 'text-red-400' : 'text-emerald-400'} font-mono font-bold">
+                <span class="text-[9px] ${isHazard ? 'text-red-400' : 'text-emerald-400'} font-mono font-bold">
                   ${isHazard ? '⚠️ Peligro' : '🛡️ Seguro'} (${markedCount} alumnos)
                 </span>
               </div>

@@ -20,8 +20,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 78,
-          "top": 20,
+          "left": 80,
+          "top": 18,
           "width": 15,
           "height": 48
         },
@@ -56,7 +56,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 8,
+          "left": 6,
           "top": 56,
           "width": 16,
           "height": 24
@@ -110,8 +110,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 40,
-          "top": 76,
+          "left": 38,
+          "top": 78,
           "width": 22,
           "height": 26
         },
@@ -128,8 +128,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 62,
-          "top": 32,
+          "left": 60,
+          "top": 26,
           "width": 6,
           "height": 22
         },
@@ -146,7 +146,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 28,
+          "left": 26,
           "top": 48,
           "width": 18,
           "height": 36
@@ -183,7 +183,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 68,
-          "top": 42,
+          "top": 44,
           "width": 6,
           "height": 6
         },
@@ -239,8 +239,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 78,
-          "top": 20,
+          "left": 80,
+          "top": 18,
           "width": 15,
           "height": 48
         },
@@ -257,7 +257,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 8,
+          "left": 6,
           "top": 56,
           "width": 16,
           "height": 24
@@ -293,8 +293,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 40,
-          "top": 76,
+          "left": 38,
+          "top": 78,
           "width": 22,
           "height": 26
         },
@@ -311,7 +311,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 28,
+          "left": 26,
           "top": 48,
           "width": 18,
           "height": 36
@@ -358,8 +358,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 38,
-          "top": 72,
+          "left": 44,
+          "top": 68,
           "width": 28,
           "height": 22
         },
@@ -413,7 +413,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 4,
-          "top": 26,
+          "top": 28,
           "width": 17,
           "height": 48
         },
@@ -448,8 +448,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 56,
-          "top": 54,
+          "left": 58,
+          "top": 52,
           "width": 14,
           "height": 25
         },
@@ -466,8 +466,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 20,
-          "top": 14,
+          "left": 22,
+          "top": 12,
           "width": 30,
           "height": 28
         },
@@ -485,7 +485,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 6,
-          "top": 76,
+          "top": 78,
           "width": 8,
           "height": 14
         },
@@ -502,7 +502,7 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 74,
+          "left": 76,
           "top": 76,
           "width": 18,
           "height": 18
@@ -521,7 +521,7 @@ window.PRL_SCENARIOS = [
         "severity": "Leve",
         "rect": {
           "left": 68,
-          "top": 38,
+          "top": 36,
           "width": 12,
           "height": 15
         },
@@ -556,7 +556,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 34,
+          "left": 26,
           "top": 82,
           "width": 12,
           "height": 10
@@ -577,8 +577,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 38,
-          "top": 72,
+          "left": 44,
+          "top": 68,
           "width": 28,
           "height": 22
         },
@@ -632,7 +632,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 4,
-          "top": 26,
+          "top": 28,
           "width": 17,
           "height": 48
         },
@@ -649,8 +649,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 56,
-          "top": 54,
+          "left": 58,
+          "top": 52,
           "width": 14,
           "height": 25
         },
@@ -668,7 +668,7 @@ window.PRL_SCENARIOS = [
         "severity": "Leve",
         "rect": {
           "left": 68,
-          "top": 38,
+          "top": 36,
           "width": 12,
           "height": 15
         },
@@ -685,7 +685,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 34,
+          "left": 26,
           "top": 82,
           "width": 12,
           "height": 10
@@ -715,7 +715,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 42,
-          "top": 50,
+          "top": 46,
           "width": 14,
           "height": 35
         },
@@ -732,8 +732,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 44,
-          "top": 16,
+          "left": 38,
+          "top": 14,
           "width": 12,
           "height": 12
         },
@@ -769,7 +769,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 68,
-          "top": 68,
+          "top": 70,
           "width": 30,
           "height": 35
         },
@@ -822,8 +822,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 54,
-          "top": 62,
+          "left": 56,
+          "top": 64,
           "width": 10,
           "height": 16
         },
@@ -841,7 +841,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 38,
-          "top": 76,
+          "top": 78,
           "width": 12,
           "height": 8
         },
@@ -876,7 +876,7 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 60,
+          "left": 64,
           "top": 14,
           "width": 8,
           "height": 45
@@ -894,7 +894,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 8,
+          "left": 6,
           "top": 66,
           "width": 14,
           "height": 10
@@ -934,7 +934,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 42,
-          "top": 50,
+          "top": 46,
           "width": 14,
           "height": 35
         },
@@ -951,8 +951,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 44,
-          "top": 16,
+          "left": 38,
+          "top": 14,
           "width": 12,
           "height": 12
         },
@@ -988,7 +988,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 68,
-          "top": 68,
+          "top": 70,
           "width": 30,
           "height": 35
         },
@@ -1041,7 +1041,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 8,
+          "left": 6,
           "top": 66,
           "width": 14,
           "height": 10
@@ -1088,8 +1088,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 38,
-          "top": 72,
+          "left": 36,
+          "top": 68,
           "width": 26,
           "height": 22
         },
@@ -1106,8 +1106,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 62,
-          "top": 48,
+          "left": 64,
+          "top": 46,
           "width": 28,
           "height": 38
         },
@@ -1125,7 +1125,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 4,
-          "top": 42,
+          "top": 48,
           "width": 14,
           "height": 48
         },
@@ -1142,8 +1142,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 44,
-          "top": 46,
+          "left": 46,
+          "top": 42,
           "width": 14,
           "height": 32
         },
@@ -1160,8 +1160,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 22,
-          "top": 76,
+          "left": 18,
+          "top": 78,
           "width": 80,
           "height": 6
         },
@@ -1179,7 +1179,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 18,
-          "top": 38,
+          "top": 34,
           "width": 6,
           "height": 45
         },
@@ -1196,8 +1196,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 78,
-          "top": 44,
+          "left": 80,
+          "top": 42,
           "width": 10,
           "height": 16
         },
@@ -1250,8 +1250,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 52,
-          "top": 76,
+          "left": 54,
+          "top": 80,
           "width": 6,
           "height": 6
         },
@@ -1268,8 +1268,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 34,
-          "top": 56,
+          "left": 32,
+          "top": 54,
           "width": 10,
           "height": 10
         },
@@ -1307,8 +1307,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 38,
-          "top": 72,
+          "left": 36,
+          "top": 68,
           "width": 26,
           "height": 22
         },
@@ -1325,8 +1325,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 62,
-          "top": 48,
+          "left": 64,
+          "top": 46,
           "width": 28,
           "height": 38
         },
@@ -1344,7 +1344,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 4,
-          "top": 42,
+          "top": 48,
           "width": 14,
           "height": 48
         },
@@ -1361,8 +1361,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 44,
-          "top": 46,
+          "left": 46,
+          "top": 42,
           "width": 14,
           "height": 32
         },
@@ -1379,8 +1379,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 34,
-          "top": 56,
+          "left": 32,
+          "top": 54,
           "width": 10,
           "height": 10
         },
@@ -1408,8 +1408,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 18,
-          "top": 22,
+          "left": 14,
+          "top": 32,
           "width": 20,
           "height": 36
         },
@@ -1444,8 +1444,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 3,
-          "top": 18,
+          "left": 2,
+          "top": 14,
           "width": 16,
           "height": 50
         },
@@ -1588,8 +1588,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 34,
-          "top": 14,
+          "left": 32,
+          "top": 10,
           "width": 10,
           "height": 12
         },
@@ -1606,7 +1606,7 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 3,
+          "left": 2,
           "top": 46,
           "width": 6,
           "height": 8
@@ -1627,8 +1627,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 18,
-          "top": 22,
+          "left": 14,
+          "top": 32,
           "width": 20,
           "height": 36
         },
@@ -1663,8 +1663,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Grave",
         "rect": {
-          "left": 3,
-          "top": 18,
+          "left": 2,
+          "top": 14,
           "width": 16,
           "height": 50
         },
@@ -1717,8 +1717,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 34,
-          "top": 14,
+          "left": 32,
+          "top": 10,
           "width": 10,
           "height": 12
         },
@@ -1746,8 +1746,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 14,
-          "top": 44,
+          "left": 10,
+          "top": 38,
           "width": 18,
           "height": 25
         },
@@ -1818,7 +1818,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Leve",
         "rect": {
-          "left": 62,
+          "left": 64,
           "top": 52,
           "width": 15,
           "height": 20
@@ -1837,7 +1837,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 16,
-          "top": 64,
+          "top": 70,
           "width": 15,
           "height": 16
         },
@@ -1891,7 +1891,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 24,
-          "top": 80,
+          "top": 82,
           "width": 8,
           "height": 8
         },
@@ -1908,8 +1908,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 54,
-          "top": 32,
+          "left": 56,
+          "top": 30,
           "width": 8,
           "height": 22
         },
@@ -1926,8 +1926,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 24,
-          "top": 44,
+          "left": 26,
+          "top": 52,
           "width": 10,
           "height": 10
         },
@@ -1944,7 +1944,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 4,
+          "left": 2,
           "top": 56,
           "width": 8,
           "height": 10
@@ -1965,8 +1965,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 14,
-          "top": 44,
+          "left": 10,
+          "top": 38,
           "width": 18,
           "height": 25
         },
@@ -2037,7 +2037,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Leve",
         "rect": {
-          "left": 62,
+          "left": 64,
           "top": 52,
           "width": 15,
           "height": 20
@@ -2055,7 +2055,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 4,
+          "left": 2,
           "top": 56,
           "width": 8,
           "height": 10
@@ -2102,8 +2102,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 14,
-          "top": 42,
+          "left": 16,
+          "top": 38,
           "width": 18,
           "height": 22
         },
@@ -2120,8 +2120,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 76,
-          "top": 24,
+          "left": 74,
+          "top": 26,
           "width": 16,
           "height": 45
         },
@@ -2193,7 +2193,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 14,
-          "top": 64,
+          "top": 66,
           "width": 18,
           "height": 16
         },
@@ -2229,7 +2229,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 2,
-          "top": 48,
+          "top": 52,
           "width": 10,
           "height": 22
         },
@@ -2282,8 +2282,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 26,
-          "top": 50,
+          "left": 24,
+          "top": 56,
           "width": 8,
           "height": 8
         },
@@ -2321,8 +2321,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 14,
-          "top": 42,
+          "left": 16,
+          "top": 38,
           "width": 18,
           "height": 22
         },
@@ -2339,8 +2339,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 76,
-          "top": 24,
+          "left": 74,
+          "top": 26,
           "width": 16,
           "height": 45
         },
@@ -2393,8 +2393,8 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 26,
-          "top": 50,
+          "left": 24,
+          "top": 56,
           "width": 8,
           "height": 8
         },
@@ -2459,7 +2459,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 58,
-          "top": 14,
+          "top": 12,
           "width": 15,
           "height": 32
         },
@@ -2513,7 +2513,7 @@ window.PRL_SCENARIOS = [
         "severity": "Seguro",
         "rect": {
           "left": 4,
-          "top": 66,
+          "top": 68,
           "width": 6,
           "height": 28
         },
@@ -2584,8 +2584,8 @@ window.PRL_SCENARIOS = [
         "isHazard": false,
         "severity": "Seguro",
         "rect": {
-          "left": 44,
-          "top": 16,
+          "left": 40,
+          "top": 14,
           "width": 14,
           "height": 8
         },
@@ -2603,7 +2603,7 @@ window.PRL_SCENARIOS = [
         "severity": "Grave",
         "rect": {
           "left": 24,
-          "top": 68,
+          "top": 70,
           "width": 14,
           "height": 16
         },
@@ -2620,7 +2620,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 66,
+          "left": 70,
           "top": 22,
           "width": 8,
           "height": 10
@@ -2678,7 +2678,7 @@ window.PRL_SCENARIOS = [
         "severity": "Muy Grave",
         "rect": {
           "left": 58,
-          "top": 14,
+          "top": 12,
           "width": 15,
           "height": 32
         },
@@ -2714,7 +2714,7 @@ window.PRL_SCENARIOS = [
         "severity": "Grave",
         "rect": {
           "left": 24,
-          "top": 68,
+          "top": 70,
           "width": 14,
           "height": 16
         },
@@ -2731,7 +2731,7 @@ window.PRL_SCENARIOS = [
         "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
-          "left": 66,
+          "left": 70,
           "top": 22,
           "width": 8,
           "height": 10
