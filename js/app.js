@@ -491,6 +491,8 @@ class PRLClassroomApp {
 
   handleHostNextScenario() {
     this.selectedScenario = null;
+    if (this.dom.resultsSvgContainer) this.dom.resultsSvgContainer.innerHTML = '';
+    if (this.dom.sceneSvgContainer) this.dom.sceneSvgContainer.innerHTML = '';
     this.renderScenariosGallery();
     this.showScreen('host-lobby');
 
@@ -511,6 +513,11 @@ class PRLClassroomApp {
     this.studentClicks = [];
     this.selectedItemIds = new Set();
     this.studentHasFinished = false;
+
+    // Limpiar contenedor de resultados para que no haya SVGs duplicados en el DOM
+    if (this.dom.resultsSvgContainer) {
+      this.dom.resultsSvgContainer.innerHTML = '';
+    }
 
     // Actualizar encabezados
     if (this.dom.hudScenarioBadge) this.dom.hudScenarioBadge.textContent = this.currentScenario.name;
@@ -885,7 +892,12 @@ class PRLClassroomApp {
   showHostResultsScreen() {
     if (!this.currentScenario) return;
 
-    // Renderizar escena del escenario en pantalla de resultados
+    // 1. Limpiar el contenedor SVG de simulación para evitar que Chrome anule los gradientes/estilos
+    if (this.dom.sceneSvgContainer) {
+      this.dom.sceneSvgContainer.innerHTML = '';
+    }
+
+    // 2. Renderizar escena del escenario en pantalla de resultados
     if (this.dom.resultsSvgContainer) {
       this.dom.resultsSvgContainer.innerHTML = this.currentScenario.svgContent;
     }
@@ -895,7 +907,7 @@ class PRLClassroomApp {
     // Recalcular puntuación final de cada alumno
     this.students.forEach(st => this.recalculateStudentScore(st));
 
-    // Renderizar hotspots de revelación con TODOS los objetos (Riesgos Reales y Elementos Seguros)
+    // Renderizar pins compactos de revelación (SIN solapamientos de texto)
     if (this.dom.resultsHotspotLayer) {
       this.dom.resultsHotspotLayer.innerHTML = items.map(item => {
         const { left, top } = item.rect;
@@ -910,38 +922,41 @@ class PRLClassroomApp {
         return `
           <div 
             onclick="window.prlApp.revealHazardDetails('${item.id}')"
-            class="absolute z-20 cursor-pointer select-none transition-all hover:scale-105 active:scale-95 group"
+            class="absolute z-20 cursor-pointer select-none transition-all hover:scale-115 active:scale-95 group -translate-x-1/2 -translate-y-1/2"
             style="left: ${left}%; top: ${top}%;"
-            title="Haz clic para ver resolución técnica: ${item.name}"
+            title="${item.name} (${isHazard ? 'Riesgo Real' : 'Elemento Seguro'}) - Haz clic para ver detalles"
           >
-            <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg shadow-lg border backdrop-blur-md ${
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-2xl border backdrop-blur-md transition-all ${
               isHazard
-                ? 'bg-red-950/95 border-red-500 text-red-200 ring-2 ring-red-500/30'
-                : 'bg-emerald-950/95 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
+                ? 'bg-red-950/95 border-red-500 text-red-100 ring-2 ring-red-500/40 shadow-red-500/40 hover:border-red-400'
+                : 'bg-emerald-950/95 border-emerald-400 text-emerald-100 ring-2 ring-emerald-500/40 shadow-emerald-500/40 hover:border-emerald-300'
             }">
-              <span class="w-5 h-5 rounded-md ${
+              <span class="w-5 h-5 rounded-full ${
                 isHazard ? 'bg-red-600 text-white font-black' : 'bg-emerald-600 text-white font-black'
               } text-[10px] flex items-center justify-center shrink-0 shadow">
+                ${isHazard ? '⚠️' : '🛡️'}
+              </span>
+              <span class="text-[11px] font-black font-mono">
                 #${item.num}
               </span>
-              <div class="flex flex-col text-left">
-                <span class="text-[9.5px] sm:text-[10.5px] font-semibold sm:font-bold leading-tight whitespace-normal max-w-[135px] sm:max-w-[170px] text-white">
-                  ${item.name}
-                </span>
-                <span class="text-[9px] ${isHazard ? 'text-red-400' : 'text-emerald-400'} font-mono font-bold">
-                  ${isHazard ? '⚠️ Peligro' : '🛡️ Seguro'} (${markedCount} alumnos)
-                </span>
-              </div>
+              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+                isHazard ? 'bg-red-900/90 text-red-200' : 'bg-emerald-900/90 text-emerald-200'
+              }">
+                ${markedCount}
+              </span>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    // Renderizar Podio y Tabla de Clasificación de la Clase
+    // 3. Renderizar bandeja inferior de todos los elementos para acceso rápido del profesor
+    this.renderHostResultsItemsTray(items);
+
+    // 4. Renderizar Podio y Tabla de Clasificación de la Clase
     this.renderClassLeaderboard();
 
-    // Mostrar el primer elemento por defecto en el panel lateral de detalles
+    // 5. Mostrar el primer elemento por defecto en el panel lateral de detalles
     if (items.length > 0) {
       this.revealHazardDetails(items[0].id);
     }
@@ -951,6 +966,72 @@ class PRLClassroomApp {
     if (window.confetti) {
       window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
     }
+  }
+
+  renderHostResultsItemsTray(items) {
+    let tray = document.getElementById('results-items-tray');
+    if (!tray) {
+      tray = document.createElement('div');
+      tray.id = 'results-items-tray';
+      tray.className = 'w-full mt-4 glass-panel p-4 rounded-2xl border border-slate-700/80 shadow-xl';
+      const viewport = this.dom.resultsSvgContainer?.parentElement;
+      if (viewport && viewport.parentElement) {
+        viewport.parentElement.appendChild(tray);
+      }
+    }
+
+    tray.innerHTML = `
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+        <h4 class="text-xs sm:text-sm font-black text-white uppercase tracking-wider flex items-center gap-2">
+          <span>📋</span> Cuadro de Clasificación (Pulsa cualquier elemento para abrir su ficha)
+        </h4>
+        <div class="flex items-center gap-3 text-[11px] font-bold">
+          <span class="text-red-400 flex items-center gap-1"><span>⚠️</span> Riesgo Real (+100)</span>
+          <span class="text-emerald-400 flex items-center gap-1"><span>🛡️</span> Seguro (-50 si marcado)</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        ${items.map(item => {
+          let markedCount = 0;
+          this.students.forEach(st => {
+            if (st.markedItemIds && st.markedItemIds.has(item.id)) markedCount++;
+          });
+          const isHazard = item.isHazard;
+
+          return `
+            <div 
+              onclick="window.prlApp.revealHazardDetails('${item.id}')"
+              class="flex items-center justify-between gap-2 p-2.5 rounded-xl border cursor-pointer transition-all hover:scale-[1.01] ${
+                isHazard 
+                  ? 'bg-red-950/40 border-red-500/30 hover:border-red-400 text-red-200' 
+                  : 'bg-emerald-950/40 border-emerald-500/30 hover:border-emerald-400 text-emerald-200'
+              }"
+            >
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-6 h-6 rounded-md ${
+                  isHazard ? 'bg-red-600 text-white font-black' : 'bg-emerald-600 text-white font-black'
+                } text-xs flex items-center justify-center shrink-0 shadow">
+                  #${item.num}
+                </span>
+                <div class="min-w-0">
+                  <div class="text-xs font-bold text-white truncate" title="${item.name}">
+                    ${item.name}
+                  </div>
+                  <div class="text-[10px] text-slate-400">
+                    ${item.category}
+                  </div>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-black font-mono shrink-0 ${
+                isHazard ? 'bg-red-900/60 text-red-300 border border-red-500/30' : 'bg-emerald-900/60 text-emerald-300 border border-emerald-500/30'
+              }">
+                ${markedCount} alumnos
+              </span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
   revealHazardDetails(itemId) {

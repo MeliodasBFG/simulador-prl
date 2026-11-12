@@ -63,7 +63,7 @@ const svgHospital = `
   <rect x="80" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="350" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="650" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="880" y="259" width="10" height="16" fill="url(#chromeGrad)"/>
 
   <!-- Cabecero de gases medicinales -->
-  <g transform="translate(420, 120)" filter="url(#hospShadow)">
+  <g transform="translate(420, 120)">
     <rect width="260" height="42" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
     <circle cx="40" cy="21" r="11" fill="#ffffff" stroke="#0284c7" stroke-width="3"/><text x="40" y="24" font-size="7" font-weight="black" fill="#0284c7" text-anchor="middle">O2</text>
     <circle cx="85" cy="21" r="11" fill="#ffffff" stroke="#eab308" stroke-width="3"/><text x="85" y="24" font-size="7" font-weight="black" fill="#eab308" text-anchor="middle">VAC</text>
@@ -80,7 +80,7 @@ const svgHospital = `
   </g>
 
   <!-- PELIGRO 1: AGUJA DESTAPADA CON SANGRE EN MESA AUXILIAR MAYO -->
-  <g id="danger-aguja" transform="translate(120, 310)" class="cursor-pointer" filter="url(#hospShadow)">
+  <g id="danger-aguja" transform="translate(120, 310)" class="cursor-pointer">
     <rect x="65" y="110" width="12" height="110" fill="url(#chromeGrad)"/>
     <rect x="25" y="215" width="90" height="10" rx="3" fill="#475569"/>
     <circle cx="35" cy="226" r="6" fill="#0f172a"/><circle cx="105" cy="226" r="6" fill="#0f172a"/>
@@ -100,7 +100,7 @@ const svgHospital = `
   </g>
 
   <!-- PELIGRO 2: BOTELLA DE OXÍGENO SIN CADENA INCLINADA -->
-  <g id="danger-oxigeno" transform="translate(800, 130)" class="cursor-pointer" filter="url(#hospShadow)">
+  <g id="danger-oxigeno" transform="translate(800, 130)" class="cursor-pointer">
     <rect x="-8" y="180" width="14" height="24" rx="2" fill="#334155" stroke="#0f172a"/>
     <path d="M2 195 Q-15 230 4 270 Q-10 300 2 330" fill="none" stroke="#94a3b8" stroke-width="5" stroke-dasharray="8,4" stroke-linecap="round"/>
     <g transform="rotate(7, 45, 410)">
@@ -124,7 +124,7 @@ const svgHospital = `
   </g>
 
   <!-- PELIGRO 4: CAMILLA HOSPITALARIA CON RUEDAS SIN FRENO Y BARANDILLA BAJADA -->
-  <g id="danger-camilla" transform="translate(480, 290)" class="cursor-pointer" filter="url(#hospShadow)">
+  <g id="danger-camilla" transform="translate(480, 290)" class="cursor-pointer">
     <rect x="15" y="110" width="220" height="12" rx="4" fill="url(#chromeGrad)" stroke="#475569" stroke-width="1.5"/>
     <rect x="40" y="122" width="16" height="55" fill="url(#chromeGrad)"/><rect x="180" y="122" width="16" height="55" fill="url(#chromeGrad)"/>
     <rect x="25" y="172" width="195" height="10" rx="3" fill="#334155"/>
@@ -152,7 +152,7 @@ const svgHospital = `
   </g>
 
   <!-- PELIGRO 3: BOLSA DE RESIDUOS BIOLÓGICOS ROTA Y DERRAMADA -->
-  <g id="danger-residuos" transform="translate(360, 420)" class="cursor-pointer" filter="url(#hospShadow)">
+  <g id="danger-residuos" transform="translate(360, 420)" class="cursor-pointer">
     <path d="M20 70 C50 55, 110 50, 160 65 C200 78, 190 115, 140 125 C80 135, 30 120, 10 95 Z" fill="#991b1b" opacity="0.75"/>
     <path d="M40 76 C70 65, 120 62, 145 74 C175 85, 160 110, 125 116 C75 122, 40 110, 28 94 Z" fill="#b91c1c" opacity="0.85"/>
     <g transform="translate(45, 25)">
@@ -170,7 +170,7 @@ const svgHospital = `
   </g>
 
   <!-- PELIGRO 5: ENFERMERO EN SOBREESFUERZO LUMBAR -->
-  <g id="danger-ergonomia" transform="translate(290, 200)" class="cursor-pointer" filter="url(#hospShadow)">
+  <g id="danger-ergonomia" transform="translate(290, 200)" class="cursor-pointer">
     <rect x="52" y="160" width="16" height="120" rx="5" fill="#0f766e" stroke="#115e59" stroke-width="2"/>
     <rect x="75" y="160" width="16" height="120" rx="5" fill="#0d9488" stroke="#115e59" stroke-width="2"/>
     <ellipse cx="56" cy="278" rx="14" ry="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
@@ -241,7 +241,7 @@ const svgOficina = `
   </g>
 
   <!-- Puesto 1 -->
-  <g transform="translate(60, 310)" filter="url(#ofiShadow)">
+  <g transform="translate(60, 310)">
     <rect x="0" y="40" width="250" height="18" rx="4" fill="url(#woodDesk)"/>
     <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="225" y="58" width="12" height="130" fill="#334155"/>
     <rect x="80" y="-45" width="95" height="65" rx="4" fill="#0f172a" stroke="#475569" stroke-width="2"/>
@@ -252,7 +252,7 @@ const svgOficina = `
   </g>
 
   <!-- PELIGRO 1: CABLES SUELTOS EN PASILLO -->
-  <g id="danger-cables" class="cursor-pointer" filter="url(#ofiShadow)">
+  <g id="danger-cables" class="cursor-pointer">
     <path d="M340 480 C 400 450, 440 550, 500 475 S 580 540, 650 480" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/>
     <path d="M340 505 C 380 530, 430 440, 490 530 S 560 460, 650 515" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
     <path d="M350 470 C 410 540, 470 460, 530 540 S 590 470, 640 530" fill="none" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
@@ -261,7 +261,7 @@ const svgOficina = `
   </g>
 
   <!-- PELIGRO 2: TAZA DE CAFÉ DERRAMADA JUNTO A REGLETA -->
-  <g id="danger-cafe" transform="translate(115, 360)" class="cursor-pointer" filter="url(#ofiShadow)">
+  <g id="danger-cafe" transform="translate(115, 360)" class="cursor-pointer">
     <g transform="translate(30, 50)">
       <rect width="85" height="26" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
       <circle cx="16" cy="13" r="6" fill="#cbd5e1"/><circle cx="36" cy="13" r="6" fill="#cbd5e1"/><circle cx="56" cy="13" r="6" fill="#cbd5e1"/>
@@ -276,7 +276,7 @@ const svgOficina = `
   </g>
 
   <!-- PELIGRO 3: EXTINTOR BLOQUEADO POR CAJAS -->
-  <g id="danger-extintor" class="cursor-pointer" filter="url(#ofiShadow)">
+  <g id="danger-extintor" class="cursor-pointer">
     <g transform="translate(845, 160)">
       <rect x="-8" y="-40" width="65" height="28" rx="3" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
       <text x="24" y="-22" fill="#ffffff" font-size="10" font-weight="black" text-anchor="middle">EXTINTOR</text>
@@ -293,7 +293,7 @@ const svgOficina = `
   </g>
 
   <!-- PELIGRO 4: ARCHIVADOR VOLCANDO -->
-  <g id="danger-archivador" transform="translate(250, 135) rotate(9, 50, 160)" filter="url(#ofiShadow)" class="cursor-pointer">
+  <g id="danger-archivador" transform="translate(250, 135) rotate(9, 50, 160)" class="cursor-pointer">
     <rect width="90" height="185" rx="3" fill="#64748b" stroke="#334155" stroke-width="3"/>
     <g transform="translate(-32, 12)">
       <rect width="118" height="36" rx="2" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
@@ -306,7 +306,7 @@ const svgOficina = `
   </g>
 
   <!-- PELIGRO 5: ERGONOMÍA DEFICIENTE -->
-  <g id="danger-ergonomia" class="cursor-pointer" filter="url(#ofiShadow)">
+  <g id="danger-ergonomia" class="cursor-pointer">
     <g transform="translate(640, 310)">
       <rect x="0" y="40" width="165" height="18" rx="4" fill="url(#woodDesk)"/>
       <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="140" y="58" width="12" height="130" fill="#334155"/>
@@ -361,7 +361,7 @@ const svgObra = `
   <rect x="0" y="380" width="1000" height="220" fill="url(#groundObra)"/>
 
   <!-- PELIGRO 1: PEÓN SIN CASCO BAJO LA CARGA -->
-  <g id="danger-sin-casco" transform="translate(460, 290)" class="cursor-pointer" filter="url(#shadowObra)">
+  <g id="danger-sin-casco" transform="translate(460, 290)" class="cursor-pointer">
     <rect x="18" y="110" width="14" height="95" fill="#1e3a8a"/><rect x="36" y="110" width="14" height="95" fill="#1e40af"/>
     <rect x="14" y="195" width="20" height="12" rx="3" fill="#78350f"/><rect x="34" y="195" width="20" height="12" rx="3" fill="#78350f"/>
     <rect x="12" y="45" width="44" height="68" rx="6" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
@@ -373,7 +373,7 @@ const svgObra = `
   </g>
 
   <!-- PELIGRO 2: ANDAMIO SIN BARANDILLAS -->
-  <g id="danger-andamio" transform="translate(80, 130)" class="cursor-pointer" filter="url(#shadowObra)">
+  <g id="danger-andamio" transform="translate(80, 130)" class="cursor-pointer">
     <line x1="20" y1="0" x2="20" y2="250" stroke="#facc15" stroke-width="8"/><line x1="220" y1="0" x2="220" y2="250" stroke="#facc15" stroke-width="8"/>
     <rect x="10" y="80" width="220" height="16" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
     <line x1="20" y1="80" x2="220" y2="250" stroke="#ca8a04" stroke-width="4"/><line x1="220" y1="80" x2="20" y2="250" stroke="#ca8a04" stroke-width="4"/>
@@ -390,7 +390,7 @@ const svgObra = `
   </g>
 
   <!-- PELIGRO 4: CUADRO ELÉCTRICO EN CHARCO -->
-  <g id="danger-cuadro" transform="translate(780, 200)" class="cursor-pointer" filter="url(#shadowObra)">
+  <g id="danger-cuadro" transform="translate(780, 200)" class="cursor-pointer">
     <rect width="90" height="110" rx="4" fill="#ea580c" stroke="#9a3412" stroke-width="3"/>
     <rect x="8" y="10" width="74" height="90" fill="#0f172a"/><rect x="18" y="25" width="54" height="20" fill="#ffffff"/>
     <path d="M45 52 L38 68 L48 68 L40 85" stroke="#facc15" stroke-width="3" fill="none"/>
@@ -399,7 +399,7 @@ const svgObra = `
   </g>
 
   <!-- PELIGRO 5: ESCALERA SOBRE BIDONES -->
-  <g id="danger-escalera" transform="translate(320, 220)" class="cursor-pointer" filter="url(#shadowObra)">
+  <g id="danger-escalera" transform="translate(320, 220)" class="cursor-pointer">
     <rect x="10" y="110" width="65" height="75" rx="5" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
     <ellipse cx="42.5" cy="110" rx="32.5" ry="8" fill="#38bdf8"/>
     <g transform="rotate(18, 42, 110)">
@@ -453,7 +453,7 @@ const svgAlmacen = `
   <rect x="175" y="310" width="210" height="12" fill="#ea580c"/>
 
   <!-- PELIGRO 1: PALET DEFORMADO E INESTABLE EN ALTURA -->
-  <g id="danger-palet" transform="translate(180, 60)" class="cursor-pointer" filter="url(#almShadow)">
+  <g id="danger-palet" transform="translate(180, 60)" class="cursor-pointer">
     <g transform="rotate(14, 100, 50)">
       <rect x="10" y="38" width="170" height="14" fill="#b45309" stroke="#78350f" stroke-width="2"/>
       <rect x="20" y="-10" width="70" height="50" rx="3" fill="#d97706" stroke="#92400e" stroke-width="2"/>
@@ -463,7 +463,7 @@ const svgAlmacen = `
   </g>
 
   <!-- PELIGRO 2: GRAN DERRAME DE ACEITE LUBRICANTE EN PASILLO -->
-  <g id="danger-aceite" transform="translate(390, 420)" class="cursor-pointer" filter="url(#almShadow)">
+  <g id="danger-aceite" transform="translate(390, 420)" class="cursor-pointer">
     <path d="M10 50 C40 20, 140 15, 210 40 C280 65, 260 110, 190 120 C110 130, 30 110, 5 80 Z" fill="url(#oilSpill)" stroke="#09090b" stroke-width="2"/>
     <path d="M40 55 C70 35, 150 32, 190 52 C230 70, 215 100, 165 106 C105 112, 55 98, 35 78 Z" fill="#18181b" opacity="0.9"/>
     <!-- Brillos irisados en el aceite -->
@@ -474,7 +474,7 @@ const svgAlmacen = `
   </g>
 
   <!-- PELIGRO 3: CARRETILLA CON HORQUILLAS ELEVADAS Y LLAVE PUESTA -->
-  <g id="danger-carretilla" transform="translate(640, 240)" class="cursor-pointer" filter="url(#almShadow)">
+  <g id="danger-carretilla" transform="translate(640, 240)" class="cursor-pointer">
     <!-- Cuerpo de carretilla amarilla -->
     <rect x="50" y="110" width="160" height="90" rx="15" fill="url(#forkliftYellow)" stroke="#ca8a04" stroke-width="3"/>
     <rect x="180" y="80" width="45" height="120" rx="6" fill="#0f172a"/>
@@ -493,7 +493,7 @@ const svgAlmacen = `
   </g>
 
   <!-- PELIGRO 4: SALIDA DE EMERGENCIA BLOQUEADA POR PALETS -->
-  <g id="danger-salida" transform="translate(20, 200)" class="cursor-pointer" filter="url(#almShadow)">
+  <g id="danger-salida" transform="translate(20, 200)" class="cursor-pointer">
     <!-- Puerta de emergencia verde con barra antipánico -->
     <rect width="110" height="180" rx="4" fill="#15803d" stroke="#166534" stroke-width="3"/>
     <rect x="15" y="90" width="80" height="10" rx="3" fill="#e2e8f0"/>
@@ -509,7 +509,7 @@ const svgAlmacen = `
   </g>
 
   <!-- PELIGRO 5: OPERARIO CARGANDO 40KG CON ESPALDA DOBLADA -->
-  <g id="danger-espalda" transform="translate(480, 270)" class="cursor-pointer" filter="url(#almShadow)">
+  <g id="danger-espalda" transform="translate(480, 270)" class="cursor-pointer">
     <rect x="30" y="110" width="14" height="85" fill="#1e3a8a"/>
     <rect x="48" y="110" width="14" height="85" fill="#1e3a8a"/>
     <g transform="translate(10, 60) rotate(-40)">
@@ -549,13 +549,13 @@ const svgLaboratorio = `
   <rect x="0" y="340" width="1000" height="260" fill="url(#labFloor)"/>
 
   <!-- Encimera fenólica de laboratorio con fregadero -->
-  <g transform="translate(180, 310)" filter="url(#labShadow)">
+  <g transform="translate(180, 310)">
     <rect x="0" y="40" width="600" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
     <rect x="15" y="60" width="570" height="130" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
   </g>
 
   <!-- PELIGRO 1: CAMPANA EXTRACTORA CON GUILLOTINA 100% ABIERTA Y VAPORES TÓXICOS -->
-  <g id="danger-campana" transform="translate(220, 100)" class="cursor-pointer" filter="url(#labShadow)">
+  <g id="danger-campana" transform="translate(220, 100)" class="cursor-pointer">
     <rect width="180" height="230" rx="4" fill="#475569" stroke="#1e293b" stroke-width="3"/>
     <rect x="15" y="15" width="150" height="170" fill="#0f172a"/>
     <!-- Guillotina de cristal subida al máximo en vez del límite de 30 cm -->
@@ -570,7 +570,7 @@ const svgLaboratorio = `
   </g>
 
   <!-- PELIGRO 2: ARMARIO DE SEGURIDAD CON PRODUCTOS QUÍMICOS INCOMPATIBLES JUNTOS -->
-  <g id="danger-incompatibles" transform="translate(760, 110)" class="cursor-pointer" filter="url(#labShadow)">
+  <g id="danger-incompatibles" transform="translate(760, 110)" class="cursor-pointer">
     <rect width="160" height="240" rx="4" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
     <line x1="80" y1="0" x2="80" y2="240" stroke="#ca8a04" stroke-width="2"/>
     <!-- Estantes con botellas de Ácido Nítrico y Disolventes orgánicos juntos -->
@@ -583,7 +583,7 @@ const svgLaboratorio = `
   </g>
 
   <!-- PELIGRO 3: DUCHA Y LAVAOJOS BLOQUEADOS POR CARRO DE MATERIAL -->
-  <g id="danger-ducha" transform="translate(20, 120)" class="cursor-pointer" filter="url(#labShadow)">
+  <g id="danger-ducha" transform="translate(20, 120)" class="cursor-pointer">
     <rect x="30" y="0" width="10" height="150" fill="#22c55e"/>
     <ellipse cx="35" cy="15" rx="25" ry="10" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
     <circle cx="35" cy="50" r="14" fill="#22c55e"/> <!-- Tirador triangular de emergencia -->
@@ -602,7 +602,7 @@ const svgLaboratorio = `
   </g>
 
   <!-- PELIGRO 5: PIPETEO BUCAL SIN EPI -->
-  <g id="danger-pipeteo" transform="translate(580, 210)" class="cursor-pointer" filter="url(#labShadow)">
+  <g id="danger-pipeteo" transform="translate(580, 210)" class="cursor-pointer">
     <circle cx="35" cy="25" r="16" fill="#fed7aa"/>
     <rect x="20" y="45" width="40" height="80" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
     <!-- Pipeta de cristal en la boca -->
@@ -637,7 +637,7 @@ const svgCocina = `
   </g>
 
   <!-- Campana extractora industrial -->
-  <g transform="translate(380, 40)" filter="url(#cocShadow)">
+  <g transform="translate(380, 40)">
     <polygon points="0,90 320,90 280,0 40,0" fill="url(#inox)" stroke="#475569" stroke-width="2"/>
     <!-- PELIGRO 3: GRASA CHORREANDO DE LOS FILTROS HACIA LOS FOGONES -->
     <path d="M60 90 Q65 125 60 145" stroke="#ca8a04" stroke-width="4" stroke-linecap="round" fill="none"/>
@@ -646,7 +646,7 @@ const svgCocina = `
   </g>
 
   <!-- Fogones y freidora industrial -->
-  <g transform="translate(380, 230)" filter="url(#cocShadow)">
+  <g transform="translate(380, 230)">
     <rect width="320" height="120" rx="4" fill="url(#inox)" stroke="#475569" stroke-width="2"/>
     <circle cx="70" cy="20" r="28" fill="#1e293b"/>
     <circle cx="70" cy="20" r="14" fill="#0284c7" opacity="0.8"/> <!-- Llama de gas -->
@@ -655,7 +655,7 @@ const svgCocina = `
   </g>
 
   <!-- PELIGRO 1: CORTAFIAMBRES CON DISCO EXPUESTO EN MARCHA -->
-  <g id="danger-cortafiambres" transform="translate(160, 270)" class="cursor-pointer" filter="url(#cocShadow)">
+  <g id="danger-cortafiambres" transform="translate(160, 270)" class="cursor-pointer">
     <rect x="0" y="40" width="160" height="15" fill="url(#inox)"/>
     <rect x="30" y="0" width="85" height="42" rx="4" fill="url(#inox)" stroke="#475569" stroke-width="1.5"/>
     <!-- Disco de acero sin carcasa de seguridad -->
@@ -669,14 +669,14 @@ const svgCocina = `
   </g>
 
   <!-- PELIGRO 4: ENCHUFE TRIFÁSICO EN CONTACTO CON AGUA -->
-  <g id="danger-enchufe" transform="translate(770, 360)" class="cursor-pointer" filter="url(#cocShadow)">
+  <g id="danger-enchufe" transform="translate(770, 360)" class="cursor-pointer">
     <rect width="80" height="24" rx="4" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
     <path d="M40 24 Q30 80 50 110" fill="none" stroke="#0f172a" stroke-width="5"/>
     <ellipse cx="50" cy="115" rx="35" ry="15" fill="#38bdf8" opacity="0.6"/>
   </g>
 
   <!-- PELIGRO 5: TABLAS DE MADERA CONTAMINADAS -->
-  <g id="danger-tablas" transform="translate(680, 280)" class="cursor-pointer" filter="url(#cocShadow)">
+  <g id="danger-tablas" transform="translate(680, 280)" class="cursor-pointer">
     <rect width="85" height="14" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
     <circle cx="30" cy="4" r="5" fill="#ef4444"/> <!-- Carne cruda -->
     <circle cx="60" cy="4" r="5" fill="#22c55e"/> <!-- Verdura en la misma tabla -->
@@ -703,7 +703,7 @@ const svgTaller = `
   <rect x="0" y="340" width="1000" height="260" fill="url(#talFloor)"/>
 
   <!-- PELIGRO 2: PUENTE ELEVADOR CON COCHE SIN TRINQUETE DE SEGURIDAD -->
-  <g id="danger-elevador" transform="translate(420, 110)" class="cursor-pointer" filter="url(#talShadow)">
+  <g id="danger-elevador" transform="translate(420, 110)" class="cursor-pointer">
     <!-- Columnas azules del elevador de 2 postes -->
     <rect x="0" y="0" width="22" height="350" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
     <rect x="260" y="0" width="22" height="350" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
@@ -718,7 +718,7 @@ const svgTaller = `
   </g>
 
   <!-- PELIGRO 1: AMOLADORA (RADIAL) SIN PROTECTOR DE DISCO -->
-  <g id="danger-radial" transform="translate(180, 310)" class="cursor-pointer" filter="url(#talShadow)">
+  <g id="danger-radial" transform="translate(180, 310)" class="cursor-pointer">
     <rect width="180" height="20" rx="3" fill="#64748b"/>
     <g transform="translate(40, -15)">
       <rect x="0" y="0" width="70" height="24" rx="4" fill="#0284c7"/>
@@ -728,7 +728,7 @@ const svgTaller = `
   </g>
 
   <!-- PELIGRO 3: BOTELLAS DE OXICORTE SIN VÁLVULA ANTIRRETROCESO -->
-  <g id="danger-oxicorte" transform="translate(800, 180)" class="cursor-pointer" filter="url(#talShadow)">
+  <g id="danger-oxicorte" transform="translate(800, 180)" class="cursor-pointer">
     <rect x="10" y="60" width="30" height="180" rx="10" fill="#0284c7"/> <!-- Oxígeno -->
     <rect x="45" y="80" width="35" height="160" rx="10" fill="#b91c1c"/> <!-- Acetileno -->
     <path d="M25 60 Q10 20 60 40" fill="none" stroke="#ef4444" stroke-width="4"/> <!-- Manguera agrietada -->
@@ -740,7 +740,7 @@ const svgTaller = `
   </g>
 
   <!-- PELIGRO 5: CUBA DE DESENGRASE ABIERTA -->
-  <g id="danger-cuba" transform="translate(20, 260)" class="cursor-pointer" filter="url(#talShadow)">
+  <g id="danger-cuba" transform="translate(20, 260)" class="cursor-pointer">
     <rect width="90" height="80" rx="4" fill="#475569" stroke="#1e293b" stroke-width="2"/>
     <ellipse cx="45" cy="10" rx="40" ry="10" fill="#0284c7" opacity="0.8"/>
   </g>
@@ -772,7 +772,7 @@ const svgAlturas = `
   </g>
 
   <!-- PELIGRO 3: LÍNEA DE VIDA ATADA A CHIMENEA PRECARIA -->
-  <g id="danger-chimenea" transform="translate(630, 90)" class="cursor-pointer" filter="url(#altShadow)">
+  <g id="danger-chimenea" transform="translate(630, 90)" class="cursor-pointer">
     <rect width="90" height="130" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
     <!-- Grietas profundas en el ladrillo -->
     <path d="M20 20 L40 50 L30 80 M60 40 L75 70" stroke="#000000" stroke-width="2.5" fill="none"/>
@@ -781,13 +781,13 @@ const svgAlturas = `
   </g>
 
   <!-- PELIGRO 1: LUCERNARIO FRÁGIL SIN RED ANTICAÍDAS -->
-  <g id="danger-lucernario" transform="translate(380, 240)" class="cursor-pointer" filter="url(#altShadow)">
+  <g id="danger-lucernario" transform="translate(380, 240)" class="cursor-pointer">
     <polygon points="0,60 160,35 180,110 20,135" fill="#38bdf8" opacity="0.5" stroke="#0284c7" stroke-width="3"/>
     <path d="M40 80 L70 95 L95 85" stroke="#ef4444" stroke-width="3" fill="none"/> <!-- Plástico quebrado -->
   </g>
 
   <!-- PELIGRO 2: TRABAJADOR AL BORDE DEL VACÍO SIN ARNÉS CONECTADO -->
-  <g id="danger-vacio" transform="translate(800, 240)" class="cursor-pointer" filter="url(#altShadow)">
+  <g id="danger-vacio" transform="translate(800, 240)" class="cursor-pointer">
     <circle cx="25" cy="20" r="14" fill="#fed7aa"/>
     <rect x="10" y="34" width="30" height="60" rx="4" fill="#ea580c"/>
     <!-- Al borde justo de la caída libre de 12 metros -->
@@ -795,7 +795,7 @@ const svgAlturas = `
   </g>
 
   <!-- PELIGRO 4: ESCALERA QUE NO SOBREPASA 1 METRO -->
-  <g id="danger-escalera-altura" transform="translate(40, 290)" class="cursor-pointer" filter="url(#altShadow)">
+  <g id="danger-escalera-altura" transform="translate(40, 290)" class="cursor-pointer">
     <line x1="20" y1="20" x2="20" y2="280" stroke="#94a3b8" stroke-width="6"/>
     <line x1="50" y1="20" x2="50" y2="280" stroke="#94a3b8" stroke-width="6"/>
     <line x1="20" y1="50" x2="50" y2="50" stroke="#cbd5e1" stroke-width="4"/>
