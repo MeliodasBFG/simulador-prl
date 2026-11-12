@@ -553,6 +553,7 @@ window.PRL_SCENARIOS = [
         "num": 12,
         "name": "Regleta eléctrica sobrecargada en suelo",
         "category": "Riesgo Eléctrico",
+        "isHazard": true,
         "severity": "Grave",
         "rect": {
           "left": 14,
@@ -675,6 +676,24 @@ window.PRL_SCENARIOS = [
         "consequences": "Sobrecarga trapecial, contracturas musculares y síndrome del túnel carpiano.",
         "regulation": "RD 488/1997 y Guía Técnica del INSST sobre ergonomía en pantallas.",
         "prevention": "Utilizar atril elevador de portátil, teclado independiente y reposamuñecas."
+      },
+      {
+        "id": "ofi-12",
+        "num": 12,
+        "name": "Regleta eléctrica sobrecargada en suelo",
+        "category": "Riesgo Eléctrico",
+        "isHazard": true,
+        "severity": "Grave",
+        "rect": {
+          "left": 14,
+          "top": 68,
+          "width": 12,
+          "height": 10
+        },
+        "description": "Múltiples adaptadores y transformadores conectados en cascada en una misma base.",
+        "consequences": "Sobrecalentamiento térmico del conductor e inicio de ignición.",
+        "regulation": "Reglamento Electrotécnico de Baja Tensión (REBT). Prohibición de enchufes en cascada.",
+        "prevention": "Calcular potencias, instalar tomas suficientes fijas en pared y no sobrecargar."
       }
     ]
   },
@@ -728,6 +747,7 @@ window.PRL_SCENARIOS = [
         "num": 3,
         "name": "Andamio a 4m sin barandillas",
         "category": "Caídas en Altura",
+        "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
           "left": 8,
@@ -745,6 +765,7 @@ window.PRL_SCENARIOS = [
         "num": 4,
         "name": "Zanja de excavación sin entibar",
         "category": "Movimiento de Tierras",
+        "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
           "left": 68,
@@ -762,6 +783,7 @@ window.PRL_SCENARIOS = [
         "num": 5,
         "name": "Cuadro eléctrico en charco de lluvia",
         "category": "Riesgo Eléctrico",
+        "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
           "left": 78,
@@ -779,6 +801,7 @@ window.PRL_SCENARIOS = [
         "num": 6,
         "name": "Escalera sobre bidones inestables",
         "category": "Medios de Acceso",
+        "isHazard": true,
         "severity": "Grave",
         "rect": {
           "left": 32,
@@ -937,6 +960,78 @@ window.PRL_SCENARIOS = [
         "consequences": "Aplastamiento de operarios por rotura de cable o fallo del gancho de seguridad.",
         "regulation": "RD 1215/1997 y NTP 125 del INSST sobre grúas torre.",
         "prevention": "Balizar el radio de giro de la pluma y no desplazar cargas sobre personas."
+      },
+      {
+        "id": "obra-3",
+        "num": 3,
+        "name": "Andamio a 4m sin barandillas",
+        "category": "Caídas en Altura",
+        "isHazard": true,
+        "severity": "Muy Grave",
+        "rect": {
+          "left": 8,
+          "top": 22,
+          "width": 26,
+          "height": 42
+        },
+        "description": "Plataforma de trabajo sin barandilla perimetral de 1 m, listón intermedio ni rodapié.",
+        "consequences": "Caída a distinto nivel con resultado mortal o lesiones medulares permanentes.",
+        "regulation": "RD 2177/2004 sobre trabajos en altura y RD 1627/1997.",
+        "prevention": "Instalar barandillas tubulares completas homologadas antes de usar el andamio."
+      },
+      {
+        "id": "obra-4",
+        "num": 4,
+        "name": "Zanja de excavación sin entibar",
+        "category": "Movimiento de Tierras",
+        "isHazard": true,
+        "severity": "Muy Grave",
+        "rect": {
+          "left": 68,
+          "top": 60,
+          "width": 30,
+          "height": 35
+        },
+        "description": "Zanja de más de 2 metros de profundidad en tierra arcillosa sin entibación ni valla perimetral.",
+        "consequences": "Sepultamiento por desprendimiento de tierras y asfixia mecánica.",
+        "regulation": "RD 1627/1997 (Anexo IV). Toda zanja de más de 1.30 m debe entibarse.",
+        "prevention": "Instalar cajones de entibación metálicos y vallar a 1 metro del borde."
+      },
+      {
+        "id": "obra-5",
+        "num": 5,
+        "name": "Cuadro eléctrico en charco de lluvia",
+        "category": "Riesgo Eléctrico",
+        "isHazard": true,
+        "severity": "Muy Grave",
+        "rect": {
+          "left": 78,
+          "top": 32,
+          "width": 16,
+          "height": 28
+        },
+        "description": "Cuadro de distribución provisional abierto con cables pelados sumergidos en agua.",
+        "consequences": "Electrocución por contacto directo/indirecto con tensión de 400V.",
+        "regulation": "Reglamento Electrotécnico de Baja Tensión (ITC-BT-33) y RD 614/2001.",
+        "prevention": "Elevar el cuadro a soporte seco, grado IP65 y diferencial de 30 mA."
+      },
+      {
+        "id": "obra-6",
+        "num": 6,
+        "name": "Escalera sobre bidones inestables",
+        "category": "Medios de Acceso",
+        "isHazard": true,
+        "severity": "Grave",
+        "rect": {
+          "left": 32,
+          "top": 36,
+          "width": 14,
+          "height": 38
+        },
+        "description": "Escalera de mano apoyada sobre la chapa aceitosa de dos bidones metálicos apilados.",
+        "consequences": "Deslizamiento violento de la base y precipitación del operario.",
+        "regulation": "RD 2177/2004 sobre escaleras de mano.",
+        "prevention": "Apoyar siempre en base plana y sólida o utilizar plataformas elevadoras PEMP."
       },
       {
         "id": "obra-11",
@@ -1702,6 +1797,7 @@ window.PRL_SCENARIOS = [
         "num": 4,
         "name": "Enchufe trifásico de 400V en contacto con agua",
         "category": "Riesgo Eléctrico",
+        "isHazard": true,
         "severity": "Muy Grave",
         "rect": {
           "left": 77,
@@ -1914,6 +2010,24 @@ window.PRL_SCENARIOS = [
         "consequences": "Inflamación súbita de la campana con propagación por el conducto extractor.",
         "regulation": "Código Técnico de la Edificación (DB-SI) y RD 513/2017.",
         "prevention": "Limpieza periódica obligatoria de filtros y conductos en lavavajillas industrial."
+      },
+      {
+        "id": "coc-4",
+        "num": 4,
+        "name": "Enchufe trifásico de 400V en contacto con agua",
+        "category": "Riesgo Eléctrico",
+        "isHazard": true,
+        "severity": "Muy Grave",
+        "rect": {
+          "left": 77,
+          "top": 58,
+          "width": 16,
+          "height": 25
+        },
+        "description": "Clavija de conexión industrial roja de 400V sumergida en charco de baldeo junto al fregadero.",
+        "consequences": "Electrocución de operarios que toquen superficies metálicas o pisen el agua.",
+        "regulation": "Reglamento Electrotécnico de Baja Tensión y RD 614/2001.",
+        "prevention": "Instalar bases estancas IP67 a más de 1.5 metros de altura del suelo en zonas húmedas."
       },
       {
         "id": "coc-5",
