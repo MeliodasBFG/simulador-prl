@@ -560,6 +560,7 @@ class PRLClassroomApp {
       isHazard: true
     }));
 
+    // 1. Renderizar en el SVG badges individuales tipo pin SIN cajas gigantes que se solapen
     this.dom.hotspotLayer.innerHTML = items.map(item => {
       const isSelected = this.selectedItemIds && this.selectedItemIds.has(item.id);
       const isHostObserving = (this.role === 'host' && !this.hostParticipates);
@@ -568,32 +569,112 @@ class PRLClassroomApp {
         <div 
           id="item-hotspot-${item.id}"
           onclick="window.prlApp.toggleItemSelection('${item.id}', event)"
-          class="item-hotspot absolute rounded-xl transition-all duration-200 select-none group flex flex-col justify-start p-1.5 z-20 ${
+          class="item-hotspot absolute z-20 select-none transition-all duration-150 ${
             isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:scale-105 active:scale-95'
-          } ${
-            isSelected 
-              ? 'border-2 border-amber-400 bg-amber-500/25 ring-4 ring-amber-500/30 shadow-lg shadow-amber-500/30' 
-              : 'border border-dashed border-red-500/40 bg-slate-950/20 hover:border-amber-400 hover:bg-slate-900/50'
           }"
-          style="left: ${item.rect.left}%; top: ${item.rect.top}%; width: ${item.rect.width}%; height: ${item.rect.height}%;"
+          style="left: ${item.rect.left}%; top: ${item.rect.top}%;"
           title="Toca para evaluar: ${item.name}"
         >
-          <!-- Etiqueta roja con número y nombre de objeto (Estilo póster oficial) -->
-          <div class="inline-flex items-center gap-1.5 self-start max-w-full">
-            <span class="w-6 h-6 rounded-md ${
+          <!-- Etiqueta compacta con número e información completa sin cortar -->
+          <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded-xl shadow-xl border backdrop-blur-md transition-all ${
+            isSelected 
+              ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-105' 
+              : 'bg-slate-950/90 border-slate-700/80 hover:border-amber-400 hover:bg-slate-900 text-slate-100'
+          }">
+            <span class="w-6 h-6 rounded-lg ${
               isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
-            } text-xs flex items-center justify-center shadow-md shadow-black/80 border border-red-400 flex-shrink-0 transition-transform group-hover:scale-110">
+            } text-xs flex items-center justify-center shrink-0 shadow">
               ${isSelected ? '⚠️' : item.num}
             </span>
-            <span class="px-2 py-0.5 rounded-md ${
-              isSelected ? 'bg-amber-950/90 text-amber-200 border-amber-500 font-black' : 'bg-slate-950/90 text-slate-100 border-slate-700/80 font-bold'
-            } text-[10px] sm:text-[11px] border shadow-md truncate max-w-[130px] sm:max-w-[180px] transition-colors">
-              ${item.name} ${isSelected ? '✓' : ''}
+            <span class="text-[11px] sm:text-xs font-bold leading-tight px-1 whitespace-normal max-w-[170px] sm:max-w-[220px]">
+              ${item.name}
             </span>
           </div>
         </div>
       `;
     }).join('');
+
+    // 2. Renderizar bandeja inferior interactiva de objetos con todos los nombres 100% visibles
+    this.renderScenarioItemsTray(items);
+  }
+
+  renderScenarioItemsTray(items) {
+    let tray = document.getElementById('simulation-items-tray');
+    if (!tray) {
+      tray = document.createElement('div');
+      tray.id = 'simulation-items-tray';
+      tray.className = 'w-full mt-4 glass-panel p-4 rounded-2xl border border-slate-700/80 shadow-xl';
+      const container = this.dom.sceneViewport?.parentElement?.parentElement;
+      if (container) {
+        container.appendChild(tray);
+      }
+    }
+
+    const count = this.selectedItemIds ? this.selectedItemIds.size : 0;
+    const isHostObserving = (this.role === 'host' && !this.hostParticipates);
+
+    tray.innerHTML = `
+      <div class="flex flex-wrap items-center justify-between gap-2 mb-3 pb-2 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">📋</span>
+          <h4 class="text-xs sm:text-sm font-black text-white uppercase tracking-wider">
+            Elementos a evaluar en este escenario
+          </h4>
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${
+            count > 0 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-400'
+          }">
+            ${count} marcados como riesgo
+          </span>
+        </div>
+        <p class="text-[11px] text-slate-400 hidden sm:block">
+          💡 Puedes marcar o desmarcar pulsando sobre la imagen o directamente en esta lista.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+        ${items.map(item => {
+          const isSelected = this.selectedItemIds && this.selectedItemIds.has(item.id);
+          return `
+            <div 
+              onclick="window.prlApp.toggleItemSelection('${item.id}', event)"
+              class="flex items-center justify-between gap-2.5 p-2.5 rounded-xl border transition-all ${
+                isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:border-amber-400'
+              } ${
+                isSelected 
+                  ? 'bg-amber-950/70 border-amber-400/80 text-amber-200 ring-1 ring-amber-400/50 shadow-md shadow-amber-500/10' 
+                  : 'bg-slate-900/60 hover:bg-slate-800/80 border-slate-800 text-slate-200'
+              }"
+            >
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-6 h-6 rounded-md ${
+                  isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
+                } text-xs flex items-center justify-center shrink-0 shadow">
+                  ${isSelected ? '⚠️' : item.num}
+                </span>
+                <div class="min-w-0">
+                  <div class="text-xs font-bold leading-tight text-white whitespace-normal break-words" title="${item.name}">
+                    ${item.name}
+                  </div>
+                  <div class="text-[10px] text-slate-400 font-mono">
+                    ${item.category}
+                  </div>
+                </div>
+              </div>
+
+              <div class="shrink-0">
+                <span class="px-2 py-1 rounded-md text-[10px] font-black uppercase tracking-wider transition ${
+                  isSelected 
+                    ? 'bg-amber-500 text-slate-950 shadow' 
+                    : 'bg-slate-800 text-slate-400 border border-slate-700'
+                }">
+                  ${isSelected ? 'RIESGO ✓' : 'SEGURO'}
+                </span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
   }
 
   toggleItemSelection(itemId, event) {
@@ -817,7 +898,7 @@ class PRLClassroomApp {
     // Renderizar hotspots de revelación con TODOS los objetos (Riesgos Reales y Elementos Seguros)
     if (this.dom.resultsHotspotLayer) {
       this.dom.resultsHotspotLayer.innerHTML = items.map(item => {
-        const { left, top, width, height } = item.rect;
+        const { left, top } = item.rect;
         const isHazard = item.isHazard;
         
         // Contar cuántos alumnos marcaron este objeto concreto
@@ -829,20 +910,28 @@ class PRLClassroomApp {
         return `
           <div 
             onclick="window.prlApp.revealHazardDetails('${item.id}')"
-            class="absolute rounded-xl cursor-pointer hover:scale-105 transition-all shadow-xl flex items-start justify-start p-1.5 group z-20 ${
-              isHazard
-                ? 'border-2 border-red-500 bg-red-600/30 hover:bg-red-600/50 shadow-red-500/30'
-                : 'border-2 border-emerald-400 bg-emerald-600/25 hover:bg-emerald-600/40 shadow-emerald-500/25'
-            }"
-            style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%;"
+            class="absolute z-20 cursor-pointer select-none transition-all hover:scale-105 active:scale-95 group"
+            style="left: ${left}%; top: ${top}%;"
             title="Haz clic para ver resolución técnica: ${item.name}"
           >
-            <div class="px-2 py-0.5 rounded-md ${
-              isHazard ? 'bg-red-950/95 text-red-200 border-red-500' : 'bg-emerald-950/95 text-emerald-200 border-emerald-400'
-            } border text-[10px] sm:text-[11px] font-black shadow-md flex items-center gap-1.5 backdrop-blur-sm">
-              <span>${isHazard ? '⚠️ #' + item.num : '🛡️ #' + item.num}</span>
-              <span class="hidden sm:inline font-bold">${isHazard ? 'Peligro' : 'Seguro'}</span>
-              <span class="text-white font-mono font-bold">(${markedCount} ${isHazard ? 'aciertos' : 'fallos'})</span>
+            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl shadow-xl border backdrop-blur-md ${
+              isHazard
+                ? 'bg-red-950/95 border-red-500 text-red-200 ring-2 ring-red-500/30'
+                : 'bg-emerald-950/95 border-emerald-400 text-emerald-200 ring-2 ring-emerald-500/30'
+            }">
+              <span class="w-6 h-6 rounded-lg ${
+                isHazard ? 'bg-red-600 text-white font-black' : 'bg-emerald-600 text-white font-black'
+              } text-xs flex items-center justify-center shrink-0 shadow">
+                #${item.num}
+              </span>
+              <div class="flex flex-col text-left">
+                <span class="text-[11px] sm:text-xs font-bold leading-tight whitespace-normal max-w-[160px] sm:max-w-[210px] text-white">
+                  ${item.name}
+                </span>
+                <span class="text-[10px] ${isHazard ? 'text-red-400' : 'text-emerald-400'} font-mono font-bold">
+                  ${isHazard ? '⚠️ Peligro' : '🛡️ Seguro'} (${markedCount} alumnos)
+                </span>
+              </div>
             </div>
           </div>
         `;
