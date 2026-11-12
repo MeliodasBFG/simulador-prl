@@ -255,6 +255,53 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+/* =========================================================================
+   SOPORTE DE MODO HORIZONTAL (LANDSCAPE) EN MÓVILES
+   Permite mostrar los nombres completos de todos los elementos sin solapamientos
+   ========================================================================= */
+
+/* Control de visibilidad del nombre completo según orientación */
+.badge-item-name {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+  white-space: normal;
+  max-width: 145px;
+}
+
+/* En móvil portrait estrecho (< 640px) se ocultan las frases largas en el dibujo para evitar solapamientos */
+@media screen and (orientation: portrait) and (max-width: 640px) {
+  .badge-item-name {
+    display: none !important;
+  }
+}
+
+/* En modo horizontal (landscape) en móvil y en pantallas grandes (PC/tablets), se muestran los nombres completos */
+@media screen and (orientation: landscape), screen and (min-width: 641px) {
+  .badge-item-name {
+    display: inline-block !important;
+    font-size: 9.5px;
+    max-width: 140px;
+  }
+}
+
+/* Optimización de altura en modo horizontal de móvil */
+@media screen and (orientation: landscape) and (max-height: 520px) {
+  #screen-simulation, #screen-host-results {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+  }
+  .scene-viewport {
+    max-height: 72vh !important;
+  }
+  #landscape-mobile-banner {
+    display: none !important;
+  }
+}
+
 /* Estilos para el Diploma de Certificación (Imprimible y descargable a PDF) */
 @media print {
   body {

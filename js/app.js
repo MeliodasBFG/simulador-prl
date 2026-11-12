@@ -319,6 +319,9 @@ class PRLClassroomApp {
     this.net.setRoom(this.roomCode);
     this.net.myName = this.myName;
 
+    // Intentar activar modo horizontal en móviles para la mejor experiencia
+    this.requestLandscapeMode();
+
     // EL ALUMNO DEBE PERMANECER 100% EN SILENCIO (Para evitar caos en el aula)
     window.prlAudio?.setRole('student');
     this.updateHostAudioUI();
@@ -514,6 +517,9 @@ class PRLClassroomApp {
     this.selectedItemIds = new Set();
     this.studentHasFinished = false;
 
+    // Activar modo horizontal si el navegador móvil lo permite
+    this.requestLandscapeMode();
+
     // Limpiar contenedor de resultados para que no haya SVGs duplicados en el DOM
     if (this.dom.resultsSvgContainer) {
       this.dom.resultsSvgContainer.innerHTML = '';
@@ -593,8 +599,8 @@ class PRLClassroomApp {
             } text-xs sm:text-[10px] flex items-center justify-center shrink-0 shadow">
               ${isSelected ? '⚠️' : item.num}
             </span>
-            <!-- Nombre del elemento: Oculto en móvil (pantallas < 768px) para que el dibujo se vea 100% limpio sin letras estorbando; visible en PC -->
-            <span class="hidden md:inline-block text-[9.5px] font-bold leading-tight px-1 whitespace-normal max-w-[130px] sm:max-w-[160px]">
+            <!-- Nombre del elemento: Visible en horizontal en móvil y en pantallas de PC -->
+            <span class="badge-item-name text-white">
               ${item.name}
             </span>
           </div>
@@ -763,6 +769,19 @@ class PRLClassroomApp {
 
     // Clic en pared o suelo vacío: NO restar puntos ni añadir fallos; mostrar aviso didáctico
     this.showSceneToast('💡 Haz clic sobre uno de los objetos numerados (1 al 12) para evaluarlo.');
+  }
+
+  async requestLandscapeMode() {
+    try {
+      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+        await document.documentElement.requestFullscreen().catch(() => {});
+      }
+      if (screen.orientation && screen.orientation.lock) {
+        await screen.orientation.lock('landscape').catch(() => {});
+      }
+    } catch (e) {
+      console.log('Modo horizontal asistido:', e);
+    }
   }
 
   showSceneToast(msg) {
