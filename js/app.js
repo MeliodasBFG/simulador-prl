@@ -582,18 +582,19 @@ class PRLClassroomApp {
           style="left: ${item.rect.left}%; top: ${item.rect.top}%;"
           title="Toca para evaluar: ${item.name}"
         >
-          <!-- Etiqueta compacta con letra más estilizada para no tapar elementos adyacentes -->
-          <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg shadow-lg border backdrop-blur-md transition-all ${
+          <!-- Chapa del número con diseño de chapa de seguridad (Visible SIEMPRE) -->
+          <div class="inline-flex items-center p-0.5 sm:px-1.5 sm:py-0.5 rounded-md sm:rounded-lg shadow-lg border backdrop-blur-md transition-all ${
             isSelected 
-              ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-105' 
+              ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-110' 
               : 'bg-slate-950/90 border-slate-700/80 hover:border-amber-400 hover:bg-slate-900 text-slate-100'
           }">
-            <span class="w-5 h-5 rounded-md ${
+            <span class="w-6 h-6 sm:w-5 sm:h-5 rounded-md ${
               isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
-            } text-[10px] flex items-center justify-center shrink-0 shadow">
+            } text-xs sm:text-[10px] flex items-center justify-center shrink-0 shadow">
               ${isSelected ? '⚠️' : item.num}
             </span>
-            <span class="text-[9.5px] sm:text-[10.5px] font-semibold sm:font-bold leading-tight px-0.5 whitespace-normal max-w-[135px] sm:max-w-[170px]">
+            <!-- Nombre del elemento: Oculto en móvil (pantallas < 768px) para que el dibujo se vea 100% limpio sin letras estorbando; visible en PC -->
+            <span class="hidden md:inline-block text-[9.5px] font-bold leading-tight px-1 whitespace-normal max-w-[130px] sm:max-w-[160px]">
               ${item.name}
             </span>
           </div>
@@ -643,6 +644,7 @@ class PRLClassroomApp {
           const isSelected = this.selectedItemIds && this.selectedItemIds.has(item.id);
           return `
             <div 
+              id="tray-item-${item.id}"
               onclick="window.prlApp.toggleItemSelection('${item.id}', event)"
               class="flex items-center justify-between gap-2.5 p-2.5 rounded-xl border transition-all ${
                 isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:border-amber-400'
@@ -713,6 +715,21 @@ class PRLClassroomApp {
       }
     }
 
+    // Feedback didáctico inmediato con el nombre del elemento
+    const item = this.currentScenario?.items?.find(it => it.id === itemId);
+    if (item) {
+      const statusText = !wasSelected ? '⚠️ Marcado como Riesgo' : '🛡️ Desmarcado (Seguro)';
+      this.showSceneToast(`[#${item.num}] ${item.name} → ${statusText}`);
+
+      // En móviles, sincronizar vista haciendo scroll suave al elemento en la bandeja
+      if (window.innerWidth < 768) {
+        const trayCard = document.getElementById(`tray-item-${itemId}`);
+        if (trayCard) {
+          trayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
     // Refrescar el estado visual de los hotspots
     this.renderScenarioInteractiveItems();
     this.updateStudentEvaluationCounter();
@@ -753,7 +770,7 @@ class PRLClassroomApp {
     if (!toast) {
       toast = document.createElement('div');
       toast.id = 'scene-click-toast';
-      toast.className = 'absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-slate-900/95 border border-amber-500/60 text-amber-300 text-xs font-bold shadow-2xl pointer-events-none transition-opacity duration-300 z-40';
+      toast.className = 'absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-slate-950/95 border border-amber-500/80 text-amber-300 text-[11px] sm:text-xs font-bold shadow-2xl pointer-events-none transition-opacity duration-300 z-40 w-max max-w-[92%] text-center truncate backdrop-blur-md';
       this.dom.sceneViewport?.appendChild(toast);
     }
     toast.textContent = msg;
