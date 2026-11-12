@@ -3,8 +3,8 @@ const path = require('path');
 
 const rootDir = __dirname;
 
-// 1. Ejecutar generador de escenarios realistas
-require('./generate_rich_scenarios.js');
+// 1. Ejecutar generador de escenarios estilo póster formativo con 12 items numerados
+require('./generate_poster_scenarios.js');
 
 // 2. Leer archivos de soporte
 const styleCss = fs.readFileSync(path.join(rootDir, 'css', 'style.css'), 'utf-8');

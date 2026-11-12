@@ -428,7 +428,8 @@ class PRLClassroomApp {
         isFinished: false,
         hits: new Set(),
         misses: 0,
-        clicks: []
+        clicks: [],
+        markedItemIds: new Set()
       });
     });
 
@@ -451,6 +452,7 @@ class PRLClassroomApp {
       st.hits = new Set();
       st.misses = 0;
       st.clicks = [];
+      st.markedItemIds = new Set();
     });
 
     // Audio Host: Transición y música de concentración/suspense
@@ -507,6 +509,7 @@ class PRLClassroomApp {
 
   startSimulationView() {
     this.studentClicks = [];
+    this.selectedItemIds = new Set();
     this.studentHasFinished = false;
 
     // Actualizar encabezados
@@ -520,6 +523,10 @@ class PRLClassroomApp {
     if (this.dom.studentPinsLayer) {
       this.dom.studentPinsLayer.innerHTML = '';
     }
+
+    // Renderizar Hotspots Concretos Numerados con Etiquetas (Estilo Lámina Formativa de la imagen)
+    this.renderScenarioInteractiveItems();
+    this.updateStudentEvaluationCounter();
 
     // Configurar visibilidad según rol
     if (this.role === 'host') {
@@ -543,75 +550,134 @@ class PRLClassroomApp {
     }
   }
 
-  handleSceneClick(event) {
-    // Si el usuario es Host pero configuró no participar, ignorar clics de marcado
+  // Renderizar los 10-12 objetos interactivos numerados con sus etiquetas
+  renderScenarioInteractiveItems() {
+    if (!this.dom.hotspotLayer || !this.currentScenario) return;
+
+    const items = this.currentScenario.items || this.currentScenario.hazards.map((h, i) => ({
+      ...h,
+      num: i + 1,
+      isHazard: true
+    }));
+
+    this.dom.hotspotLayer.innerHTML = items.map(item => {
+      const isSelected = this.selectedItemIds && this.selectedItemIds.has(item.id);
+      const isHostObserving = (this.role === 'host' && !this.hostParticipates);
+
+      return `
+        <div 
+          id="item-hotspot-${item.id}"
+          onclick="window.prlApp.toggleItemSelection('${item.id}', event)"
+          class="item-hotspot absolute rounded-xl transition-all duration-200 select-none group flex flex-col justify-start p-1.5 z-20 ${
+            isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:scale-105 active:scale-95'
+          } ${
+            isSelected 
+              ? 'border-2 border-amber-400 bg-amber-500/25 ring-4 ring-amber-500/30 shadow-lg shadow-amber-500/30' 
+              : 'border border-dashed border-red-500/40 bg-slate-950/20 hover:border-amber-400 hover:bg-slate-900/50'
+          }"
+          style="left: ${item.rect.left}%; top: ${item.rect.top}%; width: ${item.rect.width}%; height: ${item.rect.height}%;"
+          title="Toca para evaluar: ${item.name}"
+        >
+          <!-- Etiqueta roja con número y nombre de objeto (Estilo póster oficial) -->
+          <div class="inline-flex items-center gap-1.5 self-start max-w-full">
+            <span class="w-6 h-6 rounded-md ${
+              isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
+            } text-xs flex items-center justify-center shadow-md shadow-black/80 border border-red-400 flex-shrink-0 transition-transform group-hover:scale-110">
+              ${isSelected ? '⚠️' : item.num}
+            </span>
+            <span class="px-2 py-0.5 rounded-md ${
+              isSelected ? 'bg-amber-950/90 text-amber-200 border-amber-500 font-black' : 'bg-slate-950/90 text-slate-100 border-slate-700/80 font-bold'
+            } text-[10px] sm:text-[11px] border shadow-md truncate max-w-[130px] sm:max-w-[180px] transition-colors">
+              ${item.name} ${isSelected ? '✓' : ''}
+            </span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  toggleItemSelection(itemId, event) {
+    if (event) event.stopPropagation();
     if (this.role === 'host' && !this.hostParticipates) return;
     if (this.studentHasFinished) return;
 
-    // Obtener porcentaje relativo (0-100%)
-    const rect = this.dom.sceneViewport.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const clickY = event.clientY - rect.top;
+    if (!this.selectedItemIds) this.selectedItemIds = new Set();
 
-    const xPercent = (clickX / rect.width) * 100;
-    const yPercent = (clickY / rect.height) * 100;
+    const wasSelected = this.selectedItemIds.has(itemId);
+    if (wasSelected) {
+      this.selectedItemIds.delete(itemId);
+    } else {
+      this.selectedItemIds.add(itemId);
+    }
 
-    // Comprobar si coincide con algún peligro del escenario
-    let hitHazard = null;
-    for (const h of this.currentScenario.hazards) {
-      const { left, top, width, height } = h.rect;
-      if (
-        xPercent >= left &&
-        xPercent <= left + width &&
-        yPercent >= top &&
-        yPercent <= top + height
-      ) {
-        hitHazard = h;
-        break;
+    // Si el host participa, actualizar sus propias estadísticas
+    if (this.role === 'host' && this.hostParticipates) {
+      const hostSt = this.students.get(this.myId);
+      if (hostSt) {
+        if (!hostSt.markedItemIds) hostSt.markedItemIds = new Set();
+        if (!wasSelected) {
+          hostSt.markedItemIds.add(itemId);
+        } else {
+          hostSt.markedItemIds.delete(itemId);
+        }
+        this.recalculateStudentScore(hostSt);
+        this.updateHostResponseCounter();
       }
     }
 
-    const isCorrect = hitHazard !== null;
-    const clickData = {
-      x: xPercent,
-      y: yPercent,
-      hazardId: hitHazard ? hitHazard.id : null,
-      isCorrect
-    };
+    // Refrescar el estado visual de los hotspots
+    this.renderScenarioInteractiveItems();
+    this.updateStudentEvaluationCounter();
 
-    this.studentClicks.push(clickData);
-
-    // Colocar un pin neutro en la pantalla del alumno (sin revelar si es correcto o fallo)
-    this.addStudentPin(xPercent, yPercent, this.studentClicks.length);
-
-    // Enviar clic al Host en tiempo real
-    this.net.emit('STUDENT_CLICK', {
+    // Notificar al Host en tiempo real
+    this.net.emit('STUDENT_TOGGLE_ITEM', {
       studentId: this.myId,
       studentName: this.myName,
       roomCode: this.roomCode,
-      x: xPercent,
-      y: yPercent,
-      hazardId: hitHazard ? hitHazard.id : null,
-      isCorrect
+      itemId,
+      isSelected: !wasSelected,
+      markedCount: this.selectedItemIds.size
     });
-    // El dispositivo del alumno permanece en silencio para evitar caos acústico en el aula
+  }
+
+  updateStudentEvaluationCounter() {
+    const totalItems = this.currentScenario?.items?.length || 12;
+    const count = this.selectedItemIds ? this.selectedItemIds.size : 0;
+    
+    // Si tenemos el banner o botón de alumno, actualizar texto descriptivo
+    if (this.dom.btnStudentFinish && !this.studentHasFinished) {
+      this.dom.btnStudentFinish.textContent = `He terminado (${count} peligros marcados) →`;
+    }
+  }
+
+  handleSceneClick(event) {
+    // Si se hizo clic directamente en un objeto interactivo, toggleItemSelection ya lo gestionó
+    if (event.target.closest('.item-hotspot')) return;
+    if (this.role === 'host' && !this.hostParticipates) return;
+    if (this.studentHasFinished) return;
+
+    // Clic en pared o suelo vacío: NO restar puntos ni añadir fallos; mostrar aviso didáctico
+    this.showSceneToast('💡 Haz clic sobre uno de los objetos numerados (1 al 12) para evaluarlo.');
+  }
+
+  showSceneToast(msg) {
+    let toast = document.getElementById('scene-click-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'scene-click-toast';
+      toast.className = 'absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-slate-900/95 border border-amber-500/60 text-amber-300 text-xs font-bold shadow-2xl pointer-events-none transition-opacity duration-300 z-40';
+      this.dom.sceneViewport?.appendChild(toast);
+    }
+    toast.textContent = msg;
+    toast.style.opacity = '1';
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+    }, 2200);
   }
 
   addStudentPin(xPercent, yPercent, number) {
-    if (!this.dom.studentPinsLayer) return;
-
-    const pin = document.createElement('div');
-    pin.className = 'absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none animate-[bounce-in_0.2s_ease-out] z-30';
-    pin.style.left = `${xPercent}%`;
-    pin.style.top = `${yPercent}%`;
-
-    pin.innerHTML = `
-      <div class="w-7 h-7 rounded-full bg-slate-900/90 border-2 border-amber-400 text-amber-400 font-black text-xs flex items-center justify-center shadow-lg shadow-black/80">
-        ${number}
-      </div>
-    `;
-
-    this.dom.studentPinsLayer.appendChild(pin);
+    // Ya no se colocan pines ciegos en paredes vacías; la interacción se basa en los objetos numerados
   }
 
   handleStudentFinish() {
@@ -622,19 +688,22 @@ class PRLClassroomApp {
       this.dom.btnStudentFinish.classList.add('opacity-50', 'cursor-not-allowed');
     }
 
+    const count = this.selectedItemIds ? this.selectedItemIds.size : 0;
+
     if (this.dom.studentStatusBanner) {
       this.dom.studentStatusBanner.classList.remove('hidden');
       this.dom.studentStatusBanner.innerHTML = `
-        <div class="p-3 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-center text-xs font-bold text-emerald-300 animate-pulse">
-          ✓ Has completado tu inspección (${this.studentClicks.length} puntos marcados). Esperando a que el profesor cierre la ronda...
+        <div class="p-3.5 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-center text-xs font-bold text-emerald-300 animate-pulse">
+          ✓ Has completado tu inspección (${count} elementos marcados como peligros). Esperando a que el profesor cierre la ronda...
         </div>
       `;
     }
 
-    // Notificar al Host
+    // Notificar al Host con la lista completa de marcados
     this.net.emit('STUDENT_FINISHED', {
       studentId: this.myId,
-      roomCode: this.roomCode
+      roomCode: this.roomCode,
+      markedIds: Array.from(this.selectedItemIds || [])
     });
   }
 
@@ -652,60 +721,79 @@ class PRLClassroomApp {
     }
 
     if (this.dom.hudStudentsStatusList) {
-      const html = Array.from(this.students.values()).map(st => `
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
-          st.isFinished
-            ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
-            : 'bg-slate-800 text-slate-300 border-slate-700'
-        }">
-          <span class="w-2 h-2 rounded-full ${st.isFinished ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}"></span>
-          <span class="truncate max-w-[120px]">${st.name}</span>
-          <span class="text-[10px] opacity-75 font-mono">(${st.clicks.length})</span>
-        </div>
-      `).join('');
+      const html = Array.from(this.students.values()).map(st => {
+        const markedCount = st.markedItemIds ? st.markedItemIds.size : (st.clicks ? st.clicks.length : 0);
+        return `
+          <div class="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold border transition ${
+            st.isFinished
+              ? 'bg-emerald-950/40 text-emerald-300 border-emerald-500/30'
+              : 'bg-slate-800 text-slate-300 border-slate-700'
+          }">
+            <span class="w-2 h-2 rounded-full ${st.isFinished ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}"></span>
+            <span class="truncate max-w-[120px]">${st.name}</span>
+            <span class="text-[10px] opacity-75 font-mono">(${markedCount} marcados)</span>
+          </div>
+        `;
+      }).join('');
       this.dom.hudStudentsStatusList.innerHTML = html;
     }
   }
 
+  recalculateStudentScore(st) {
+    if (!st || !this.currentScenario) return;
+    if (!st.markedItemIds) st.markedItemIds = new Set();
+    if (!st.hits) st.hits = new Set();
+    st.hits.clear();
+    st.misses = 0;
+
+    const items = this.currentScenario.items || [];
+    st.markedItemIds.forEach(itemId => {
+      const item = items.find(it => it.id === itemId);
+      if (item) {
+        if (item.isHazard) {
+          st.hits.add(itemId);
+        } else {
+          st.misses++;
+        }
+      }
+    });
+  }
+
   runBotSimulationResponses() {
     const bots = Array.from(this.students.values()).filter(st => st.id.startsWith('bot_'));
-    if (bots.length === 0) return;
+    if (bots.length === 0 || !this.currentScenario) return;
+
+    const items = this.currentScenario.items || [];
+    const realHazards = items.filter(it => it.isHazard);
+    const safeItems = items.filter(it => !it.isHazard);
 
     bots.forEach(bot => {
-      // Simular clics aleatorios (algunos aciertos en peligros reales, algunos fallos)
-      const numClicks = Math.floor(2 + Math.random() * 4);
-      for (let i = 0; i < numClicks; i++) {
+      if (!bot.markedItemIds) bot.markedItemIds = new Set();
+
+      // Bot elige entre 3 y 6 elementos (algunos riesgos reales y opcionalmente 1 o 2 elementos seguros como distractor)
+      const numHazards = Math.min(realHazards.length, Math.floor(2 + Math.random() * 4));
+      const chosenHazards = [...realHazards].sort(() => 0.5 - Math.random()).slice(0, numHazards);
+
+      const pickSafe = (Math.random() > 0.4 && safeItems.length > 0)
+        ? [...safeItems].sort(() => 0.5 - Math.random()).slice(0, Math.floor(1 + Math.random() * 2))
+        : [];
+
+      const botChoices = [...chosenHazards, ...pickSafe];
+
+      botChoices.forEach((item, i) => {
         setTimeout(() => {
           if (!this.currentScenario) return;
-
-          // 70% probabilidad de acertar un peligro real
-          const hitSuccess = Math.random() > 0.3;
-          let hitHazard = null;
-          let x = Math.random() * 80 + 10;
-          let y = Math.random() * 70 + 15;
-
-          if (hitSuccess && this.currentScenario.hazards.length > 0) {
-            const randomH = this.currentScenario.hazards[Math.floor(Math.random() * this.currentScenario.hazards.length)];
-            hitHazard = randomH;
-            x = randomH.rect.left + randomH.rect.width / 2;
-            y = randomH.rect.top + randomH.rect.height / 2;
-          }
-
-          if (hitHazard) {
-            bot.hits.add(hitHazard.id);
-          } else {
-            bot.misses++;
-          }
-          bot.clicks.push({ x, y, hazardId: hitHazard ? hitHazard.id : null, isCorrect: hitHazard !== null });
+          bot.markedItemIds.add(item.id);
+          this.recalculateStudentScore(bot);
           this.updateHostResponseCounter();
-        }, (i + 1) * 2000 + Math.random() * 1500);
-      }
+        }, (i + 1) * 2000 + Math.random() * 1200);
+      });
 
-      // Marcar como finalizado a los 10-15 segundos
+      // Marcar al bot como finalizado tras completar su evaluación
       setTimeout(() => {
         bot.isFinished = true;
         this.updateHostResponseCounter();
-      }, 10000 + Math.random() * 5000);
+      }, (botChoices.length + 1) * 2200 + 1000);
     });
   }
 
@@ -721,27 +809,40 @@ class PRLClassroomApp {
       this.dom.resultsSvgContainer.innerHTML = this.currentScenario.svgContent;
     }
 
-    // Renderizar hotspots de revelación con los riesgos correctos resaltados
+    const items = this.currentScenario.items || [];
+
+    // Recalcular puntuación final de cada alumno
+    this.students.forEach(st => this.recalculateStudentScore(st));
+
+    // Renderizar hotspots de revelación con TODOS los objetos (Riesgos Reales y Elementos Seguros)
     if (this.dom.resultsHotspotLayer) {
-      this.dom.resultsHotspotLayer.innerHTML = this.currentScenario.hazards.map((h, idx) => {
-        const { left, top, width, height } = h.rect;
+      this.dom.resultsHotspotLayer.innerHTML = items.map(item => {
+        const { left, top, width, height } = item.rect;
+        const isHazard = item.isHazard;
         
-        // Contar cuántos alumnos acertaron este riesgo específico
-        let correctStudentsCount = 0;
+        // Contar cuántos alumnos marcaron este objeto concreto
+        let markedCount = 0;
         this.students.forEach(st => {
-          if (st.hits && st.hits.has(h.id)) correctStudentsCount++;
+          if (st.markedItemIds && st.markedItemIds.has(item.id)) markedCount++;
         });
 
         return `
           <div 
-            onclick="window.prlApp.revealHazardDetails('${h.id}')"
-            class="absolute border-4 border-amber-400 bg-amber-500/25 rounded-xl cursor-pointer hover:bg-amber-500/40 hover:scale-105 transition-all shadow-xl shadow-amber-500/30 flex items-start justify-end p-1.5 group"
+            onclick="window.prlApp.revealHazardDetails('${item.id}')"
+            class="absolute rounded-xl cursor-pointer hover:scale-105 transition-all shadow-xl flex items-start justify-start p-1.5 group z-20 ${
+              isHazard
+                ? 'border-2 border-red-500 bg-red-600/30 hover:bg-red-600/50 shadow-red-500/30'
+                : 'border-2 border-emerald-400 bg-emerald-600/25 hover:bg-emerald-600/40 shadow-emerald-500/25'
+            }"
             style="left: ${left}%; top: ${top}%; width: ${width}%; height: ${height}%;"
-            title="Haz clic para ver explicación y qué alumnos acertaron"
+            title="Haz clic para ver resolución técnica: ${item.name}"
           >
-            <div class="px-2 py-0.5 rounded-full bg-slate-950 text-amber-300 border border-amber-400 text-[11px] font-black font-mono shadow-md flex items-center gap-1">
-              <span>⚠️ #${idx + 1}</span>
-              <span class="text-white">(${correctStudentsCount} aciertos)</span>
+            <div class="px-2 py-0.5 rounded-md ${
+              isHazard ? 'bg-red-950/95 text-red-200 border-red-500' : 'bg-emerald-950/95 text-emerald-200 border-emerald-400'
+            } border text-[10px] sm:text-[11px] font-black shadow-md flex items-center gap-1.5 backdrop-blur-sm">
+              <span>${isHazard ? '⚠️ #' + item.num : '🛡️ #' + item.num}</span>
+              <span class="hidden sm:inline font-bold">${isHazard ? 'Peligro' : 'Seguro'}</span>
+              <span class="text-white font-mono font-bold">(${markedCount} ${isHazard ? 'aciertos' : 'fallos'})</span>
             </div>
           </div>
         `;
@@ -751,9 +852,9 @@ class PRLClassroomApp {
     // Renderizar Podio y Tabla de Clasificación de la Clase
     this.renderClassLeaderboard();
 
-    // Mostrar el primer peligro por defecto en el panel lateral
-    if (this.currentScenario.hazards.length > 0) {
-      this.revealHazardDetails(this.currentScenario.hazards[0].id);
+    // Mostrar el primer elemento por defecto en el panel lateral de detalles
+    if (items.length > 0) {
+      this.revealHazardDetails(items[0].id);
     }
 
     this.showScreen('host-results');
@@ -763,86 +864,98 @@ class PRLClassroomApp {
     }
   }
 
-  revealHazardDetails(hazardId) {
-    const h = this.currentScenario.hazards.find(x => x.id === hazardId);
-    if (!h || !this.dom.hazardDetailContent) return;
+  revealHazardDetails(itemId) {
+    const items = this.currentScenario?.items || this.currentScenario?.hazards || [];
+    const item = items.find(x => x.id === itemId);
+    if (!item || !this.dom.hazardDetailContent) return;
 
-    // Efecto de audio en el Host al examinar un peligro
+    // Efecto de audio en el Host al examinar un peligro o elemento seguro
     window.prlAudio?.playHazardReveal();
 
-    // Alumnos que acertaron este peligro específico
-    const studentsWhoHit = [];
-    const studentsWhoMissed = [];
+    const isHazard = item.isHazard;
+
+    // Alumnos que marcaron y alumnos que no marcaron
+    const studentsWhoMarked = [];
+    const studentsWhoDidNotMark = [];
 
     this.students.forEach(st => {
-      if (st.hits && st.hits.has(h.id)) {
-        studentsWhoHit.push(st.name);
+      if (st.markedItemIds && st.markedItemIds.has(item.id)) {
+        studentsWhoMarked.push(st.name);
       } else {
-        studentsWhoMissed.push(st.name);
+        studentsWhoDidNotMark.push(st.name);
       }
     });
 
-    const severityColors = {
-      'Leve': 'bg-blue-500/20 text-blue-300 border-blue-500/30',
-      'Grave': 'bg-amber-500/20 text-amber-300 border-amber-500/30',
-      'Muy Grave': 'bg-red-500/20 text-red-300 border-red-500/30'
-    }[h.severity] || 'bg-amber-500/20 text-amber-300';
+    const badgeStyle = isHazard
+      ? 'bg-red-500/20 text-red-300 border-red-500/40'
+      : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
 
     this.dom.hazardDetailContent.innerHTML = `
       <div class="space-y-4 text-xs sm:text-sm">
         <div class="flex items-center justify-between gap-2 border-b border-slate-700 pb-3">
-          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black border ${severityColors}">
-            ${h.severity.toUpperCase()}
+          <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black border ${badgeStyle} flex items-center gap-1">
+            ${isHazard ? '⚠️ RIESGO REAL VERDADERO (+100 PTS)' : '🛡️ ELEMENTO SEGURO / CONFORME A NORMA (-50 PTS SI MARCADO)'}
           </span>
-          <span class="text-xs text-amber-400 font-mono font-bold">${h.category}</span>
+          <span class="text-xs text-amber-400 font-mono font-bold">${item.category}</span>
         </div>
 
-        <h3 class="text-base sm:text-lg font-black text-white leading-tight">${h.name}</h3>
-        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">${h.description}</p>
-
-        <!-- Consecuencias -->
-        <div class="p-3 bg-red-950/20 border border-red-500/20 rounded-xl text-xs">
-          <span class="font-bold text-red-400 uppercase tracking-wider block mb-1">⚠️ Consecuencias / Daños:</span>
-          <p class="text-red-200">${h.consequences}</p>
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg ${isHazard ? 'bg-red-600' : 'bg-emerald-600'} text-white font-black flex items-center justify-center text-sm shadow">
+            #${item.num}
+          </span>
+          <h3 class="text-base sm:text-lg font-black text-white leading-tight">${item.name}</h3>
         </div>
 
-        <!-- Normativa Oficial -->
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">${item.description}</p>
+
+        <!-- Consecuencias o Estado de Seguridad -->
+        <div class="p-3 ${isHazard ? 'bg-red-950/30 border-red-500/30' : 'bg-emerald-950/30 border-emerald-500/30'} border rounded-xl text-xs">
+          <span class="font-bold ${isHazard ? 'text-red-400' : 'text-emerald-400'} uppercase tracking-wider block mb-1">
+            ${isHazard ? '⚠️ Consecuencias / Daños Potenciales:' : '🛡️ Condición de Seguridad / Estado Conforme:'}
+          </span>
+          <p class="${isHazard ? 'text-red-200' : 'text-emerald-200'}">${item.consequences}</p>
+        </div>
+
+        <!-- Normativa Oficial Aplicable -->
         <div class="p-3 bg-amber-950/20 border border-amber-500/30 rounded-xl text-xs">
-          <span class="font-bold text-amber-400 uppercase tracking-wider block mb-1">⚖️ Normativa Legal Infringida:</span>
-          <p class="text-amber-200 italic font-medium">${h.regulation}</p>
+          <span class="font-bold text-amber-400 uppercase tracking-wider block mb-1">⚖️ Normativa Legal / Marco Técnico:</span>
+          <p class="text-amber-200 italic font-medium">${item.regulation}</p>
         </div>
 
-        <!-- Solución Preventiva -->
-        <div class="p-3 bg-emerald-950/20 border border-emerald-500/30 rounded-xl text-xs">
-          <span class="font-bold text-emerald-400 uppercase tracking-wider block mb-1">🛡️ Medida Preventiva Obligatoria:</span>
-          <p class="text-emerald-200">${h.prevention}</p>
+        <!-- Medida Preventiva u Observación -->
+        <div class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-xs">
+          <span class="font-bold text-sky-400 uppercase tracking-wider block mb-1">
+            ${isHazard ? '🛡️ Medida Preventiva Obligatoria:' : 'ℹ️ Justificación Formativa:'}
+          </span>
+          <p class="text-slate-300">${item.prevention}</p>
         </div>
 
-        <!-- ALUMNOS QUE ACERTARON ESTE RIESGO -->
+        <!-- LISTA DE ALUMNOS QUE LO MARCARON -->
         <div class="p-3.5 bg-slate-900/90 border border-slate-700 rounded-xl">
           <div class="flex items-center justify-between mb-2">
-            <span class="font-bold text-emerald-400 text-xs flex items-center gap-1.5">
-              <span>✓</span> Alumnos que lo identificaron (${studentsWhoHit.length}/${this.students.size}):
+            <span class="font-bold ${isHazard ? 'text-emerald-400' : 'text-amber-400'} text-xs flex items-center gap-1.5">
+              <span>${isHazard ? '✓ Alumnos que acertaron (+100 pts)' : '⚠️ Alumnos que lo marcaron erróneamente (-50 pts)'}:</span>
+              <span>(${studentsWhoMarked.length}/${this.students.size})</span>
             </span>
           </div>
           ${
-            studentsWhoHit.length > 0
-              ? `<div class="flex flex-wrap gap-1.5">${studentsWhoHit.map(n => `<span class="px-2 py-0.5 bg-emerald-950 text-emerald-300 border border-emerald-500/40 rounded-md text-[11px] font-bold">${n}</span>`).join('')}</div>`
-              : `<p class="text-slate-500 text-xs italic">Ningún alumno localizó este peligro.</p>`
+            studentsWhoMarked.length > 0
+              ? `<div class="flex flex-wrap gap-1.5">${studentsWhoMarked.map(n => `<span class="px-2 py-0.5 ${isHazard ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-amber-950 text-amber-300 border-amber-500/40'} border rounded-md text-[11px] font-bold">${n}</span>`).join('')}</div>`
+              : `<p class="text-slate-500 text-xs italic">${isHazard ? 'Ningún alumno localizó este peligro.' : 'Ningún alumno cayó en este distractor (¡excelente!).'}</p>`
           }
         </div>
 
-        <!-- Alumnos que lo omitieron -->
-        ${
-          studentsWhoMissed.length > 0
-            ? `
-              <div class="p-3 bg-slate-900/50 border border-slate-800 rounded-xl text-xs">
-                <span class="font-bold text-slate-400 block mb-1">Alumnos que no lo detectaron (${studentsWhoMissed.length}):</span>
-                <p class="text-slate-500 text-[11px]">${studentsWhoMissed.join(', ')}</p>
-              </div>
-            `
-            : ''
-        }
+        <!-- Alumnos que NO lo marcaron -->
+        <div class="p-3 bg-slate-900/50 border border-slate-800 rounded-xl text-xs">
+          <span class="font-bold text-slate-400 block mb-1">
+            ${isHazard ? 'Alumnos que no detectaron el riesgo (0 pts):' : 'Alumnos que reconocieron que era seguro (0 penalización):'} (${studentsWhoDidNotMark.length})
+          </span>
+          ${
+            studentsWhoDidNotMark.length > 0
+              ? `<p class="text-slate-400 text-[11px]">${studentsWhoDidNotMark.join(', ')}</p>`
+              : `<p class="text-slate-500 text-[11px] italic">Todos los alumnos respondieron.</p>`
+          }
+        </div>
       </div>
     `;
   }
@@ -909,6 +1022,7 @@ class PRLClassroomApp {
           id: payload.studentId,
           name: payload.studentName,
           isFinished: false,
+          markedItemIds: new Set(),
           hits: new Set(),
           misses: 0,
           clicks: []
@@ -930,17 +1044,31 @@ class PRLClassroomApp {
       }
     });
 
-    // Clic de un alumno recibido por el Host
-    this.net.on('STUDENT_CLICK', (payload) => {
+    // Alumno marca o desmarca un objeto interactivo concreto
+    this.net.on('STUDENT_TOGGLE_ITEM', (payload) => {
       if (this.role === 'host') {
         const st = this.students.get(payload.studentId);
         if (st) {
-          if (payload.isCorrect && payload.hazardId) {
-            st.hits.add(payload.hazardId);
+          if (!st.markedItemIds) st.markedItemIds = new Set();
+          if (payload.isSelected) {
+            st.markedItemIds.add(payload.itemId);
           } else {
-            st.misses = (st.misses || 0) + 1;
+            st.markedItemIds.delete(payload.itemId);
           }
-          st.clicks.push(payload);
+          this.recalculateStudentScore(st);
+          this.updateHostResponseCounter();
+        }
+      }
+    });
+
+    // Clic antiguo compatible
+    this.net.on('STUDENT_CLICK', (payload) => {
+      if (this.role === 'host') {
+        const st = this.students.get(payload.studentId);
+        if (st && payload.hazardId) {
+          if (!st.markedItemIds) st.markedItemIds = new Set();
+          st.markedItemIds.add(payload.hazardId);
+          this.recalculateStudentScore(st);
           this.updateHostResponseCounter();
         }
       }
@@ -952,6 +1080,10 @@ class PRLClassroomApp {
         const st = this.students.get(payload.studentId);
         if (st) {
           st.isFinished = true;
+          if (Array.isArray(payload.markedIds)) {
+            st.markedItemIds = new Set(payload.markedIds);
+            this.recalculateStudentScore(st);
+          }
           this.updateHostResponseCounter();
           window.prlAudio?.playStudentFinished();
         }
