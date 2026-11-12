@@ -1002,7 +1002,19 @@ class PRLClassroomApp {
   }
 }
 
-// Inicialización global
-window.addEventListener('DOMContentLoaded', () => {
-  window.prlApp = new PRLClassroomApp();
-});
+// Inicialización global robusta
+function initPRLApp() {
+  if (!window.prlApp) {
+    try {
+      window.prlApp = new PRLClassroomApp();
+    } catch (err) {
+      console.error('Error al inicializar PRLClassroomApp:', err);
+    }
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initPRLApp);
+} else {
+  initPRLApp();
+}

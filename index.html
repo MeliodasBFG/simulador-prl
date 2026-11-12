@@ -33,7 +33,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <!-- MQTT Client para Conexión Global en la Nube (Permite jugar sin la misma red Wi-Fi / 4G / 5G) -->
-  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
+  <script src="https://unpkg.com/mqtt@4.3.7/dist/mqtt.min.js"></script>
 
   <!-- Estilos Personalizados -->
   <link rel="stylesheet" href="css/style.css">
@@ -137,6 +137,7 @@
       <!-- Opción 1: Crear Sala (Profesor / Host) -->
       <div 
         id="btn-role-host"
+        onclick="if (window.prlApp) { window.prlApp.showScreen('host-setup'); } else { document.getElementById('screen-role-select').classList.add('hidden'); document.getElementById('screen-host-setup').classList.remove('hidden'); }"
         class="glass-panel p-8 rounded-3xl border border-amber-500/30 hover:border-amber-400 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer flex flex-col justify-between group"
       >
         <div>
@@ -161,6 +162,7 @@
       <!-- Opción 2: Unirse a Sala (Alumno) -->
       <div 
         id="btn-role-student"
+        onclick="if (window.prlApp) { window.prlApp.showScreen('student-join'); } else { document.getElementById('screen-role-select').classList.add('hidden'); document.getElementById('screen-student-join').classList.remove('hidden'); }"
         class="glass-panel p-8 rounded-3xl border border-sky-500/30 hover:border-sky-400 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-sky-500/10 cursor-pointer flex flex-col justify-between group"
       >
         <div>

@@ -45,7 +45,7 @@ class PRLNetwork {
   // =========================================================================
 
   initCloudBroker() {
-    if (typeof mqtt === 'undefined') {
+    if (typeof mqtt === 'undefined' || !mqtt.connect) {
       console.warn('Librería MQTT no cargada en el DOM, reintentando en 1s...');
       setTimeout(() => this.initCloudBroker(), 1000);
       return;

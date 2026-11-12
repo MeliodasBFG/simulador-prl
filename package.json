@@ -2,11 +2,10 @@
   "name": "simulador-prl-classroom-live",
   "version": "2.0.0",
   "description": "Plataforma multijugador en tiempo real para aulas estilo Kahoot de Prevención de Riesgos Laborales (PRL). Multiplataforma y Client-Side.",
-  "main": "server.js",
   "scripts": {
+    "build": "node build_all_scenarios.js",
     "start": "node server.js",
     "dev": "node server.js",
-    "server": "node server.js",
     "preview": "npx serve ."
   },
   "keywords": [
