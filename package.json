@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "Plataforma multijugador en tiempo real para aulas estilo Kahoot de Prevención de Riesgos Laborales (PRL). Multiplataforma y Client-Side.",
   "scripts": {
-    "build": "node build_all_scenarios.js",
+    "build": "node build_bundle.js",
     "start": "node server.js",
     "dev": "node server.js",
     "preview": "npx serve ."
