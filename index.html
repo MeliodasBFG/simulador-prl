@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>Simulador PRL Live | Plataforma Multijugador para Aulas</title>
+  
+  <meta name="description" content="Simulador interactivo de riesgos laborales en tiempo real estilo Kahoot para aulas y empresas. Roles de Profesor (Host) y Alumnos. Multiplataforma y 100% Client-Side.">
+  <meta name="theme-color" content="#0f172a">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            prl: {
+              yellow: '#f59e0b',
+              amber: '#d97706',
+              danger: '#ef4444',
+              success: '#10b981',
+              dark: '#0f172a',
+              card: '#1e293b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <!-- MQTT Client para Conexión Global en la Nube (Permite jugar sin la misma red Wi-Fi / 4G / 5G) -->
+  <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.4/dist/mqtt.min.js"></script>
+
+  <!-- Estilos Personalizados -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-amber-500 selection:text-slate-950">
+
+  <!-- =========================================================================
+       CABECERA GLOBAL (NO IMPRIMIBLE)
+       ========================================================================= -->
+  <header class="no-print border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logotipo y Nombre -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20 text-slate-950 font-black text-xl">
+          ⚠️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-base sm:text-lg tracking-tight text-white">PRL CLASSROOM LIVE</span>
+            <span class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              KAHOOT EDITION
+            </span>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">Detección de Riesgos Laborales Sincronizada en Tiempo Real</p>
+        </div>
+      </div>
+
+      <!-- Controles de cabecera -->
+      <div class="flex items-center gap-3">
+        <!-- Widget de Audio Exclusivo del Host -->
+        <div id="host-audio-widget" class="hidden flex items-center gap-2">
+          <!-- Botón Mute/Unmute -->
+          <button 
+            id="btn-host-mute" 
+            class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-slate-200 transition cursor-pointer active:scale-95"
+            title="Activar/Silenciar música de fondo y efectos"
+          >
+            <span id="host-mute-icon">🔊</span>
+            <span id="host-mute-text" class="hidden sm:inline">Audio Aula ON</span>
+          </button>
+
+          <!-- Control de Volumen -->
+          <div class="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800/80 rounded-lg border border-slate-700 text-xs">
+            <span class="text-[10px] text-slate-400 font-bold uppercase">Vol:</span>
+            <input 
+              type="range" 
+              id="host-volume-slider" 
+              min="0" 
+              max="1" 
+              step="0.05" 
+              value="0.7" 
+              class="w-16 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+              title="Volumen general del Host"
+            >
+          </div>
+
+          <!-- Indicador de pista activa -->
+          <span id="host-track-badge" class="hidden lg:inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-black bg-amber-500/15 text-amber-400 border border-amber-500/30 font-mono">
+            🎵 BGM: Lobby
+          </span>
+        </div>
+
+        <!-- Indicador de silencio para Alumnos -->
+        <div id="student-audio-badge" class="hidden items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-[11px] font-semibold">
+          <span>🔇</span>
+          <span class="hidden sm:inline">Dispositivo en silencio (Audio en Proyector)</span>
+        </div>
+
+        <button 
+          onclick="location.reload()" 
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700 transition cursor-pointer"
+          title="Cambiar de rol o reiniciar"
+        >
+          <span>🔄 Cambiar Rol</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       PANTALLA 1: SELECCIÓN DE ROL (PROFESOR VS ALUMNO)
+       ========================================================================= -->
+  <main id="screen-role-select" class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 flex flex-col justify-center">
+    
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-wider mb-4">
+        <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+        Sincronización Multijugador en Vivo
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-4">
+        Simulador de Riesgos Laborales en <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500">Tiempo Real</span>
+      </h1>
+      <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+        Elige tu rol para comenzar la sesión formativa interactiva en el aula.
+      </p>
+    </div>
+
+    <!-- Tarjetas de Selección de Rol -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto w-full">
+      
+      <!-- Opción 1: Crear Sala (Profesor / Host) -->
+      <div 
+        id="btn-role-host"
+        class="glass-panel p-8 rounded-3xl border border-amber-500/30 hover:border-amber-400 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-amber-500/10 cursor-pointer flex flex-col justify-between group"
+      >
+        <div>
+          <div class="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+            🎓
+          </div>
+          <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-400 border border-amber-500/30 inline-block mb-3">
+            Para Proyector o Pantalla Principal
+          </span>
+          <h2 class="text-2xl font-black text-white mb-2">Crear Sala (Profesor / Host)</h2>
+          <p class="text-sm text-slate-300 leading-relaxed mb-6">
+            Genera un código de sala para que tus alumnos se conecten, elige entre los <strong>8 escenarios disponibles</strong>, controla el ritmo del juego, revela los riesgos y analiza la tabla de clasificación.
+          </p>
+        </div>
+
+        <button class="w-full py-4 px-6 bg-gradient-to-r from-amber-500 to-amber-600 group-hover:from-amber-400 group-hover:to-amber-500 text-slate-950 font-black rounded-2xl transition shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 text-base">
+          <span>Abrir Sala de Profesor</span>
+          <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+
+      <!-- Opción 2: Unirse a Sala (Alumno) -->
+      <div 
+        id="btn-role-student"
+        class="glass-panel p-8 rounded-3xl border border-sky-500/30 hover:border-sky-400 transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-sky-500/10 cursor-pointer flex flex-col justify-between group"
+      >
+        <div>
+          <div class="w-16 h-16 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+            📱
+          </div>
+          <span class="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-sky-500/20 text-sky-400 border border-sky-500/30 inline-block mb-3">
+            Para Móvil, Tablet o PC
+          </span>
+          <h2 class="text-2xl font-black text-white mb-2">Unirse a Sala (Alumno)</h2>
+          <p class="text-sm text-slate-300 leading-relaxed mb-6">
+            Introduce el código de 4 dígitos proyectado por tu profesor, introduce tu nombre, inspecciona los escenarios y marca los peligros desde tu pantalla.
+          </p>
+        </div>
+
+        <button class="w-full py-4 px-6 bg-gradient-to-r from-sky-500 to-sky-600 group-hover:from-sky-400 group-hover:to-sky-500 text-slate-950 font-black rounded-2xl transition shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 text-base">
+          <span>Entrar con Código PIN</span>
+          <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       PANTALLA 2: CONFIGURACIÓN DEL HOST
+       ========================================================================= -->
+  <section id="screen-host-setup" class="hidden flex-1 max-w-lg w-full mx-auto px-4 py-12 flex flex-col justify-center">
+    <div class="glass-panel p-8 rounded-3xl border border-slate-700 shadow-2xl">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="text-3xl">🎓</span>
+        <div>
+          <h2 class="text-2xl font-extrabold text-white">Configurar Sala de Profesor</h2>
+          <p class="text-xs text-slate-400">Personaliza la sesión antes de abrir el lobby de espera.</p>
+        </div>
+      </div>
+
+      <div class="space-y-5 mb-8">
+        <div>
+          <label for="host-name-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            Nombre del Profesor / Formador
+          </label>
+          <input 
+            type="text" 
+            id="host-name-input" 
+            value="Profesor PRL" 
+            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-amber-500"
+          >
+        </div>
+
+        <!-- Opción solicitada: ¿Deseas participar en el juego o solo observar? -->
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input 
+              type="checkbox" 
+              id="host-participates-check" 
+              checked 
+              class="w-5 h-5 mt-0.5 rounded text-amber-500 focus:ring-amber-400 bg-slate-800 border-slate-600 cursor-pointer"
+            >
+            <div>
+              <span class="font-bold text-white text-sm block">¿Deseas participar en el juego o solo observar?</span>
+              <p class="text-xs text-slate-400 mt-1 leading-snug">
+                Si está activado, el Host también podrá interactuar y marcar peligros. Si está desactivado, el Host actuará exclusivamente como árbitro y observador en proyector.
+              </p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button 
+          id="btn-cancel-host" 
+          class="w-1/3 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-sm transition"
+        >
+          Volver
+        </button>
+        <button 
+          id="btn-create-room" 
+          class="w-2/3 py-3.5 px-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-amber-500/20 transition cursor-pointer"
+        >
+          Abrir Sala y Mostrar PIN
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       PANTALLA 3: UNIÓN DEL ALUMNO
+       ========================================================================= -->
+  <section id="screen-student-join" class="hidden flex-1 max-w-md w-full mx-auto px-4 py-12 flex flex-col justify-center">
+    <div class="glass-panel p-8 rounded-3xl border border-slate-700 shadow-2xl">
+      <div class="text-center mb-6">
+        <span class="text-4xl block mb-2">📱</span>
+        <h2 class="text-2xl font-black text-white">Unirse a la Clase</h2>
+        <p class="text-xs text-slate-400">Introduce tu nombre y el código de 4 dígitos proyectado en la pantalla.</p>
+      </div>
+
+      <div class="space-y-4 mb-8">
+        <div>
+          <label for="student-name-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            Tu Nombre o Alias
+          </label>
+          <input 
+            type="text" 
+            id="student-name-input" 
+            placeholder="Ej: Marcos Sánchez" 
+            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-sky-500"
+            maxlength="35"
+          >
+        </div>
+
+        <div>
+          <label for="room-code-input" class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+            Código PIN de Sala (4 dígitos)
+          </label>
+          <input 
+            type="text" 
+            id="room-code-input" 
+            placeholder="Ej: 4829" 
+            class="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-amber-400 text-center text-3xl font-black font-mono tracking-widest focus:outline-none focus:ring-2 focus:ring-amber-500 uppercase"
+            maxlength="4"
+          >
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button 
+          id="btn-cancel-student" 
+          class="w-1/3 py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-sm transition"
+        >
+          Volver
+        </button>
+        <button 
+          id="btn-join-room" 
+          class="w-2/3 py-3.5 px-6 bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 text-slate-950 font-black rounded-xl text-sm shadow-lg shadow-sky-500/20 transition cursor-pointer"
+        >
+          Entrar al Juego
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       PANTALLA 4: LOBBY DEL PROFESOR / HOST
+       ========================================================================= -->
+  <section id="screen-host-lobby" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Banner de Código PIN en grande para Proyector -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-amber-500/40 text-center mb-8 bg-gradient-to-b from-slate-900 to-slate-950 shadow-2xl relative overflow-hidden">
+      <div class="relative z-10">
+        <span class="text-xs font-black uppercase tracking-widest text-slate-400 block mb-1">
+          ÚNETE DESDE TU TELÉFONO O PORTÁTIL CON EL CÓDIGO
+        </span>
+        <div class="flex items-center justify-center gap-4 my-2">
+          <span id="host-lobby-pin" class="text-5xl sm:text-7xl font-black font-mono tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 drop-shadow-md">
+            ----
+          </span>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-400 mb-3">
+          Los alumnos deben entrar en la web e introducir este PIN. <strong>¡No necesitan estar en la misma red Wi-Fi!</strong>
+        </p>
+        
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <!-- Botón Copiar Enlace Directo -->
+          <button 
+            id="btn-copy-link" 
+            class="py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-amber-300 transition flex items-center gap-1.5 cursor-pointer shadow-md"
+            title="Copiar enlace con el PIN prellenado para enviar por WhatsApp o Teams"
+          >
+            <span>🔗 Copiar Enlace de Invitación</span>
+          </button>
+
+          <!-- Insignia de Red Global en la Nube -->
+          <div id="cloud-network-badge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-xs font-bold">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>🌐 Red Global Nube Activa (4G/5G / Cualquier Wi-Fi)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel de Alumnos Conectados en Tiempo Real -->
+    <div class="glass-panel p-6 rounded-3xl border border-slate-800 mb-8">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-3">
+          <span class="text-xl">👥</span>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-white">Alumnos Conectados en Tiempo Real</h3>
+            <span id="host-lobby-count" class="text-xs text-amber-400 font-bold font-mono">0 alumnos conectados</span>
+          </div>
+        </div>
+
+        <!-- Botón para Simular Alumnos (Demo en 1 clic) -->
+        <button 
+          id="btn-simulate-bots" 
+          class="py-2 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-amber-300 transition flex items-center gap-2 cursor-pointer"
+          title="Añade 4 alumnos virtuales para probar la dinámica sin necesidad de otros dispositivos"
+        >
+          <span>🤖 Añadir Alumnos Simulados (Demo)</span>
+        </button>
+      </div>
+
+      <!-- Cuadrícula de alumnos conectados -->
+      <div id="host-lobby-students-list" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 min-h-[70px]">
+        <!-- Inyectado por app.js -->
+      </div>
+    </div>
+
+    <!-- Selección del Escenario por el Host (8 escenarios) -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800">
+      <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div>
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <span>🗺️</span> Elige el Escenario de Trabajo (8 Disponibles)
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-400">El profesor selecciona qué escenario inspeccionará la clase en esta ronda.</p>
+        </div>
+
+        <button 
+          id="btn-start-scenario" 
+          disabled 
+          class="py-3.5 px-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-sm sm:text-base rounded-2xl shadow-xl shadow-amber-500/20 transition cursor-pointer active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          <span>🚀 Iniciar Escenario con la Clase</span>
+        </button>
+      </div>
+
+      <div id="scenarios-gallery" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Renderizado dinámico de los 8 escenarios por app.js -->
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =========================================================================
+       PANTALLA 5: LOBBY DE ESPERA DEL ALUMNO
+       ========================================================================= -->
+  <section id="screen-student-lobby" class="hidden flex-1 max-w-md w-full mx-auto px-4 py-16 flex flex-col justify-center text-center">
+    <div class="glass-panel p-8 rounded-3xl border border-sky-500/30 shadow-2xl animate-[bounce-in_0.3s_ease-out]">
+      <div class="w-20 h-20 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/30 flex items-center justify-center text-4xl mx-auto mb-6">
+        ⏳
+      </div>
+      <h2 class="text-2xl font-black text-white mb-2">¡Estás dentro de la clase!</h2>
+      <p class="text-sm text-slate-300 mb-6">
+        Bienvenido/a, <strong id="student-lobby-name" class="text-amber-400"></strong>. Conectado a la sala <strong id="student-lobby-pin" class="font-mono text-sky-300"></strong>.
+      </p>
+
+      <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 text-xs text-slate-400 leading-relaxed mb-6">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping mr-1.5"></span>
+        Esperando a que el profesor seleccione el escenario e inicie la ronda...
+      </div>
+
+      <p class="text-[11px] text-slate-500 italic">
+        Cuando el profesor lance el escenario, la imagen se cargará automáticamente en tu pantalla.
+      </p>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       PANTALLA 6: PANTALLA DE SIMULACIÓN EN VIVO (HOST & ALUMNOS)
+       ========================================================================= -->
+  <section id="screen-simulation" class="hidden flex-1 flex flex-col justify-between max-w-7xl w-full mx-auto px-2 sm:px-4 lg:px-8 py-3">
+    
+    <!-- Barra Superior de Control y Estado -->
+    <div class="glass-panel rounded-2xl p-3 sm:p-4 mb-3 border border-slate-700/80 shadow-lg">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        
+        <!-- Insignia del Escenario y Sala -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center border border-slate-700 text-base">
+            🔍
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="hud-scenario-badge" class="font-black text-white text-sm sm:text-base"></span>
+              <span id="hud-room-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono"></span>
+            </div>
+            <p class="text-xs text-slate-400 hidden sm:block">Inspección de riesgos laborales en curso</p>
+          </div>
+        </div>
+
+        <!-- CONTROLES ESPECÍFICOS DEL PROFESOR / HOST -->
+        <div id="hud-host-controls" class="hidden flex flex-wrap items-center gap-4">
+          <!-- Contador en vivo de respuestas -->
+          <div class="px-4 py-2 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="hud-responses-count" class="font-black text-xs sm:text-sm text-emerald-400 font-mono">
+              0 / 0 alumnos han respondido
+            </span>
+          </div>
+
+          <!-- BOTÓN DESTACADO DEL HOST: Terminar escenario y mostrar resultados -->
+          <button 
+            id="btn-host-end-scenario" 
+            class="py-2.5 px-6 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-red-600/30 transition cursor-pointer active:scale-95 flex items-center gap-2"
+          >
+            <span>🛑 Terminar escenario y mostrar resultados</span>
+          </button>
+        </div>
+
+        <!-- CONTROLES ESPECÍFICOS DEL ALUMNO -->
+        <div id="hud-student-controls" class="hidden flex items-center gap-3">
+          <button 
+            id="btn-student-finish" 
+            class="py-2.5 px-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg shadow-emerald-500/25 transition cursor-pointer active:scale-95"
+          >
+            <span>✅ He terminado mi inspección</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Lista en vivo de estado de los alumnos (Visible para el Host) -->
+      <div id="hud-students-status-list" class="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2 overflow-x-auto">
+        <!-- Renderizado dinámico de estado por app.js -->
+      </div>
+    </div>
+
+    <!-- Banner de confirmación para el alumno al terminar -->
+    <div id="student-status-banner" class="hidden mb-3"></div>
+
+    <!-- Área del Escenario Interactivo (Mantiene Proporción Relativa 16:9) -->
+    <div class="flex-1 flex items-center justify-center w-full my-auto">
+      <div id="scene-viewport" class="scene-viewport">
+        <!-- Contenedor del SVG vectorial -->
+        <div id="scene-svg-container" class="w-full h-full"></div>
+
+        <!-- Capa de Hotspots Interactivos -->
+        <div id="hotspot-layer" class="hotspot-layer"></div>
+
+        <!-- Capa de Pines colocados por el Alumno (Neutros, sin revelar solución) -->
+        <div id="student-pins-layer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+      </div>
+    </div>
+
+    <!-- Barra Inferior de Información -->
+    <div class="mt-2 py-1 px-4 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+      <span>Toca donde creas que hay un peligro. <strong>Los aciertos y fallos se revelarán en la pantalla del profesor al terminar.</strong></span>
+    </div>
+
+  </section>
+
+  <!-- =========================================================================
+       PANTALLA 7: PANTALLA DE REVELACIÓN Y RESULTADOS (PANTALLA DEL HOST)
+       ========================================================================= -->
+  <section id="screen-host-results" class="hidden flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- Encabezado de la Revelación -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-slate-800 pb-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+          <span>✓</span> Resolución Técnica Oficial
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-black text-white">Riesgos Identificados y Clasificación</h2>
+        <p class="text-xs sm:text-sm text-slate-400">Haz clic en cada riesgo para ver su normativa y los alumnos específicos que acertaron.</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button 
+          onclick="window.print()" 
+          class="no-print py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-2"
+        >
+          <span>🖨️ Imprimir Informe</span>
+        </button>
+
+        <button 
+          id="btn-next-scenario" 
+          class="no-print py-2.5 px-6 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-lg transition cursor-pointer flex items-center gap-2"
+        >
+          <span>🔄 Jugar Siguiente Escenario</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Zona Principal: Escenario con Hotspots Resaltados + Panel de Detalle -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      
+      <!-- Escenario con los riesgos revelados (2 Columnas) -->
+      <div class="lg:col-span-2">
+        <div class="scene-viewport relative shadow-2xl">
+          <div id="results-svg-container" class="w-full h-full"></div>
+          <div id="results-hotspot-layer" class="hotspot-layer"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2 text-center">
+          💡 <strong>Pasa el ratón o haz clic</strong> sobre las cajas amarillas para consultar la normativa y ver qué alumnos acertaron.
+        </p>
+      </div>
+
+      <!-- Panel Lateral: Ficha Técnica del Riesgo Seleccionado (1 Columna) -->
+      <div class="lg:col-span-1">
+        <div class="glass-panel p-5 rounded-3xl border border-slate-700 sticky top-20 shadow-xl">
+          <div id="hazard-detail-content">
+            <!-- Inyectado dinámicamente al hacer clic en un riesgo -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Podio y Tabla de Clasificación de la Clase (Ranking) -->
+    <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-800 mb-10">
+      <div class="text-center max-w-xl mx-auto mb-6">
+        <span class="text-3xl block mb-1">🏆</span>
+        <h3 class="text-xl sm:text-2xl font-black text-white">Clasificación General del Aula</h3>
+        <p class="text-xs text-slate-400">Puntuación: <strong>+100 por riesgo real identificado</strong> y <strong>-50 por falso positivo en zona segura</strong>.</p>
+      </div>
+
+      <!-- Podio de los 3 Primeros -->
+      <div id="podium-container" class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
+        <!-- Inyectado por app.js -->
+      </div>
+
+      <!-- Tabla Completa de Alumnos -->
+      <div class="overflow-x-auto rounded-2xl border border-slate-800">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-900/80 border-b border-slate-800 text-[11px] font-black uppercase tracking-wider text-slate-400">
+              <th class="py-3 px-4">Posición</th>
+              <th class="py-3 px-4">Alumno</th>
+              <th class="py-3 px-4">Riesgos Acertados</th>
+              <th class="py-3 px-4">Falsos Positivos</th>
+              <th class="py-3 px-4 text-right">Puntuación Total</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-tbody">
+            <!-- Inyectado por app.js -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =========================================================================
+       PIE DE PÁGINA (NO IMPRIMIBLE)
+       ========================================================================= -->
+  <footer class="no-print mt-auto border-t border-slate-800 bg-slate-950/90 py-5 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="mb-1">
+        Simulador PRL Live — Formación gamificada en Prevención de Riesgos Laborales en tiempo real.
+      </p>
+      <p class="text-slate-600">
+        Normativa: Ley 31/1995, RD 486/1997, RD 1627/1997, RD 1215/1997, RD 374/2001, RD 664/1997, RD 2177/2004, RD 2060/2008.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts de la Aplicación -->
+  <script src="js/audio.js"></script>
+  <script src="js/scenarios.js"></script>
+  <script src="js/network.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
