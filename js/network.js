@@ -8,7 +8,7 @@
  * Arquitectura de transporte triple:
  * 1. Global Cloud Broker (MQTT sobre WebSockets seguros WSS): Conexión mundial inmediata.
  * 2. BroadcastChannel: Sincronización instantánea inter-pestañas en el mismo equipo.
- * 3. Local WebSocket: Conexión con server.js si se ejecuta en local.
+ * 3. LocalStorage fallback: Respaldo síncrono en el mismo navegador.
  */
 
 class PRLNetwork {
@@ -17,16 +17,21 @@ class PRLNetwork {
     this.myId = 'user_' + Math.random().toString(36).substring(2, 9);
     this.myName = '';
     this.currentRoom = null;
+    this.subscribedTopic = null;
     this.isHost = false;
 
-    // Callbacks
+    // Callbacks y deduplicación
     this.listeners = new Map();
     this.seenMessageIds = new Set();
+
+    // Cola de mensajes pendientes por si el usuario interactúa antes de completar el handshake MQTT
+    this.pendingCloudQueue = [];
 
     // Estado de conexión en la nube
     this.cloudStatus = 'connecting'; // 'connected' | 'connecting' | 'offline'
     this.mqttClient = null;
     this.currentBrokerIndex = 0;
+    this.connectWatchdog = null;
     this.brokers = [
       'wss://broker.emqx.io:8084/mqtt',      // Broker público mundial de alta velocidad
       'wss://broker.hivemq.com:8884/mqtt'   // Broker secundario de respaldo
@@ -54,24 +59,38 @@ class PRLNetwork {
     const brokerUrl = this.brokers[this.currentBrokerIndex];
     console.log(`🌐 Conectando a la red global en la nube: ${brokerUrl}`);
 
+    clearTimeout(this.connectWatchdog);
+    let hasConnectedOnce = false;
+
     try {
       this.mqttClient = mqtt.connect(brokerUrl, {
-        clientId: `prl_${this.myId}_${Math.random().toString(16).substr(2, 5)}`,
+        clientId: `prl_${this.myId}_${Math.random().toString(16).slice(2, 7)}`,
         clean: true,
-        connectTimeout: 7000,
+        connectTimeout: 6000,
         reconnectPeriod: 3000,
         keepalive: 30
       });
 
+      // Si el primer broker tarda más de 6.5s sin conectar, cambiar automáticamente al respaldo
+      this.connectWatchdog = setTimeout(() => {
+        if (!hasConnectedOnce && (!this.mqttClient || !this.mqttClient.connected)) {
+          console.warn(`⏱️ Timeout al conectar con ${brokerUrl}, probando broker de respaldo...`);
+          this.switchBroker();
+        }
+      }, 6500);
+
       this.mqttClient.on('connect', () => {
+        hasConnectedOnce = true;
+        clearTimeout(this.connectWatchdog);
         console.log('✅ Conexión global en la nube establecida con éxito');
         this.cloudStatus = 'connected';
         this.notifyStatus();
 
-        // Si ya tenemos una sala asignada, suscribirse a su tema
+        // Si ya tenemos una sala asignada, suscribirse a su tema y vaciar la cola pendiente
         if (this.currentRoom) {
           this.subscribeRoomTopic(this.currentRoom);
         }
+        this.flushPendingCloudMessages();
       });
 
       this.mqttClient.on('message', (topic, payload) => {
@@ -85,7 +104,9 @@ class PRLNetwork {
 
       this.mqttClient.on('error', (err) => {
         console.warn('Aviso de conexión en broker:', err.message);
-        this.switchBroker();
+        if (!hasConnectedOnce) {
+          this.switchBroker();
+        }
       });
 
       this.mqttClient.on('close', () => {
@@ -105,29 +126,54 @@ class PRLNetwork {
   }
 
   switchBroker() {
+    clearTimeout(this.connectWatchdog);
     if (this.mqttClient) {
       try { this.mqttClient.end(true); } catch (e) {}
       this.mqttClient = null;
     }
-    // Probar el siguiente broker de respaldo
+    this.subscribedTopic = null;
     this.currentBrokerIndex = (this.currentBrokerIndex + 1) % this.brokers.length;
-    setTimeout(() => this.initCloudBroker(), 2000);
+    setTimeout(() => this.initCloudBroker(), 1500);
   }
 
   subscribeRoomTopic(roomCode) {
-    if (this.mqttClient && this.mqttClient.connected) {
-      const topic = `prl/classroom/v2/${roomCode}/#`;
-      this.mqttClient.subscribe(topic, { qos: 0 }, (err) => {
-        if (!err) {
-          console.log(`📡 Suscrito al canal global del aula: ${topic}`);
-        }
-      });
+    if (!roomCode || !this.mqttClient || !this.mqttClient.connected) return;
+    const newTopic = `prl/classroom/v2/${roomCode}/#`;
+
+    if (this.subscribedTopic && this.subscribedTopic !== newTopic) {
+      try {
+        this.mqttClient.unsubscribe(this.subscribedTopic);
+      } catch (e) {}
     }
+
+    if (this.subscribedTopic === newTopic) return;
+
+    this.mqttClient.subscribe(newTopic, { qos: 0 }, (err) => {
+      if (!err) {
+        this.subscribedTopic = newTopic;
+        console.log(`📡 Suscrito al canal global del aula: ${newTopic}`);
+      }
+    });
   }
 
   setRoom(roomCode) {
+    if (this.currentRoom !== roomCode) {
+      // Al cambiar de sala descartamos la cola previa para evitar fugas entre salas
+      this.pendingCloudQueue = this.pendingCloudQueue.filter(m => m.roomCode === roomCode);
+    }
     this.currentRoom = roomCode;
     this.subscribeRoomTopic(roomCode);
+  }
+
+  flushPendingCloudMessages() {
+    if (!this.mqttClient || !this.mqttClient.connected || this.pendingCloudQueue.length === 0) return;
+    const queue = this.pendingCloudQueue.splice(0, this.pendingCloudQueue.length);
+    queue.forEach(msg => {
+      if (msg.roomCode) {
+        const topic = `prl/classroom/v2/${msg.roomCode}/events`;
+        this.mqttClient.publish(topic, JSON.stringify(msg), { qos: 0 });
+      }
+    });
   }
 
   // =========================================================================
@@ -183,15 +229,24 @@ class PRLNetwork {
     // Marcar como visto localmente para evitar procesar el propio eco
     this.seenMessageIds.add(msgId);
 
-    // 1. Enviar por Nube Global (Para cualquier red 4G/5G/Wi-Fi distinta)
-    if (this.mqttClient && this.mqttClient.connected && this.currentRoom) {
-      const topic = `prl/classroom/v2/${this.currentRoom}/events`;
-      this.mqttClient.publish(topic, JSON.stringify(message), { qos: 0 });
+    // 1. Enviar por Nube Global (o encolar si MQTT aún está conectando)
+    if (this.currentRoom) {
+      if (this.mqttClient && this.mqttClient.connected) {
+        const topic = `prl/classroom/v2/${this.currentRoom}/events`;
+        this.mqttClient.publish(topic, JSON.stringify(message), { qos: 0 });
+      } else {
+        this.pendingCloudQueue.push(message);
+        if (this.pendingCloudQueue.length > 30) {
+          this.pendingCloudQueue.shift();
+        }
+      }
     }
 
     // 2. Enviar por BroadcastChannel (Mismo ordenador / diferentes pestañas)
     if (this.channel) {
-      this.channel.postMessage(message);
+      try {
+        this.channel.postMessage(message);
+      } catch (e) {}
     }
 
     // 3. Respaldo LocalStorage
@@ -206,7 +261,7 @@ class PRLNetwork {
   handleIncomingMessage(message) {
     if (!message || !message.type || !message.id) return;
 
-    // Deduplicación: Si ya hemos procesado este mensaje (por ejemplo vino por BroadcastChannel y luego por MQTT), ignorar
+    // Deduplicación: Si ya hemos procesado este mensaje, ignorar
     if (this.seenMessageIds.has(message.id)) {
       return;
     }
@@ -234,12 +289,19 @@ class PRLNetwork {
   dispatch(eventType, message) {
     const handlers = this.listeners.get(eventType);
     if (handlers) {
-      handlers.forEach(fn => fn(message.payload, message));
+      const payload = message && message.payload !== undefined ? message.payload : message;
+      handlers.forEach(fn => {
+        try {
+          fn(payload, message);
+        } catch (err) {
+          console.error(`Error en listener de red (${eventType}):`, err);
+        }
+      });
     }
   }
 
   notifyStatus() {
-    this.dispatch('NETWORK_STATUS', { status: this.cloudStatus });
+    this.dispatch('NETWORK_STATUS', { payload: { status: this.cloudStatus } });
   }
 
   generateRoomCode() {

@@ -3,6 +3,9 @@ const path = require('path');
 
 // ============================================================================
 // GENERADOR DE ESCENARIOS DE ALTA DEFINICIÓN REALISTAS (PRL CLASSROOM LIVE)
+// 8 Escenarios x 12 Elementos Concretos (Peligros reales + Elementos seguros)
+// Cada uno de los 12 elementos está dibujado explícitamente en su coordenada.
+// Cero atributos SVG frágiles (sin filter="url(#...)") para máxima compatibilidad.
 // ============================================================================
 
 // 1. HOSPITAL Y URGENCIAS CLÍNICAS
@@ -22,168 +25,178 @@ const svgHospital = `
       <stop offset="45%" stop-color="#e2e8f0"/>
       <stop offset="100%" stop-color="#94a3b8"/>
     </linearGradient>
-    <linearGradient id="chromeGrad" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="hospChrome" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#64748b"/>
       <stop offset="25%" stop-color="#f8fafc"/>
       <stop offset="50%" stop-color="#94a3b8"/>
       <stop offset="75%" stop-color="#f1f5f9"/>
       <stop offset="100%" stop-color="#475569"/>
     </linearGradient>
-    <linearGradient id="o2Body" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="hospO2Body" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#cbd5e1"/>
       <stop offset="35%" stop-color="#ffffff"/>
       <stop offset="85%" stop-color="#e2e8f0"/>
       <stop offset="100%" stop-color="#94a3b8"/>
     </linearGradient>
-    <linearGradient id="o2Shoulder" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="hospO2Shoulder" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#15803d"/>
       <stop offset="40%" stop-color="#22c55e"/>
       <stop offset="80%" stop-color="#166534"/>
       <stop offset="100%" stop-color="#14532d"/>
     </linearGradient>
-    <filter id="hospShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="3" dy="6" stdDeviation="5" flood-color="#042f2e" flood-opacity="0.3"/>
-    </filter>
   </defs>
 
+  <!-- Pared y rejilla limpia -->
   <rect x="0" y="0" width="1000" height="340" fill="url(#hospWallGrad)"/>
   <g stroke="#99f6e4" stroke-width="1" opacity="0.35">
     <line x1="0" y1="30" x2="1000" y2="30"/>
     <line x1="0" y1="65" x2="1000" y2="65"/>
     <line x1="100" y1="0" x2="100" y2="65"/><line x1="300" y1="0" x2="300" y2="65"/><line x1="500" y1="0" x2="500" y2="65"/><line x1="700" y1="0" x2="700" y2="65"/><line x1="900" y1="0" x2="900" y2="65"/>
   </g>
-  <rect x="150" y="20" width="160" height="25" rx="3" fill="#ffffff" opacity="0.95"/>
-  <rect x="600" y="20" width="160" height="25" rx="3" fill="#ffffff" opacity="0.95"/>
-  <polygon points="130,45 330,45 420,340 40,340" fill="#ffffff" opacity="0.04"/>
-  <polygon points="580,45 780,45 870,340 490,340" fill="#ffffff" opacity="0.04"/>
 
-  <!-- Pasamanos de madera sanitaria -->
-  <rect x="0" y="245" width="1000" height="14" fill="#d97706" rx="3"/>
-  <rect x="0" y="246" width="1000" height="4" fill="#fbbf24"/>
-  <rect x="80" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="350" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="650" y="259" width="10" height="16" fill="url(#chromeGrad)"/><rect x="880" y="259" width="10" height="16" fill="url(#chromeGrad)"/>
+  <!-- ITEM 9 (SEGURO): Luminaria LED estanca empotrada -->
+  <g id="hosp-led" transform="translate(90, 18)">
+    <rect width="190" height="28" rx="4" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+    <rect x="6" y="4" width="178" height="20" rx="2" fill="#ffffff"/>
+    <polygon points="6,24 184,24 235,125 -45,125" fill="#ffffff" opacity="0.08"/>
+  </g>
+  <rect x="620" y="18" width="150" height="26" rx="4" fill="#ffffff" opacity="0.9"/>
 
-  <!-- Cabecero de gases medicinales -->
-  <g transform="translate(420, 120)">
-    <rect width="260" height="42" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <circle cx="40" cy="21" r="11" fill="#ffffff" stroke="#0284c7" stroke-width="3"/><text x="40" y="24" font-size="7" font-weight="black" fill="#0284c7" text-anchor="middle">O2</text>
-    <circle cx="85" cy="21" r="11" fill="#ffffff" stroke="#eab308" stroke-width="3"/><text x="85" y="24" font-size="7" font-weight="black" fill="#eab308" text-anchor="middle">VAC</text>
-    <circle cx="130" cy="21" r="11" fill="#ffffff" stroke="#10b981" stroke-width="3"/><text x="130" y="24" font-size="7" font-weight="black" fill="#10b981" text-anchor="middle">AIRE</text>
-    <rect x="170" y="12" width="22" height="18" rx="2" fill="#22c55e"/><rect x="200" y="12" width="22" height="18" rx="2" fill="#22c55e"/><rect x="230" y="14" width="14" height="14" rx="2" fill="#ef4444"/>
+  <!-- ITEM 2 (SEGURO): Pasamanos continuo de pared -->
+  <rect x="0" y="232" width="1000" height="16" fill="#d97706" rx="3" stroke="#b45309" stroke-width="1"/>
+  <rect x="0" y="234" width="1000" height="4" fill="#fbbf24"/>
+  <rect x="70" y="248" width="10" height="18" fill="url(#hospChrome)"/>
+  <rect x="240" y="248" width="10" height="18" fill="url(#hospChrome)"/>
+  <rect x="440" y="248" width="10" height="18" fill="url(#hospChrome)"/>
+  <rect x="740" y="248" width="10" height="18" fill="url(#hospChrome)"/>
+
+  <!-- ITEM 5 (SEGURO): Panel de cabecero de gases medicinales -->
+  <g transform="translate(385, 76)">
+    <rect width="265" height="44" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="40" cy="22" r="12" fill="#ffffff" stroke="#0284c7" stroke-width="3"/><text x="40" y="25" font-size="8" font-weight="bold" fill="#0284c7" text-anchor="middle">O2</text>
+    <circle cx="85" cy="22" r="12" fill="#ffffff" stroke="#eab308" stroke-width="3"/><text x="85" y="25" font-size="7" font-weight="bold" fill="#b45309" text-anchor="middle">VAC</text>
+    <circle cx="130" cy="22" r="12" fill="#ffffff" stroke="#10b981" stroke-width="3"/><text x="130" y="25" font-size="7" font-weight="bold" fill="#047857" text-anchor="middle">AIRE</text>
+    <rect x="170" y="13" width="22" height="18" rx="2" fill="#22c55e"/><rect x="200" y="13" width="22" height="18" rx="2" fill="#22c55e"/><rect x="232" y="15" width="14" height="14" rx="2" fill="#ef4444"/>
   </g>
 
-  <!-- Suelo de vinilo con reflejos -->
+  <!-- Suelo vinílico conductivo continuo -->
   <rect x="0" y="340" width="1000" height="260" fill="url(#hospFloorGrad)"/>
-  <rect x="0" y="336" width="1000" height="8" fill="#0f766e"/>
-  <g stroke="#ffffff" stroke-width="1.5" opacity="0.35">
+  <rect x="0" y="334" width="1000" height="10" fill="#0f766e"/>
+  <g stroke="#ffffff" stroke-width="1.5" opacity="0.4">
     <line x1="0" y1="410" x2="1000" y2="410"/><line x1="0" y1="495" x2="1000" y2="495"/>
     <line x1="200" y1="340" x2="50" y2="600"/><line x1="480" y1="340" x2="380" y2="600"/><line x1="750" y1="340" x2="720" y2="600"/>
   </g>
+  <!-- Brillo suelo conductivo derecha (ITEM 11) -->
+  <ellipse cx="860" cy="545" rx="90" ry="18" fill="#ffffff" opacity="0.28"/>
 
-  <!-- PELIGRO 1: AGUJA DESTAPADA CON SANGRE EN MESA AUXILIAR MAYO -->
-  <g id="danger-aguja" transform="translate(120, 310)" class="cursor-pointer">
-    <rect x="65" y="110" width="12" height="110" fill="url(#chromeGrad)"/>
-    <rect x="25" y="215" width="90" height="10" rx="3" fill="#475569"/>
-    <circle cx="35" cy="226" r="6" fill="#0f172a"/><circle cx="105" cy="226" r="6" fill="#0f172a"/>
-    <rect x="0" y="95" width="150" height="18" rx="4" fill="url(#chromeGrad)" stroke="#475569" stroke-width="1.5"/>
-    <path d="M20 96 C40 90, 90 90, 110 96 C105 108, 30 108, 20 96 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
-    <g transform="translate(35, 88) rotate(-8)">
-      <rect x="15" y="0" width="55" height="12" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" opacity="0.9"/>
-      <line x1="25" y1="0" x2="25" y2="6" stroke="#0284c7" stroke-width="1"/><line x1="35" y1="0" x2="35" y2="8" stroke="#0284c7" stroke-width="1"/><line x1="45" y1="0" x2="45" y2="6" stroke="#0284c7" stroke-width="1"/>
-      <rect x="17" y="2" width="22" height="8" rx="1" fill="#dc2626" opacity="0.85"/>
-      <rect x="68" y="3" width="22" height="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1"/><rect x="88" y="0" width="4" height="12" fill="#64748b"/>
-      <polygon points="15,2 8,4 8,8 15,10" fill="#0284c7"/>
-      <line x1="8" y1="6" x2="-22" y2="6" stroke="#94a3b8" stroke-width="2.5" stroke-linecap="round"/>
-      <polygon points="-22,6 -18,4 -18,8" fill="#cbd5e1"/>
-      <circle cx="-23" cy="7" r="2.5" fill="#ef4444"/>
-    </g>
-    <circle cx="125" cy="98" r="7" fill="#f8fafc" stroke="#cbd5e1"/><circle cx="124" cy="97" r="4" fill="#dc2626" opacity="0.8"/>
+  <!-- ITEM 10 (SEGURO): Enchufes schuko grado médico verdes en pared derecha -->
+  <g transform="translate(895, 250)">
+    <rect width="74" height="36" rx="4" fill="#16a34a" stroke="#14532d" stroke-width="2"/>
+    <circle cx="22" cy="18" r="10" fill="#ecfdf5" stroke="#15803d" stroke-width="1.5"/>
+    <circle cx="18" cy="18" r="2" fill="#0f172a"/><circle cx="26" cy="18" r="2" fill="#0f172a"/>
+    <circle cx="52" cy="18" r="10" fill="#ecfdf5" stroke="#15803d" stroke-width="1.5"/>
+    <circle cx="48" cy="18" r="2" fill="#0f172a"/><circle cx="56" cy="18" r="2" fill="#0f172a"/>
+    <path d="M52 28 Q56 75 45 110" fill="none" stroke="#1e293b" stroke-width="3"/>
   </g>
 
-  <!-- PELIGRO 2: BOTELLA DE OXÍGENO SIN CADENA INCLINADA -->
-  <g id="danger-oxigeno" transform="translate(800, 130)" class="cursor-pointer">
-    <rect x="-8" y="180" width="14" height="24" rx="2" fill="#334155" stroke="#0f172a"/>
-    <path d="M2 195 Q-15 230 4 270 Q-10 300 2 330" fill="none" stroke="#94a3b8" stroke-width="5" stroke-dasharray="8,4" stroke-linecap="round"/>
-    <g transform="rotate(7, 45, 410)">
-      <rect x="15" y="90" width="65" height="320" rx="20" fill="url(#o2Body)" stroke="#94a3b8" stroke-width="2.5"/>
-      <path d="M15 130 Q15 65 47 65 Q80 65 80 130 Z" fill="url(#o2Shoulder)" stroke="#166534" stroke-width="2"/>
-      <rect x="42" y="45" width="12" height="22" fill="#d97706" stroke="#92400e" stroke-width="1.5"/>
-      <g transform="translate(34, 18)">
+  <!-- ITEM 3 (PELIGRO): Aguja hipodérmica usada en batea sobre mesa mayo -->
+  <g id="danger-aguja" transform="translate(75, 345)">
+    <rect x="65" y="100" width="12" height="100" fill="url(#hospChrome)"/>
+    <rect x="25" y="195" width="95" height="10" rx="3" fill="#475569"/>
+    <circle cx="35" cy="206" r="6" fill="#0f172a"/><circle cx="110" cy="206" r="6" fill="#0f172a"/>
+    <rect x="0" y="85" width="155" height="18" rx="4" fill="url(#hospChrome)" stroke="#475569" stroke-width="1.5"/>
+    <path d="M18 86 C40 80, 95 80, 118 86 C112 98, 28 98, 18 86 Z" fill="#cbd5e1" stroke="#64748b" stroke-width="1.5"/>
+    <g transform="translate(36, 76) rotate(-8)">
+      <rect x="18" y="0" width="58" height="13" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5" opacity="0.92"/>
+      <rect x="20" y="2.5" width="24" height="8" rx="1" fill="#dc2626" opacity="0.88"/>
+      <rect x="74" y="3" width="24" height="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1"/><rect x="96" y="0" width="4" height="13" fill="#64748b"/>
+      <polygon points="18,2 10,4.5 10,8.5 18,11" fill="#0284c7"/>
+      <line x1="10" y1="6.5" x2="-24" y2="6.5" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+      <circle cx="-25" cy="7.5" r="3" fill="#ef4444"/>
+    </g>
+    <circle cx="132" cy="88" r="7" fill="#f8fafc" stroke="#cbd5e1"/><circle cx="131" cy="87" r="4" fill="#dc2626" opacity="0.85"/>
+  </g>
+
+  <!-- ITEM 1 (PELIGRO): Botella de Oxígeno sin cadena antivuelco -->
+  <g id="danger-oxigeno" transform="translate(795, 130)">
+    <rect x="-10" y="175" width="14" height="24" rx="2" fill="#334155" stroke="#0f172a"/>
+    <path d="M2 190 Q-16 225 4 265 Q-12 295 2 325" fill="none" stroke="#94a3b8" stroke-width="5" stroke-dasharray="8,4" stroke-linecap="round"/>
+    <g transform="rotate(6, 45, 390)">
+      <rect x="15" y="85" width="64" height="310" rx="20" fill="url(#hospO2Body)" stroke="#94a3b8" stroke-width="2.5"/>
+      <path d="M15 125 Q15 60 47 60 Q79 60 79 125 Z" fill="url(#hospO2Shoulder)" stroke="#166534" stroke-width="2"/>
+      <rect x="42" y="40" width="12" height="22" fill="#d97706" stroke="#92400e" stroke-width="1.5"/>
+      <g transform="translate(34, 15)">
         <circle cx="14" cy="14" r="14" fill="#ffffff" stroke="#475569" stroke-width="2"/>
         <line x1="14" y1="14" x2="20" y2="8" stroke="#ef4444" stroke-width="2"/>
         <circle cx="34" cy="20" r="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
-        <line x1="34" y1="20" x2="38" y2="16" stroke="#0284c7" stroke-width="1.5"/>
-        <rect x="5" y="-12" width="8" height="20" rx="2" fill="#e0f2fe" stroke="#64748b" stroke-width="1"/>
       </g>
-      <g transform="translate(50, 240) rotate(-90)">
-        <text x="0" y="4" font-size="12" font-weight="black" fill="#047857" letter-spacing="4">OXÍGENO MEDICINAL</text>
-        <text x="0" y="16" font-size="8" font-weight="bold" fill="#64748b">UN 1072 · GAS COMPRIMIDO 200 BAR</text>
+      <g transform="translate(50, 235) rotate(-90)">
+        <text x="0" y="4" font-size="11" font-weight="bold" fill="#047857" letter-spacing="3">OXÍGENO MEDICINAL</text>
       </g>
-      <polygon points="48,150 58,162 48,174 38,162" fill="#eab308" stroke="#ca8a04"/>
-      <ellipse cx="47.5" cy="405" rx="32" ry="8" fill="#475569"/>
+      <polygon points="48,145 58,157 48,169 38,157" fill="#eab308" stroke="#ca8a04"/>
+      <ellipse cx="47" cy="392" rx="32" ry="8" fill="#475569"/>
     </g>
   </g>
 
-  <!-- PELIGRO 4: CAMILLA HOSPITALARIA CON RUEDAS SIN FRENO Y BARANDILLA BAJADA -->
-  <g id="danger-camilla" transform="translate(480, 290)" class="cursor-pointer">
-    <rect x="15" y="110" width="220" height="12" rx="4" fill="url(#chromeGrad)" stroke="#475569" stroke-width="1.5"/>
-    <rect x="40" y="122" width="16" height="55" fill="url(#chromeGrad)"/><rect x="180" y="122" width="16" height="55" fill="url(#chromeGrad)"/>
-    <rect x="25" y="172" width="195" height="10" rx="3" fill="#334155"/>
-    <g transform="translate(25, 82)">
-      <rect width="180" height="6" rx="2" fill="url(#chromeGrad)"/>
-      <line x1="30" y1="6" x2="30" y2="30" stroke="#94a3b8" stroke-width="3"/><line x1="80" y1="6" x2="80" y2="30" stroke="#94a3b8" stroke-width="3"/><line x1="130" y1="6" x2="130" y2="30" stroke="#94a3b8" stroke-width="3"/>
+  <!-- ITEM 4 (PELIGRO) + ITEM 7 (SEGURO GOTERO IV) + ITEM 12 (PEDAL FRENO LEVANTADO) -->
+  <g id="danger-camilla" transform="translate(485, 290)">
+    <rect x="15" y="105" width="215" height="12" rx="4" fill="url(#hospChrome)" stroke="#475569" stroke-width="1.5"/>
+    <rect x="40" y="117" width="16" height="55" fill="url(#hospChrome)"/><rect x="180" y="117" width="16" height="55" fill="url(#hospChrome)"/>
+    <rect x="25" y="167" width="190" height="10" rx="3" fill="#334155"/>
+    <!-- Barandilla lateral bajada -->
+    <g transform="translate(25, 78)">
+      <rect width="175" height="6" rx="2" fill="url(#hospChrome)"/>
+      <line x1="30" y1="6" x2="30" y2="28" stroke="#94a3b8" stroke-width="3"/><line x1="80" y1="6" x2="80" y2="28" stroke="#94a3b8" stroke-width="3"/><line x1="130" y1="6" x2="130" y2="28" stroke="#94a3b8" stroke-width="3"/>
     </g>
-    <rect x="10" y="55" width="230" height="28" rx="6" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
-    <path d="M12 56 Q125 60 238 56 L238 68 Q125 72 12 68 Z" fill="#38bdf8" opacity="0.4"/>
-    <rect x="195" y="50" width="40" height="16" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
-    <g transform="translate(225, -20)">
-      <line x1="0" y1="0" x2="0" y2="100" stroke="url(#chromeGrad)" stroke-width="4"/>
-      <rect x="-14" y="6" width="18" height="30" rx="4" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" opacity="0.85"/>
-      <line x1="-5" y1="36" x2="-5" y2="90" stroke="#94a3b8" stroke-width="1.5"/>
+    <rect x="10" y="50" width="225" height="28" rx="6" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+    <rect x="190" y="45" width="40" height="16" rx="4" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+    <!-- ITEM 7 (SEGURO): Soporte de gotero IV -->
+    <g transform="translate(215, -100)">
+      <line x1="0" y1="0" x2="0" y2="160" stroke="url(#hospChrome)" stroke-width="5"/>
+      <line x1="-18" y1="0" x2="18" y2="0" stroke="#64748b" stroke-width="4" stroke-linecap="round"/>
+      <rect x="-20" y="8" width="22" height="36" rx="5" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+      <rect x="-16" y="16" width="14" height="16" fill="#38bdf8" opacity="0.5"/>
+      <line x1="-9" y1="44" x2="-9" y2="135" stroke="#94a3b8" stroke-width="2"/>
     </g>
-    <g transform="translate(38, 178)">
-      <circle cx="12" cy="16" r="14" fill="#0f172a" stroke="#475569" stroke-width="2.5"/><circle cx="12" cy="16" r="5" fill="url(#chromeGrad)"/>
-      <rect x="18" y="4" width="16" height="5" rx="1.5" fill="#ef4444" stroke="#991b1b" stroke-width="1"/>
+    <!-- ITEM 12 (PELIGRO): Pedal rojo de freno levantado (no trabado) -->
+    <g transform="translate(38, 174)">
+      <circle cx="12" cy="16" r="14" fill="#0f172a" stroke="#475569" stroke-width="2.5"/><circle cx="12" cy="16" r="5" fill="url(#hospChrome)"/>
+      <rect x="18" y="-2" width="18" height="6" rx="2" fill="#ef4444" stroke="#991b1b" stroke-width="1.5" transform="rotate(-18, 18, 2)"/>
     </g>
-    <g transform="translate(185, 178)">
-      <circle cx="12" cy="16" r="14" fill="#0f172a" stroke="#475569" stroke-width="2.5"/><circle cx="12" cy="16" r="5" fill="url(#chromeGrad)"/>
-      <rect x="18" y="4" width="16" height="5" rx="1.5" fill="#ef4444" stroke="#991b1b" stroke-width="1"/>
+    <g transform="translate(182, 174)">
+      <circle cx="12" cy="16" r="14" fill="#0f172a" stroke="#475569" stroke-width="2.5"/><circle cx="12" cy="16" r="5" fill="url(#hospChrome)"/>
+      <rect x="18" y="-2" width="18" height="6" rx="2" fill="#ef4444" stroke="#991b1b" stroke-width="1.5" transform="rotate(-18, 18, 2)"/>
     </g>
-    <path d="M-15 125 L-35 125 M-25 118 L-35 125 L-25 132" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+    <path d="M-15 120 L-35 120 M-25 113 L-35 120 L-25 127" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 
-  <!-- PELIGRO 3: BOLSA DE RESIDUOS BIOLÓGICOS ROTA Y DERRAMADA -->
-  <g id="danger-residuos" transform="translate(360, 420)" class="cursor-pointer">
-    <path d="M20 70 C50 55, 110 50, 160 65 C200 78, 190 115, 140 125 C80 135, 30 120, 10 95 Z" fill="#991b1b" opacity="0.75"/>
-    <path d="M40 76 C70 65, 120 62, 145 74 C175 85, 160 110, 125 116 C75 122, 40 110, 28 94 Z" fill="#b91c1c" opacity="0.85"/>
-    <g transform="translate(45, 25)">
+  <!-- ITEM 6 (PELIGRO): Bolsa de residuos biosanitarios rota -->
+  <g id="danger-residuos" transform="translate(340, 445)">
+    <path d="M18 60 C48 45, 108 40, 158 55 C195 68, 185 105, 138 115 C78 125, 28 110, 10 85 Z" fill="#991b1b" opacity="0.8"/>
+    <g transform="translate(45, 15)">
       <path d="M25 55 C10 40, 20 15, 45 10 C65 6, 85 10, 100 25 C115 42, 125 70, 95 80 C60 90, 35 85, 25 55 Z" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
-      <path d="M40 20 Q55 35 45 65 Q70 45 90 60" fill="none" stroke="#eab308" stroke-width="3"/>
-      <path d="M40 10 L30 -5 M45 10 L50 -8" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"/>
-      <g transform="translate(60, 42) scale(0.65)">
+      <g transform="translate(56, 36) scale(0.75)">
         <circle cx="12" cy="12" r="10" fill="none" stroke="#000000" stroke-width="2.5"/>
         <circle cx="8" cy="8" r="6" fill="none" stroke="#000000" stroke-width="2"/><circle cx="16" cy="8" r="6" fill="none" stroke="#000000" stroke-width="2"/>
         <circle cx="12" cy="16" r="6" fill="none" stroke="#000000" stroke-width="2"/><circle cx="12" cy="12" r="2.5" fill="#000000"/>
       </g>
-      <ellipse cx="85" cy="82" rx="10" ry="5" fill="#f8fafc" stroke="#dc2626" stroke-width="1.5"/>
-      <path d="M92 78 Q105 82 108 92 Q100 95 90 85" fill="#38bdf8" opacity="0.9"/>
     </g>
   </g>
 
-  <!-- PELIGRO 5: ENFERMERO EN SOBREESFUERZO LUMBAR -->
-  <g id="danger-ergonomia" transform="translate(290, 200)" class="cursor-pointer">
-    <rect x="52" y="160" width="16" height="120" rx="5" fill="#0f766e" stroke="#115e59" stroke-width="2"/>
-    <rect x="75" y="160" width="16" height="120" rx="5" fill="#0d9488" stroke="#115e59" stroke-width="2"/>
-    <ellipse cx="56" cy="278" rx="14" ry="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-    <ellipse cx="82" cy="278" rx="14" ry="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
-    <g transform="translate(30, 75) rotate(-35)">
+  <!-- ITEM 8 (PELIGRO): Celador en sobreesfuerzo lumbar -->
+  <g id="danger-ergonomia" transform="translate(275, 205)">
+    <rect x="52" y="155" width="16" height="115" rx="5" fill="#0f766e" stroke="#115e59" stroke-width="2"/>
+    <rect x="75" y="155" width="16" height="115" rx="5" fill="#0d9488" stroke="#115e59" stroke-width="2"/>
+    <ellipse cx="56" cy="270" rx="14" ry="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <ellipse cx="82" cy="270" rx="14" ry="7" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+    <g transform="translate(30, 72) rotate(-35)">
       <rect x="0" y="0" width="75" height="42" rx="10" fill="#14b8a6" stroke="#0f766e" stroke-width="2.5"/>
-      <polygon points="60,10 75,20 60,30" fill="#ccfbf1"/>
       <path d="M15 28 L-15 75 L-30 65" fill="none" stroke="#14b8a6" stroke-width="14" stroke-linecap="round"/>
       <circle cx="-32" cy="64" r="8" fill="#38bdf8"/>
       <path d="M-8 -5 L-18 -15 M-2 -8 L-5 -22 M5 -4 L10 -16" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
       <circle cx="-4" cy="-5" r="4" fill="#ef4444"/>
     </g>
-    <g transform="translate(10, 95)">
+    <g transform="translate(10, 92)">
       <circle cx="15" cy="15" r="18" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
       <path d="M0 12 C0 -4, 30 -4, 32 12 Z" fill="#78350f"/>
       <rect x="2" y="16" width="18" height="15" rx="3" fill="#38bdf8" stroke="#0284c7" stroke-width="1"/>
@@ -206,94 +219,47 @@ const svgOficina = `
       <stop offset="30%" stop-color="#475569"/>
       <stop offset="100%" stop-color="#1e293b"/>
     </linearGradient>
-    <linearGradient id="woodDesk" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="ofiWoodDesk" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#78350f"/>
       <stop offset="40%" stop-color="#b45309"/>
       <stop offset="80%" stop-color="#d97706"/>
       <stop offset="100%" stop-color="#92400e"/>
     </linearGradient>
-    <linearGradient id="coffeeGrad" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="ofiCoffeeGrad" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#451a03"/>
       <stop offset="50%" stop-color="#78350f"/>
       <stop offset="100%" stop-color="#270e02"/>
     </linearGradient>
-    <filter id="ofiShadow" x="-15%" y="-15%" width="130%" height="130%">
-      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#020617" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
+  <!-- Pared y suelo moqueta técnica (ITEM 9) -->
   <rect x="0" y="0" width="1000" height="340" fill="url(#ofiWall)"/>
-  <g transform="translate(340, 30)">
-    <rect width="320" height="180" rx="4" fill="#0284c7" opacity="0.25"/>
-    <rect width="320" height="180" rx="4" fill="none" stroke="#64748b" stroke-width="6"/>
-    <line x1="160" y1="0" x2="160" y2="180" stroke="#64748b" stroke-width="4"/>
-    <line x1="0" y1="90" x2="320" y2="90" stroke="#64748b" stroke-width="4"/>
-    <rect x="25" y="60" width="45" height="120" fill="#0f172a" opacity="0.5"/>
-    <rect x="80" y="35" width="55" height="145" fill="#0f172a" opacity="0.6"/>
-    <rect x="180" y="50" width="60" height="130" fill="#0f172a" opacity="0.5"/>
-  </g>
-
   <rect x="0" y="340" width="1000" height="260" fill="url(#ofiFloor)"/>
   <rect x="0" y="336" width="1000" height="8" fill="#0f172a"/>
-  <g stroke="#1e293b" stroke-width="1.5" opacity="0.6">
+  <g stroke="#1e293b" stroke-width="1.5" opacity="0.65">
     <line x1="0" y1="410" x2="1000" y2="410"/><line x1="0" y1="490" x2="1000" y2="490"/>
-    <line x1="180" y1="340" x2="50" y2="600"/><line x1="420" y1="340" x2="320" y2="600"/><line x1="680" y1="340" x2="680" y2="600"/>
+    <line x1="180" y1="340" x2="50" y2="600"/><line x1="420" y1="340" x2="320" y2="600"/><line x1="680" y1="340" x2="680" y2="600"/><line x1="880" y1="340" x2="940" y2="600"/>
   </g>
 
-  <!-- Puesto 1 -->
-  <g transform="translate(60, 310)">
-    <rect x="0" y="40" width="250" height="18" rx="4" fill="url(#woodDesk)"/>
-    <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="225" y="58" width="12" height="130" fill="#334155"/>
-    <rect x="80" y="-45" width="95" height="65" rx="4" fill="#0f172a" stroke="#475569" stroke-width="2"/>
-    <rect x="84" y="-41" width="87" height="57" fill="#0284c7"/>
-    <rect x="122" y="20" width="12" height="20" fill="#475569"/>
-    <ellipse cx="128" cy="40" rx="22" ry="4" fill="#334155"/>
-    <rect x="85" y="44" width="60" height="8" rx="2" fill="#1e293b"/><ellipse cx="160" cy="48" rx="6" ry="4" fill="#1e293b"/>
-  </g>
-
-  <!-- PELIGRO 1: CABLES SUELTOS EN PASILLO -->
-  <g id="danger-cables" class="cursor-pointer">
-    <path d="M340 480 C 400 450, 440 550, 500 475 S 580 540, 650 480" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/>
-    <path d="M340 505 C 380 530, 430 440, 490 530 S 560 460, 650 515" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
-    <path d="M350 470 C 410 540, 470 460, 530 540 S 590 470, 640 530" fill="none" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
-    <ellipse cx="495" cy="490" rx="16" ry="22" fill="none" stroke="#0f172a" stroke-width="7" transform="rotate(-25, 495, 490)"/>
-    <path d="M485 470 Q500 445 515 470" fill="none" stroke="#f59e0b" stroke-width="7"/>
-  </g>
-
-  <!-- PELIGRO 2: TAZA DE CAFÉ DERRAMADA JUNTO A REGLETA -->
-  <g id="danger-cafe" transform="translate(115, 360)" class="cursor-pointer">
-    <g transform="translate(30, 50)">
-      <rect width="85" height="26" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
-      <circle cx="16" cy="13" r="6" fill="#cbd5e1"/><circle cx="36" cy="13" r="6" fill="#cbd5e1"/><circle cx="56" cy="13" r="6" fill="#cbd5e1"/>
-      <circle cx="5" cy="13" r="2.5" fill="#ef4444"/>
+  <!-- ITEM 7 (SEGURO): Ventanal exterior con persiana veneciana -->
+  <g transform="translate(360, 28)">
+    <rect width="300" height="175" rx="4" fill="#38bdf8" opacity="0.22"/>
+    <rect width="300" height="175" rx="4" fill="none" stroke="#64748b" stroke-width="6"/>
+    <rect x="25" y="55" width="45" height="120" fill="#0f172a" opacity="0.45"/>
+    <rect x="85" y="35" width="55" height="140" fill="#0f172a" opacity="0.55"/>
+    <rect x="180" y="50" width="60" height="125" fill="#0f172a" opacity="0.45"/>
+    <!-- Lamas de persiana veneciana -->
+    <g stroke="#cbd5e1" stroke-width="3" opacity="0.85">
+      <line x1="6" y1="14" x2="294" y2="14"/><line x1="6" y1="24" x2="294" y2="24"/>
+      <line x1="6" y1="34" x2="294" y2="34"/><line x1="6" y1="44" x2="294" y2="44"/>
+      <line x1="6" y1="54" x2="294" y2="54"/>
     </g>
-    <g transform="translate(0, 36) rotate(65)">
-      <rect width="24" height="30" rx="4" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
-      <path d="M24 6 Q34 15 24 24" fill="none" stroke="#dc2626" stroke-width="3"/>
-    </g>
-    <path d="M22 60 Q45 50 68 58 Q95 52 115 65 Q98 78 68 75 Q32 78 22 60 Z" fill="url(#coffeeGrad)" opacity="0.95"/>
-    <path d="M72 45 L76 36 L82 42 L88 30 L84 46 Z" fill="#facc15" stroke="#eab308" stroke-width="1.5"/>
+    <line x1="150" y1="0" x2="150" y2="175" stroke="#64748b" stroke-width="4"/>
+    <line x1="0" y1="90" x2="300" y2="90" stroke="#64748b" stroke-width="4"/>
   </g>
 
-  <!-- PELIGRO 3: EXTINTOR BLOQUEADO POR CAJAS -->
-  <g id="danger-extintor" class="cursor-pointer">
-    <g transform="translate(845, 160)">
-      <rect x="-8" y="-40" width="65" height="28" rx="3" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
-      <text x="24" y="-22" fill="#ffffff" font-size="10" font-weight="black" text-anchor="middle">EXTINTOR</text>
-      <rect x="5" y="0" width="42" height="105" rx="15" fill="#dc2626" stroke="#991b1b" stroke-width="2.5"/>
-      <circle cx="26" cy="-16" r="6" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.5"/>
-      <path d="M34 -6 Q48 0 46 50 L42 75" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
-    </g>
-    <g transform="translate(805, 230)">
-      <rect x="12" y="0" width="105" height="55" rx="3" fill="#d97706" stroke="#b45309" stroke-width="2"/>
-      <rect x="4" y="50" width="118" height="60" rx="3" fill="#b45309" stroke="#78350f" stroke-width="2"/>
-      <rect x="-8" y="105" width="130" height="65" rx="3" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-      <rect x="-15" y="165" width="145" height="70" rx="3" fill="#92400e" stroke="#78350f" stroke-width="2"/>
-    </g>
-  </g>
-
-  <!-- PELIGRO 4: ARCHIVADOR VOLCANDO -->
-  <g id="danger-archivador" transform="translate(250, 135) rotate(9, 50, 160)" class="cursor-pointer">
+  <!-- ITEM 2 (PELIGRO): Archivador venciendo con cajones abiertos -->
+  <g id="danger-archivador" transform="translate(230, 145) rotate(8, 50, 160)">
     <rect width="90" height="185" rx="3" fill="#64748b" stroke="#334155" stroke-width="3"/>
     <g transform="translate(-32, 12)">
       <rect width="118" height="36" rx="2" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
@@ -305,20 +271,104 @@ const svgOficina = `
     <g transform="translate(4, 144)"><rect width="82" height="34" rx="2" fill="#475569"/></g>
   </g>
 
-  <!-- PELIGRO 5: ERGONOMÍA DEFICIENTE -->
-  <g id="danger-ergonomia" class="cursor-pointer">
-    <g transform="translate(640, 310)">
-      <rect x="0" y="40" width="165" height="18" rx="4" fill="url(#woodDesk)"/>
-      <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="140" y="58" width="12" height="130" fill="#334155"/>
-      <rect x="40" y="22" width="60" height="38" rx="2" fill="#0f172a" transform="rotate(-15, 70, 40)"/>
-      <rect x="42" y="24" width="56" height="34" fill="#38bdf8" transform="rotate(-15, 70, 40)"/>
+  <!-- ITEM 5 (SEGURO): Puesto informático ergonómico con monitor curvo -->
+  <g transform="translate(65, 310)">
+    <rect x="0" y="40" width="250" height="18" rx="4" fill="url(#ofiWoodDesk)"/>
+    <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="225" y="58" width="12" height="130" fill="#334155"/>
+    <path d="M68 -48 Q125 -40 182 -48 L182 18 Q125 24 68 18 Z" fill="#0f172a" stroke="#475569" stroke-width="2.5"/>
+    <path d="M73 -43 Q125 -36 177 -43 L177 13 Q125 19 73 13 Z" fill="#0284c7"/>
+    <rect x="119" y="18" width="12" height="22" fill="#475569"/>
+    <ellipse cx="125" cy="40" rx="22" ry="4" fill="#334155"/>
+    <rect x="85" y="44" width="60" height="8" rx="2" fill="#1e293b"/><ellipse cx="160" cy="48" rx="6" ry="4" fill="#1e293b"/>
+  </g>
+
+  <!-- ITEM 8 (SEGURO): Papelera metálica de oficina bajo extremo izquierdo mesa -->
+  <g transform="translate(32, 430)">
+    <polygon points="4,0 44,0 38,58 10,58" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+    <line x1="12" y1="10" x2="15" y2="50" stroke="#475569" stroke-width="1.5"/>
+    <line x1="24" y1="10" x2="24" y2="50" stroke="#475569" stroke-width="1.5"/>
+    <line x1="36" y1="10" x2="33" y2="50" stroke="#475569" stroke-width="1.5"/>
+    <circle cx="24" cy="-2" r="7" fill="#f8fafc" stroke="#cbd5e1"/>
+  </g>
+
+  <!-- ITEM 3 (PELIGRO): Taza de café derramada en regleta -->
+  <g id="danger-cafe" transform="translate(105, 368)">
+    <g transform="translate(26, 48)">
+      <rect width="84" height="24" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+      <circle cx="16" cy="12" r="5" fill="#cbd5e1"/><circle cx="36" cy="12" r="5" fill="#cbd5e1"/><circle cx="56" cy="12" r="5" fill="#cbd5e1"/>
+      <circle cx="5" cy="12" r="2.5" fill="#ef4444"/>
     </g>
-    <g transform="translate(685, 305)">
-      <rect x="5" y="-30" width="42" height="60" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="2.5" transform="rotate(24, 25, 20)"/>
+    <g transform="translate(0, 34) rotate(65)">
+      <rect width="22" height="28" rx="4" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
+      <path d="M22 6 Q32 14 22 22" fill="none" stroke="#dc2626" stroke-width="3"/>
+    </g>
+    <path d="M20 56 Q45 48 68 56 Q95 50 112 63 Q95 75 68 72 Q32 75 20 56 Z" fill="url(#ofiCoffeeGrad)" opacity="0.95"/>
+    <path d="M72 42 L76 34 L82 40 L88 28 L84 44 Z" fill="#facc15" stroke="#eab308" stroke-width="1.5"/>
+  </g>
+
+  <!-- ITEM 12 (PELIGRO): Regleta eléctrica sobrecargada en suelo derecha mesa 1 -->
+  <g transform="translate(230, 480)">
+    <rect width="74" height="22" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <rect x="8" y="-12" width="14" height="14" rx="2" fill="#0f172a"/>
+    <rect x="24" y="-16" width="16" height="18" rx="2" fill="#f59e0b" stroke="#b45309"/>
+    <rect x="44" y="-12" width="14" height="14" rx="2" fill="#ef4444"/>
+    <circle cx="66" cy="11" r="4" fill="#ef4444"/>
+    <path d="M32 -18 L28 -28 L36 -24 L42 -34" fill="none" stroke="#facc15" stroke-width="2.5"/>
+  </g>
+
+  <!-- ITEM 1 (PELIGRO): Cables sueltos cruzando pasillo -->
+  <g id="danger-cables">
+    <path d="M345 485 C 405 455, 445 555, 505 480 S 585 545, 650 485" fill="none" stroke="#0f172a" stroke-width="8" stroke-linecap="round"/>
+    <path d="M345 510 C 385 535, 435 445, 495 535 S 565 465, 650 520" fill="none" stroke="#f59e0b" stroke-width="6" stroke-linecap="round"/>
+    <path d="M355 475 C 415 545, 475 465, 535 545 S 595 475, 645 535" fill="none" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="495" cy="495" rx="16" ry="22" fill="none" stroke="#0f172a" stroke-width="7" transform="rotate(-25, 495, 495)"/>
+  </g>
+
+  <!-- ITEM 10 (PELIGRO PORTÁTIL BAJO) + ITEM 6 (SILLA ROTA) -->
+  <g id="danger-ergonomia">
+    <g transform="translate(565, 310)">
+      <rect x="0" y="40" width="185" height="18" rx="4" fill="url(#ofiWoodDesk)"/>
+      <rect x="15" y="58" width="12" height="130" fill="#334155"/><rect x="158" y="58" width="12" height="130" fill="#334155"/>
+      <!-- Portátil plano muy bajo sobre mesa -->
+      <rect x="28" y="34" width="66" height="6" rx="1" fill="#475569"/>
+      <polygon points="32,34 88,34 78,2 22,2" fill="#0f172a" stroke="#64748b" stroke-width="2"/>
+      <polygon points="35,31 84,31 76,6 27,6" fill="#38bdf8"/>
+    </g>
+    <!-- Silla rota inclinada y rueda desprendida -->
+    <g transform="translate(655, 305)">
+      <rect x="5" y="-28" width="42" height="58" rx="8" fill="#1e293b" stroke="#0f172a" stroke-width="2.5" transform="rotate(24, 25, 20)"/>
       <ellipse cx="25" cy="40" rx="28" ry="12" fill="#1e293b" stroke="#0f172a" stroke-width="2.5"/>
       <rect x="22" y="52" width="6" height="35" fill="#475569"/>
-      <circle cx="5" cy="90" r="4.5" fill="#0f172a"/><circle cx="45" cy="90" r="4.5" fill="#0f172a"/><circle cx="62" cy="92" r="5" fill="#ef4444"/>
+      <circle cx="5" cy="90" r="4.5" fill="#0f172a"/><circle cx="45" cy="90" r="4.5" fill="#0f172a"/><circle cx="64" cy="92" r="5.5" fill="#ef4444"/>
     </g>
+  </g>
+
+  <!-- ITEM 4 (PELIGRO): Extintor bloqueado por cajas (derecha) -->
+  <g id="danger-extintor">
+    <g transform="translate(808, 155)">
+      <rect x="-8" y="-38" width="65" height="26" rx="3" fill="#dc2626" stroke="#ffffff" stroke-width="2"/>
+      <text x="24" y="-21" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">EXTINTOR</text>
+      <rect x="5" y="0" width="42" height="100" rx="15" fill="#dc2626" stroke="#991b1b" stroke-width="2.5"/>
+      <circle cx="26" cy="-16" r="6" fill="#e2e8f0" stroke="#0f172a" stroke-width="1.5"/>
+      <path d="M34 -6 Q48 0 46 50 L42 75" fill="none" stroke="#0f172a" stroke-width="5" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(772, 225)">
+      <rect x="10" y="0" width="95" height="52" rx="3" fill="#d97706" stroke="#b45309" stroke-width="2"/>
+      <rect x="4" y="50" width="106" height="58" rx="3" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+      <rect x="-4" y="106" width="116" height="62" rx="3" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+      <rect x="-10" y="166" width="128" height="68" rx="3" fill="#92400e" stroke="#78350f" stroke-width="2"/>
+    </g>
+  </g>
+
+  <!-- ITEM 11 (SEGURO): Planta natural decorativa (extremo derecho suelo) -->
+  <g transform="translate(918, 340)">
+    <polygon points="8,75 46,75 40,125 14,125" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+    <rect x="5" y="68" width="44" height="10" rx="2" fill="#d97706"/>
+    <path d="M27 70 Q10 35 4 20 Q20 30 27 55" fill="#16a34a" stroke="#15803d" stroke-width="1.5"/>
+    <path d="M27 70 Q44 35 52 18 Q36 28 27 55" fill="#22c55e" stroke="#15803d" stroke-width="1.5"/>
+    <path d="M27 65 Q27 25 27 2 Q34 25 27 60" fill="#15803d" stroke="#14532d" stroke-width="1.5"/>
+    <ellipse cx="14" cy="45" rx="12" ry="6" fill="#22c55e" transform="rotate(-25, 14, 45)"/>
+    <ellipse cx="40" cy="45" rx="12" ry="6" fill="#16a34a" transform="rotate(25, 40, 45)"/>
   </g>
 </svg>
 `;
@@ -327,85 +377,116 @@ const svgOficina = `
 const svgObra = `
 <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" class="w-full h-full select-none">
   <defs>
-    <linearGradient id="skyObra" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="obraSky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#0284c7"/>
       <stop offset="60%" stop-color="#bae6fd"/>
       <stop offset="100%" stop-color="#f0f9ff"/>
     </linearGradient>
-    <linearGradient id="groundObra" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="obraGround" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#78350f"/>
       <stop offset="40%" stop-color="#92400e"/>
       <stop offset="100%" stop-color="#451a03"/>
     </linearGradient>
-    <filter id="shadowObra">
-      <feDropShadow dx="3" dy="6" stdDeviation="4" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
-  <rect x="0" y="0" width="1000" height="380" fill="url(#skyObra)"/>
+  <rect x="0" y="0" width="1000" height="380" fill="url(#obraSky)"/>
+
+  <!-- ITEM 9 (SEGURO): Estructura de forjado y pilares de hormigón fraguados -->
   <g fill="#94a3b8" stroke="#475569" stroke-width="2">
     <rect x="0" y="140" width="600" height="24"/>
-    <rect x="60" y="164" width="35" height="150"/><rect x="250" y="164" width="35" height="150"/><rect x="450" y="164" width="35" height="150"/>
-    <line x1="70" y1="140" x2="70" y2="110" stroke="#b45309" stroke-width="4"/><line x1="85" y1="140" x2="85" y2="115" stroke="#b45309" stroke-width="4"/>
-    <line x1="260" y1="140" x2="260" y2="110" stroke="#b45309" stroke-width="4"/><line x1="275" y1="140" x2="275" y2="115" stroke="#b45309" stroke-width="4"/>
+    <rect x="60" y="164" width="35" height="216"/>
+    <rect x="260" y="164" width="38" height="216"/>
+    <rect x="460" y="164" width="35" height="216"/>
   </g>
 
+  <!-- ITEM 10 (SEGURO TOP-RIGHT) + ITEM 2 (PELIGRO CUBILOTE SUSPENDIDO) -->
   <g transform="translate(680, 20)">
-    <rect x="40" y="60" width="18" height="300" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    <!-- Torre grúa arriostrada -->
+    <rect x="40" y="60" width="22" height="340" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+    <line x1="40" y1="100" x2="62" y2="140" stroke="#ca8a04" stroke-width="2"/>
+    <line x1="40" y1="180" x2="62" y2="220" stroke="#ca8a04" stroke-width="2"/>
+    <line x1="-180" y1="200" x2="40" y2="200" stroke="#475569" stroke-width="6"/> <!-- Arriostramiento a edificio -->
     <rect x="-350" y="60" width="450" height="14" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
-    <rect x="-200" y="74" width="22" height="12" fill="#0f172a"/>
-    <line x1="-189" y1="86" x2="-189" y2="240" stroke="#0f172a" stroke-width="3"/>
-    <polygon points="-210,240 -168,240 -178,280 -200,280" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
+    <rect x="-200" y="74" width="24" height="14" fill="#0f172a"/>
+    <line x1="-188" y1="88" x2="-188" y2="195" stroke="#0f172a" stroke-width="3"/>
+    <polygon points="-212,195 -164,195 -174,238 -202,238" fill="#f59e0b" stroke="#b45309" stroke-width="2"/>
   </g>
 
-  <rect x="0" y="380" width="1000" height="220" fill="url(#groundObra)"/>
+  <!-- ITEM 12 (SEGURO): Señalización obligatoria de casco en poste derecha -->
+  <g transform="translate(895, 105)">
+    <rect x="28" y="65" width="8" height="180" fill="#64748b"/>
+    <rect x="0" y="0" width="64" height="68" rx="6" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+    <circle cx="32" cy="28" r="21" fill="#0284c7"/>
+    <path d="M18 32 Q32 14 46 32 Z" fill="#ffffff"/>
+    <rect x="16" y="31" width="32" height="4" rx="2" fill="#ffffff"/>
+    <text x="32" y="60" font-size="7" font-weight="bold" fill="#0f172a" text-anchor="middle">USO CASCO</text>
+  </g>
 
-  <!-- PELIGRO 1: PEÓN SIN CASCO BAJO LA CARGA -->
-  <g id="danger-sin-casco" transform="translate(460, 290)" class="cursor-pointer">
+  <rect x="0" y="380" width="1000" height="220" fill="url(#obraGround)"/>
+
+  <!-- ITEM 3 (PELIGRO): Andamio a 4m sin barandillas -->
+  <g id="danger-andamio" transform="translate(55, 130)">
+    <line x1="20" y1="0" x2="20" y2="250" stroke="#facc15" stroke-width="8"/><line x1="200" y1="0" x2="200" y2="250" stroke="#facc15" stroke-width="8"/>
+    <rect x="10" y="80" width="200" height="16" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+    <line x1="20" y1="80" x2="200" y2="250" stroke="#ca8a04" stroke-width="4"/><line x1="200" y1="80" x2="20" y2="250" stroke="#ca8a04" stroke-width="4"/>
+    <g transform="translate(120, 12)">
+      <circle cx="15" cy="15" r="12" fill="#fed7aa"/><rect x="5" y="27" width="20" height="40" fill="#f97316"/>
+    </g>
+  </g>
+
+  <!-- ITEM 11 (PELIGRO): Redondos de acero corrugado salientes sin setas en zapata -->
+  <g transform="translate(45, 420)">
+    <rect x="0" y="55" width="120" height="35" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+    <line x1="18" y1="55" x2="18" y2="-10" stroke="#78350f" stroke-width="5"/>
+    <line x1="42" y1="55" x2="42" y2="-16" stroke="#92400e" stroke-width="5"/>
+    <line x1="68" y1="55" x2="68" y2="-8" stroke="#78350f" stroke-width="5"/>
+    <line x1="95" y1="55" x2="95" y2="-14" stroke="#92400e" stroke-width="5"/>
+    <circle cx="18" cy="-10" r="3" fill="#ef4444"/><circle cx="42" cy="-16" r="3" fill="#ef4444"/>
+  </g>
+
+  <!-- ITEM 6 (PELIGRO): Escalera apoyada sobre bidones inestables -->
+  <g id="danger-escalera" transform="translate(310, 220)">
+    <rect x="10" y="105" width="65" height="75" rx="5" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+    <ellipse cx="42.5" cy="105" rx="32.5" ry="8" fill="#38bdf8"/>
+    <g transform="rotate(18, 42, 105)">
+      <line x1="20" y1="-65" x2="20" y2="120" stroke="#e2e8f0" stroke-width="5"/><line x1="50" y1="-65" x2="50" y2="120" stroke="#e2e8f0" stroke-width="5"/>
+      <line x1="20" y1="-45" x2="50" y2="-45" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="-10" x2="50" y2="-10" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="25" x2="50" y2="25" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="60" x2="50" y2="60" stroke="#94a3b8" stroke-width="4"/>
+    </g>
+  </g>
+
+  <!-- ITEM 1 (PEÓN SIN CASCO) + ITEM 7 (CHALECO REFLECTANTE) + ITEM 8 (BOTAS S3) -->
+  <g id="danger-sin-casco" transform="translate(460, 290)">
     <rect x="18" y="110" width="14" height="95" fill="#1e3a8a"/><rect x="36" y="110" width="14" height="95" fill="#1e40af"/>
-    <rect x="14" y="195" width="20" height="12" rx="3" fill="#78350f"/><rect x="34" y="195" width="20" height="12" rx="3" fill="#78350f"/>
+    <!-- Botas seguridad S3 (ITEM 8) -->
+    <rect x="12" y="195" width="22" height="14" rx="4" fill="#451a03" stroke="#0f172a" stroke-width="1.5"/>
+    <rect x="12" y="198" width="8" height="10" rx="2" fill="#94a3b8"/> <!-- Puntera acero -->
+    <rect x="34" y="195" width="22" height="14" rx="4" fill="#451a03" stroke="#0f172a" stroke-width="1.5"/>
+    <rect x="48" y="198" width="8" height="10" rx="2" fill="#94a3b8"/>
+    <!-- Chaleco reflectante (ITEM 7) -->
     <rect x="12" y="45" width="44" height="68" rx="6" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
-    <rect x="12" y="65" width="44" height="10" fill="#e2e8f0"/>
+    <rect x="12" y="65" width="44" height="10" fill="#ffffff" opacity="0.9"/>
+    <rect x="12" y="84" width="44" height="8" fill="#ffffff" opacity="0.9"/>
+    <!-- Teléfono distraído, SIN casco -->
     <path d="M12 55 L-4 35 L4 28" fill="none" stroke="#facc15" stroke-width="10" stroke-linecap="round"/>
     <rect x="-6" y="24" width="8" height="15" rx="2" fill="#0f172a"/>
     <circle cx="34" cy="22" r="16" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5"/>
     <path d="M20 18 Q34 6 48 18" fill="#451a03"/>
   </g>
 
-  <!-- PELIGRO 2: ANDAMIO SIN BARANDILLAS -->
-  <g id="danger-andamio" transform="translate(80, 130)" class="cursor-pointer">
-    <line x1="20" y1="0" x2="20" y2="250" stroke="#facc15" stroke-width="8"/><line x1="220" y1="0" x2="220" y2="250" stroke="#facc15" stroke-width="8"/>
-    <rect x="10" y="80" width="220" height="16" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-    <line x1="20" y1="80" x2="220" y2="250" stroke="#ca8a04" stroke-width="4"/><line x1="220" y1="80" x2="20" y2="250" stroke="#ca8a04" stroke-width="4"/>
-    <g transform="translate(140, 10)">
-      <circle cx="15" cy="15" r="12" fill="#fed7aa"/><rect x="5" y="27" width="20" height="42" fill="#f97316"/>
-    </g>
+  <!-- ITEM 5 (PELIGRO): Cuadro eléctrico en charco de lluvia -->
+  <g id="danger-cuadro" transform="translate(775, 200)">
+    <rect width="88" height="108" rx="4" fill="#ea580c" stroke="#9a3412" stroke-width="3"/>
+    <rect x="8" y="10" width="72" height="88" fill="#0f172a"/><rect x="18" y="24" width="52" height="20" fill="#ffffff"/>
+    <path d="M44 50 L37 66 L47 66 L39 83" stroke="#facc15" stroke-width="3" fill="none"/>
+    <path d="M35 108 Q20 148 40 176" fill="none" stroke="#ef4444" stroke-width="4"/><path d="M55 108 Q70 138 50 176" fill="none" stroke="#3b82f6" stroke-width="4"/>
+    <ellipse cx="48" cy="176" rx="44" ry="15" fill="#38bdf8" opacity="0.7"/>
   </g>
 
-  <!-- PELIGRO 3: ZANJA SIN ENTIBAR -->
-  <g id="danger-zanja" transform="translate(680, 360)" class="cursor-pointer">
-    <polygon points="0,20 300,20 280,220 30,220" fill="#291307" stroke="#0f172a" stroke-width="3"/>
-    <path d="M-10 18 Q40 25 80 18 Q140 28 200 18" fill="none" stroke="#ef4444" stroke-width="3"/>
-    <circle cx="90" cy="80" r="12" fill="#451a03"/><circle cx="140" cy="120" r="18" fill="#451a03"/>
-  </g>
-
-  <!-- PELIGRO 4: CUADRO ELÉCTRICO EN CHARCO -->
-  <g id="danger-cuadro" transform="translate(780, 200)" class="cursor-pointer">
-    <rect width="90" height="110" rx="4" fill="#ea580c" stroke="#9a3412" stroke-width="3"/>
-    <rect x="8" y="10" width="74" height="90" fill="#0f172a"/><rect x="18" y="25" width="54" height="20" fill="#ffffff"/>
-    <path d="M45 52 L38 68 L48 68 L40 85" stroke="#facc15" stroke-width="3" fill="none"/>
-    <path d="M35 110 Q20 150 40 180" fill="none" stroke="#ef4444" stroke-width="4"/><path d="M55 110 Q70 140 50 180" fill="none" stroke="#3b82f6" stroke-width="4"/>
-    <ellipse cx="50" cy="180" rx="45" ry="16" fill="#38bdf8" opacity="0.6"/>
-  </g>
-
-  <!-- PELIGRO 5: ESCALERA SOBRE BIDONES -->
-  <g id="danger-escalera" transform="translate(320, 220)" class="cursor-pointer">
-    <rect x="10" y="110" width="65" height="75" rx="5" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
-    <ellipse cx="42.5" cy="110" rx="32.5" ry="8" fill="#38bdf8"/>
-    <g transform="rotate(18, 42, 110)">
-      <line x1="20" y1="-80" x2="20" y2="120" stroke="#e2e8f0" stroke-width="5"/><line x1="50" y1="-80" x2="50" y2="120" stroke="#e2e8f0" stroke-width="5"/>
-      <line x1="20" y1="-60" x2="50" y2="-60" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="-20" x2="50" y2="-20" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="20" x2="50" y2="20" stroke="#94a3b8" stroke-width="4"/><line x1="20" y1="60" x2="50" y2="60" stroke="#94a3b8" stroke-width="4"/>
-    </g>
+  <!-- ITEM 4 (PELIGRO): Zanja de excavación sin entibar -->
+  <g id="danger-zanja" transform="translate(680, 395)">
+    <polygon points="0,15 300,15 280,190 30,190" fill="#291307" stroke="#0f172a" stroke-width="3"/>
+    <path d="M-10 13 Q40 20 80 13 Q140 23 200 13" fill="none" stroke="#ef4444" stroke-width="3"/>
+    <circle cx="90" cy="75" r="12" fill="#451a03"/><circle cx="150" cy="115" r="18" fill="#451a03"/>
   </g>
 </svg>
 `;
@@ -420,108 +501,103 @@ const svgAlmacen = `
     <linearGradient id="almFloor" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#334155"/><stop offset="35%" stop-color="#475569"/><stop offset="100%" stop-color="#1e293b"/>
     </linearGradient>
-    <linearGradient id="forkliftYellow" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="almForkliftYellow" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#facc15"/><stop offset="50%" stop-color="#eab308"/><stop offset="100%" stop-color="#ca8a04"/>
     </linearGradient>
-    <linearGradient id="oilSpill" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="almOilSpill" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#09090b"/><stop offset="45%" stop-color="#18181b"/><stop offset="70%" stop-color="#27272a"/><stop offset="100%" stop-color="#09090b"/>
     </linearGradient>
-    <filter id="almShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="4" dy="6" stdDeviation="5" flood-color="#020617" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
-  <!-- Pared industrial con cerchas metálicas -->
   <rect x="0" y="0" width="1000" height="340" fill="url(#almWall)"/>
   <g stroke="#334155" stroke-width="2" opacity="0.4">
     <line x1="0" y1="60" x2="1000" y2="60"/><line x1="0" y1="120" x2="1000" y2="120"/>
     <line x1="200" y1="0" x2="200" y2="340"/><line x1="500" y1="0" x2="500" y2="340"/><line x1="800" y1="0" x2="800" y2="340"/>
   </g>
 
-  <!-- Suelo de hormigón pulido con señalización vial -->
+  <!-- ITEM 10 (SEGURO): Campanas LED de alumbrado industrial suspendidas en techo -->
+  <g transform="translate(500, 0)">
+    <line x1="30" y1="0" x2="30" y2="40" stroke="#94a3b8" stroke-width="3"/>
+    <polygon points="8,62 52,62 42,40 18,40" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+    <ellipse cx="30" cy="64" rx="18" ry="4" fill="#fef08a"/>
+    <polygon points="8,66 52,66 110,220 -50,220" fill="#fef08a" opacity="0.06"/>
+  </g>
+
+  <!-- Suelo hormigón y ITEM 6 (Línea amarilla pasillo peatonal) -->
   <rect x="0" y="340" width="1000" height="260" fill="url(#almFloor)"/>
   <rect x="0" y="336" width="1000" height="8" fill="#0f172a"/>
-  <!-- Líneas de pasillo peatonal de seguridad amarillas -->
-  <line x1="0" y1="520" x2="1000" y2="520" stroke="#eab308" stroke-width="8" stroke-dasharray="25,15"/>
+  <line x1="0" y1="535" x2="1000" y2="535" stroke="#eab308" stroke-width="9" stroke-dasharray="28,14"/>
 
-  <!-- Estanterías industriales tipo Mecalux (Azul y Naranja) -->
-  <g stroke="#0284c7" stroke-width="8" opacity="0.95">
-    <line x1="180" y1="60" x2="180" y2="380"/><line x1="380" y1="60" x2="380" y2="380"/>
+  <!-- ITEM 7 (SEGURO): Bastidores Mecalux azules con placas de anclaje al suelo -->
+  <g stroke="#0284c7" stroke-width="9">
+    <line x1="185" y1="65" x2="185" y2="380"/><line x1="385" y1="65" x2="385" y2="380"/>
   </g>
-  <rect x="175" y="110" width="210" height="12" fill="#ea580c"/>
-  <rect x="175" y="210" width="210" height="12" fill="#ea580c"/>
-  <rect x="175" y="310" width="210" height="12" fill="#ea580c"/>
+  <rect x="172" y="376" width="26" height="8" fill="#94a3b8"/><rect x="372" y="376" width="26" height="8" fill="#94a3b8"/>
+  <rect x="180" y="110" width="210" height="12" fill="#ea580c"/>
+  <rect x="180" y="210" width="210" height="12" fill="#ea580c"/>
+  <rect x="180" y="310" width="210" height="12" fill="#ea580c"/>
 
-  <!-- PELIGRO 1: PALET DEFORMADO E INESTABLE EN ALTURA -->
-  <g id="danger-palet" transform="translate(180, 60)" class="cursor-pointer">
-    <g transform="rotate(14, 100, 50)">
+  <!-- ITEM 1 (PELIGRO): Palet deformado y ladeado en altura -->
+  <g id="danger-palet" transform="translate(185, 60)">
+    <g transform="rotate(13, 100, 50)">
       <rect x="10" y="38" width="170" height="14" fill="#b45309" stroke="#78350f" stroke-width="2"/>
       <rect x="20" y="-10" width="70" height="50" rx="3" fill="#d97706" stroke="#92400e" stroke-width="2"/>
       <rect x="95" y="-15" width="75" height="55" rx="3" fill="#b45309" stroke="#78350f" stroke-width="2"/>
-      <path d="M15 -5 Q50 -25 165 -10" fill="none" stroke="#e0f2fe" stroke-width="4" opacity="0.7"/> <!-- Plástico roto -->
+      <path d="M15 -5 Q50 -25 165 -10" fill="none" stroke="#e0f2fe" stroke-width="4" opacity="0.75"/>
     </g>
   </g>
 
-  <!-- PELIGRO 2: GRAN DERRAME DE ACEITE LUBRICANTE EN PASILLO -->
-  <g id="danger-aceite" transform="translate(390, 420)" class="cursor-pointer">
-    <path d="M10 50 C40 20, 140 15, 210 40 C280 65, 260 110, 190 120 C110 130, 30 110, 5 80 Z" fill="url(#oilSpill)" stroke="#09090b" stroke-width="2"/>
-    <path d="M40 55 C70 35, 150 32, 190 52 C230 70, 215 100, 165 106 C105 112, 55 98, 35 78 Z" fill="#18181b" opacity="0.9"/>
-    <!-- Brillos irisados en el aceite -->
-    <path d="M70 48 Q110 40 140 55" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
-    <path d="M90 70 Q130 65 160 80" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.5"/>
-    <!-- Rodadas de carretilla pasando por encima -->
-    <line x1="30" y1="20" x2="220" y2="130" stroke="#000000" stroke-width="6" stroke-dasharray="10,5" opacity="0.6"/>
+  <!-- ITEM 2 (PELIGRO): Charco de aceite en pasillo de paso -->
+  <g id="danger-aceite" transform="translate(385, 420)">
+    <path d="M10 48 C40 18, 140 15, 205 38 C265 62, 245 102, 180 112 C100 122, 25 102, 5 74 Z" fill="url(#almOilSpill)" stroke="#09090b" stroke-width="2"/>
+    <path d="M70 46 Q110 38 140 53" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.65"/>
+    <path d="M90 68 Q130 63 160 78" fill="none" stroke="#a855f7" stroke-width="2" opacity="0.55"/>
   </g>
 
-  <!-- PELIGRO 3: CARRETILLA CON HORQUILLAS ELEVADAS Y LLAVE PUESTA -->
-  <g id="danger-carretilla" transform="translate(640, 240)" class="cursor-pointer">
-    <!-- Cuerpo de carretilla amarilla -->
-    <rect x="50" y="110" width="160" height="90" rx="15" fill="url(#forkliftYellow)" stroke="#ca8a04" stroke-width="3"/>
-    <rect x="180" y="80" width="45" height="120" rx="6" fill="#0f172a"/>
-    <!-- Cabina y jaula antivuelco ROPS/FOPS -->
-    <rect x="90" y="30" width="80" height="90" rx="4" fill="none" stroke="#0f172a" stroke-width="6"/>
-    <circle cx="120" cy="70" r="14" fill="none" stroke="#0f172a" stroke-width="4"/> <!-- Volante -->
-    <!-- LLAVE ROJA PUESTA EN EL CONTACTO SIN CONDUCTOR -->
-    <circle cx="140" cy="85" r="4" fill="#ef4444"/><rect x="140" y="85" width="8" height="3" fill="#ef4444"/>
-    <!-- Mástil vertical y HORQUILLAS ELEVADAS EN VACÍO A 1.6M (PELIGRO DE EMPALAMIENTO) -->
-    <rect x="220" y="-30" width="14" height="230" fill="#334155"/>
-    <rect x="230" y="40" width="100" height="12" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/> <!-- Horquilla alta -->
-    <rect x="230" y="52" width="100" height="12" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/>
-    <!-- Ruedas negras macizas -->
-    <circle cx="85" cy="200" r="26" fill="#0f172a" stroke="#334155" stroke-width="4"/>
-    <circle cx="190" cy="200" r="24" fill="#0f172a" stroke="#334155" stroke-width="4"/>
+  <!-- ITEM 3 (CARRETILLA HORQUILLAS ALTAS + LLAVE) & ITEM 8 (JAULA ROPS/FOPS) -->
+  <g id="danger-carretilla" transform="translate(645, 240)">
+    <rect x="45" y="110" width="155" height="88" rx="15" fill="url(#almForkliftYellow)" stroke="#ca8a04" stroke-width="3"/>
+    <rect x="175" y="80" width="44" height="118" rx="6" fill="#0f172a"/>
+    <rect x="85" y="25" width="84" height="90" rx="4" fill="none" stroke="#0f172a" stroke-width="7"/> <!-- Jaula ROPS/FOPS -->
+    <circle cx="115" cy="70" r="14" fill="none" stroke="#0f172a" stroke-width="4"/>
+    <circle cx="136" cy="85" r="4.5" fill="#ef4444"/><rect x="136" y="85" width="9" height="3.5" fill="#ef4444"/> <!-- Llave puesta -->
+    <rect x="215" y="-30" width="14" height="225" fill="#334155"/>
+    <rect x="225" y="38" width="98" height="12" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/>
+    <rect x="225" y="50" width="98" height="12" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/>
+    <circle cx="80" cy="198" r="25" fill="#0f172a" stroke="#334155" stroke-width="4"/>
+    <circle cx="185" cy="198" r="23" fill="#0f172a" stroke="#334155" stroke-width="4"/>
   </g>
 
-  <!-- PELIGRO 4: SALIDA DE EMERGENCIA BLOQUEADA POR PALETS -->
-  <g id="danger-salida" transform="translate(20, 200)" class="cursor-pointer">
-    <!-- Puerta de emergencia verde con barra antipánico -->
-    <rect width="110" height="180" rx="4" fill="#15803d" stroke="#166534" stroke-width="3"/>
-    <rect x="15" y="90" width="80" height="10" rx="3" fill="#e2e8f0"/>
-    <rect x="30" y="-35" width="60" height="24" rx="3" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
-    <text x="60" y="-18" font-size="10" font-weight="black" fill="#ffffff" text-anchor="middle">SALIDA</text>
-    <!-- Palets de madera apilados bloqueando físicamente la apertura -->
-    <g transform="translate(10, 70)">
-      <rect x="0" y="0" width="95" height="24" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-      <rect x="0" y="26" width="95" height="24" rx="2" fill="#b45309" stroke="#78350f" stroke-width="2"/>
-      <rect x="0" y="52" width="95" height="24" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
-      <rect x="0" y="78" width="95" height="24" rx="2" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+  <!-- ITEM 4 (PUERTA EMERGENCIA BLOQUEADA) + ITEM 9 (SEÑAL LUMINISCENTE VERDE SALIDA) -->
+  <g id="danger-salida" transform="translate(22, 195)">
+    <rect width="108" height="185" rx="4" fill="#15803d" stroke="#166534" stroke-width="3"/>
+    <rect x="15" y="90" width="78" height="10" rx="3" fill="#e2e8f0"/>
+    <!-- Señal luminiscente arriba -->
+    <rect x="18" y="-42" width="72" height="26" rx="3" fill="#22c55e" stroke="#ffffff" stroke-width="2"/>
+    <text x="54" y="-25" font-size="11" font-weight="bold" fill="#ffffff" text-anchor="middle">SALIDA ➔</text>
+    <g transform="translate(8, 72)">
+      <rect x="0" y="0" width="92" height="24" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+      <rect x="0" y="26" width="92" height="24" rx="2" fill="#b45309" stroke="#78350f" stroke-width="2"/>
+      <rect x="0" y="52" width="92" height="24" rx="2" fill="#d97706" stroke="#92400e" stroke-width="2"/>
+      <rect x="0" y="78" width="92" height="24" rx="2" fill="#b45309" stroke="#78350f" stroke-width="2"/>
     </g>
   </g>
 
-  <!-- PELIGRO 5: OPERARIO CARGANDO 40KG CON ESPALDA DOBLADA -->
-  <g id="danger-espalda" transform="translate(480, 270)" class="cursor-pointer">
-    <rect x="30" y="110" width="14" height="85" fill="#1e3a8a"/>
-    <rect x="48" y="110" width="14" height="85" fill="#1e3a8a"/>
-    <g transform="translate(10, 60) rotate(-40)">
+  <!-- ITEM 5 (OPERARIO ESPALDA) + ITEM 12 (CAJA 40 KG) + ITEM 11 (CALZADO SEGURIDAD) -->
+  <g id="danger-espalda" transform="translate(495, 255)">
+    <rect x="30" y="108" width="14" height="82" fill="#1e3a8a"/>
+    <rect x="48" y="108" width="14" height="82" fill="#1e3a8a"/>
+    <!-- Calzado seguridad S3 (ITEM 11) -->
+    <rect x="24" y="186" width="22" height="12" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <rect x="46" y="186" width="22" height="12" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+    <g transform="translate(10, 58) rotate(-40)">
       <rect width="60" height="34" rx="6" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
       <path d="M10 20 L-10 60 L10 60" fill="none" stroke="#facc15" stroke-width="10"/>
-      <!-- Caja pesada de 40 kg sin medios mecánicos -->
       <rect x="-35" y="45" width="65" height="50" rx="3" fill="#78350f" stroke="#451a03" stroke-width="2"/>
-      <text x="-2" y="75" font-size="12" font-weight="black" fill="#fde047" text-anchor="middle">40 kg</text>
-      <!-- Rayos rojos de lesión lumbar -->
+      <text x="-2" y="75" font-size="12" font-weight="bold" fill="#fde047" text-anchor="middle">40 kg</text>
       <path d="M-8 -6 L-16 -16 M-2 -8 L-5 -20" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
     </g>
-    <circle cx="2" cy="70" r="14" fill="#fed7aa"/>
+    <circle cx="2" cy="68" r="14" fill="#fed7aa"/>
   </g>
 </svg>
 `;
@@ -536,77 +612,92 @@ const svgLaboratorio = `
     <linearGradient id="labFloor" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#334155"/><stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
-    <filter id="labShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
-  <!-- Pared alicatada de laboratorio -->
   <rect x="0" y="0" width="1000" height="340" fill="url(#labWall)"/>
   <g stroke="#334155" stroke-width="1" opacity="0.35">
     <line x1="0" y1="60" x2="1000" y2="60"/><line x1="0" y1="120" x2="1000" y2="120"/><line x1="0" y1="180" x2="1000" y2="180"/><line x1="0" y1="240" x2="1000" y2="240"/>
   </g>
+
+  <!-- Suelo epoxi continuo sin juntas (ITEM 10) -->
   <rect x="0" y="340" width="1000" height="260" fill="url(#labFloor)"/>
+  <rect x="0" y="335" width="1000" height="10" fill="#1e293b"/> <!-- Zócalo media caña sanitaria -->
 
-  <!-- Encimera fenólica de laboratorio con fregadero -->
-  <g transform="translate(180, 310)">
-    <rect x="0" y="40" width="600" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
-    <rect x="15" y="60" width="570" height="130" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
-  </g>
-
-  <!-- PELIGRO 1: CAMPANA EXTRACTORA CON GUILLOTINA 100% ABIERTA Y VAPORES TÓXICOS -->
-  <g id="danger-campana" transform="translate(220, 100)" class="cursor-pointer">
-    <rect width="180" height="230" rx="4" fill="#475569" stroke="#1e293b" stroke-width="3"/>
-    <rect x="15" y="15" width="150" height="170" fill="#0f172a"/>
-    <!-- Guillotina de cristal subida al máximo en vez del límite de 30 cm -->
-    <rect x="15" y="15" width="150" height="35" fill="#38bdf8" opacity="0.35" stroke="#94a3b8" stroke-width="2"/>
-    <!-- Vaso de precipitados con vapor púrpura tóxico saliendo hacia el aula -->
-    <rect x="75" y="130" width="30" height="42" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
-    <ellipse cx="90" cy="130" rx="15" ry="4" fill="#a855f7" opacity="0.8"/>
-    <!-- Nube de vapores escapando fuera de la campana -->
-    <path d="M90 125 Q70 90 85 60 Q100 20 135 15 Q175 10 205 45" fill="none" stroke="#a855f7" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-    <!-- Piloto rojo de alarma de caudal de aire en fallo -->
-    <circle cx="150" cy="30" r="4" fill="#ef4444"/>
-  </g>
-
-  <!-- PELIGRO 2: ARMARIO DE SEGURIDAD CON PRODUCTOS QUÍMICOS INCOMPATIBLES JUNTOS -->
-  <g id="danger-incompatibles" transform="translate(760, 110)" class="cursor-pointer">
-    <rect width="160" height="240" rx="4" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
-    <line x1="80" y1="0" x2="80" y2="240" stroke="#ca8a04" stroke-width="2"/>
-    <!-- Estantes con botellas de Ácido Nítrico y Disolventes orgánicos juntos -->
-    <rect x="15" y="40" width="130" height="6" fill="#ca8a04"/>
-    <rect x="15" y="120" width="130" height="6" fill="#ca8a04"/>
-    <!-- Botellas de ácido (corrosivo) e inflamable sin cubeto de retención -->
-    <rect x="25" y="12" width="22" height="28" rx="2" fill="#ef4444"/>
-    <rect x="55" y="12" width="22" height="28" rx="2" fill="#eab308"/>
-    <rect x="90" y="12" width="22" height="28" rx="2" fill="#ef4444"/>
-  </g>
-
-  <!-- PELIGRO 3: DUCHA Y LAVAOJOS BLOQUEADOS POR CARRO DE MATERIAL -->
-  <g id="danger-ducha" transform="translate(20, 120)" class="cursor-pointer">
-    <rect x="30" y="0" width="10" height="150" fill="#22c55e"/>
-    <ellipse cx="35" cy="15" rx="25" ry="10" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
-    <circle cx="35" cy="50" r="14" fill="#22c55e"/> <!-- Tirador triangular de emergencia -->
-    <!-- Carro metálico con cajas bloqueando el paso a la ducha -->
-    <g transform="translate(0, 120)">
-      <rect width="80" height="85" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
-      <circle cx="15" cy="90" r="8" fill="#0f172a"/><circle cx="65" cy="90" r="8" fill="#0f172a"/>
+  <!-- Encimera fenólica (ITEM 7) + Fregadero con grifo cisne (ITEM 8) -->
+  <g transform="translate(175, 315)">
+    <rect x="0" y="40" width="560" height="20" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="15" y="60" width="530" height="130" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+    <!-- Fregadero con grifo de cuello de cisne (ITEM 8) a la derecha de la encimera -->
+    <g transform="translate(470, 5)">
+      <path d="M22 35 L22 10 Q22 -8 40 -8 Q52 -8 52 8" fill="none" stroke="#cbd5e1" stroke-width="5" stroke-linecap="round"/>
+      <rect x="0" y="35" width="66" height="8" rx="2" fill="#64748b"/>
+      <rect x="6" y="43" width="54" height="28" rx="3" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
     </g>
   </g>
 
-  <!-- PELIGRO 4: MATRAZ ROTO CON DERRAME QUÍMICO EN ENCIMERA -->
-  <g id="danger-derrame" transform="translate(460, 310)" class="cursor-pointer">
-    <path d="M10 38 Q40 25 80 35 Q130 30 150 45 Q120 58 70 55 Q20 58 10 38 Z" fill="#22c55e" opacity="0.85"/>
-    <path d="M50 30 L65 10 L75 10 L90 30 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" transform="rotate(45, 70, 25)"/>
-    <circle cx="45" cy="38" r="3" fill="#ffffff" opacity="0.9"/>
+  <!-- ITEM 1 (GUILLOTINA ABIERTA) + ITEM 11 (VAPORES TÓXICOS ESCAPANDO) -->
+  <g id="danger-campana" transform="translate(215, 105)">
+    <rect width="180" height="230" rx="4" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+    <rect x="15" y="15" width="150" height="170" fill="#0f172a"/>
+    <rect x="15" y="15" width="150" height="32" fill="#38bdf8" opacity="0.35" stroke="#94a3b8" stroke-width="2"/>
+    <rect x="75" y="130" width="30" height="42" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.5"/>
+    <ellipse cx="90" cy="130" rx="15" ry="4" fill="#a855f7" opacity="0.8"/>
+    <path d="M90 125 Q70 90 85 55 Q100 10 135 -10 Q175 -15 205 20" fill="none" stroke="#c084fc" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+    <circle cx="150" cy="30" r="5" fill="#ef4444"/>
   </g>
 
-  <!-- PELIGRO 5: PIPETEO BUCAL SIN EPI -->
-  <g id="danger-pipeteo" transform="translate(580, 210)" class="cursor-pointer">
+  <!-- ITEM 2 (ARMARIO INCOMPATIBLES) + ITEM 9 (ETIQUETAS CLP EN FRASCOS) -->
+  <g id="danger-incompatibles" transform="translate(765, 110)">
+    <rect width="160" height="240" rx="4" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
+    <line x1="80" y1="0" x2="80" y2="240" stroke="#ca8a04" stroke-width="2"/>
+    <rect x="15" y="52" width="130" height="6" fill="#ca8a04"/>
+    <rect x="15" y="138" width="130" height="6" fill="#ca8a04"/>
+    <!-- Frascos con etiquetas CLP rombo rojo visibles -->
+    <g transform="translate(22, 16)">
+      <rect width="26" height="36" rx="3" fill="#dc2626"/>
+      <rect x="4" y="10" width="18" height="16" fill="#ffffff"/>
+      <polygon points="13,12 18,18 13,24 8,18" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+    </g>
+    <g transform="translate(58, 16)">
+      <rect width="26" height="36" rx="3" fill="#eab308" stroke="#854d0e"/>
+      <rect x="4" y="10" width="18" height="16" fill="#ffffff"/>
+      <polygon points="13,12 18,18 13,24 8,18" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+    </g>
+    <g transform="translate(96, 16)">
+      <rect width="26" height="36" rx="3" fill="#dc2626"/>
+      <rect x="4" y="10" width="18" height="16" fill="#ffffff"/>
+      <polygon points="13,12 18,18 13,24 8,18" fill="none" stroke="#ef4444" stroke-width="1.8"/>
+    </g>
+  </g>
+
+  <!-- ITEM 3 (DUCHA BLOQUEADA POR CARRO) + ITEM 12 (TIRADOR TRIANGULAR DE EMERGENCIA) -->
+  <g id="danger-ducha" transform="translate(28, 110)">
+    <rect x="30" y="0" width="10" height="150" fill="#22c55e"/>
+    <ellipse cx="35" cy="15" rx="25" ry="10" fill="#22c55e" stroke="#15803d" stroke-width="2"/>
+    <!-- Tirador triangular rígido visible -->
+    <line x1="65" y1="25" x2="65" y2="85" stroke="#cbd5e1" stroke-width="3"/>
+    <polygon points="65,85 52,110 78,110" fill="none" stroke="#facc15" stroke-width="4" stroke-linejoin="round"/>
+    <!-- Carro metálico bloqueando debajo -->
+    <g transform="translate(0, 128)">
+      <rect width="84" height="86" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+      <circle cx="15" cy="92" r="8" fill="#0f172a"/><circle cx="68" cy="92" r="8" fill="#0f172a"/>
+    </g>
+  </g>
+
+  <!-- ITEM 4 (MATRAZ ROTO CON ÁCIDO EN ENCIMERA) -->
+  <g id="danger-derrame" transform="translate(430, 315)">
+    <path d="M10 38 Q40 25 80 35 Q130 30 150 45 Q120 58 70 55 Q20 58 10 38 Z" fill="#22c55e" opacity="0.88"/>
+    <path d="M50 30 L65 10 L75 10 L90 30 Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.5" transform="rotate(45, 70, 25)"/>
+    <circle cx="45" cy="38" r="3" fill="#ffffff"/>
+  </g>
+
+  <!-- ITEM 5 (PIPETEO BUCAL) + ITEM 6 (BATA BLANCA ALGODÓN) -->
+  <g id="danger-pipeteo" transform="translate(555, 215)">
     <circle cx="35" cy="25" r="16" fill="#fed7aa"/>
-    <rect x="20" y="45" width="40" height="80" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
-    <!-- Pipeta de cristal en la boca -->
-    <line x1="30" y1="28" x2="0" y2="70" stroke="#38bdf8" stroke-width="3"/>
+    <rect x="16" y="45" width="42" height="88" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <line x1="37" y1="45" x2="37" y2="133" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="42" cy="65" r="2" fill="#475569"/><circle cx="42" cy="85" r="2" fill="#475569"/>
+    <line x1="28" y1="28" x2="-4" y2="75" stroke="#38bdf8" stroke-width="3.5"/>
   </g>
 </svg>
 `;
@@ -621,12 +712,9 @@ const svgCocina = `
     <linearGradient id="cocFloor" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#991b1b"/><stop offset="50%" stop-color="#b91c1c"/><stop offset="100%" stop-color="#7f1d1d"/>
     </linearGradient>
-    <linearGradient id="inox" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="cocInox" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#94a3b8"/><stop offset="30%" stop-color="#f8fafc"/><stop offset="70%" stop-color="#cbd5e1"/><stop offset="100%" stop-color="#64748b"/>
     </linearGradient>
-    <filter id="cocShadow">
-      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-opacity="0.35"/>
-    </filter>
   </defs>
 
   <rect x="0" y="0" width="1000" height="320" fill="url(#cocWall)"/>
@@ -636,55 +724,83 @@ const svgCocina = `
     <line x1="200" y1="320" x2="80" y2="600"/><line x1="500" y1="320" x2="450" y2="600"/><line x1="800" y1="320" x2="820" y2="600"/>
   </g>
 
-  <!-- Campana extractora industrial -->
-  <g transform="translate(380, 40)">
-    <polygon points="0,90 320,90 280,0 40,0" fill="url(#inox)" stroke="#475569" stroke-width="2"/>
-    <!-- PELIGRO 3: GRASA CHORREANDO DE LOS FILTROS HACIA LOS FOGONES -->
+  <!-- ITEM 3 (PELIGRO): Campana extractora industrial con filtros goteando grasa -->
+  <g transform="translate(360, 35)">
+    <polygon points="0,90 320,90 280,0 40,0" fill="url(#cocInox)" stroke="#475569" stroke-width="2"/>
     <path d="M60 90 Q65 125 60 145" stroke="#ca8a04" stroke-width="4" stroke-linecap="round" fill="none"/>
     <path d="M160 90 Q165 130 160 155" stroke="#ca8a04" stroke-width="4" stroke-linecap="round" fill="none"/>
     <path d="M260 90 Q265 120 260 140" stroke="#ca8a04" stroke-width="4" stroke-linecap="round" fill="none"/>
   </g>
 
-  <!-- Fogones y freidora industrial -->
-  <g transform="translate(380, 230)">
-    <rect width="320" height="120" rx="4" fill="url(#inox)" stroke="#475569" stroke-width="2"/>
-    <circle cx="70" cy="20" r="28" fill="#1e293b"/>
-    <circle cx="70" cy="20" r="14" fill="#0284c7" opacity="0.8"/> <!-- Llama de gas -->
-    <circle cx="160" cy="20" r="28" fill="#1e293b"/>
-    <rect x="230" y="8" width="70" height="45" rx="3" fill="#eab308" opacity="0.85"/> <!-- Freidora burbujeando -->
+  <!-- ITEM 10 (SEGURO): Cocinero con uniforme de algodón ignífugo -->
+  <g transform="translate(555, 130)">
+    <rect x="16" y="42" width="44" height="65" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <circle cx="32" cy="58" r="2" fill="#0f172a"/><circle cx="32" cy="72" r="2" fill="#0f172a"/>
+    <circle cx="44" cy="58" r="2" fill="#0f172a"/><circle cx="44" cy="72" r="2" fill="#0f172a"/>
+    <circle cx="38" cy="24" r="14" fill="#fed7aa"/>
+    <rect x="24" y="-8" width="28" height="22" rx="4" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
   </g>
 
-  <!-- PELIGRO 1: CORTAFIAMBRES CON DISCO EXPUESTO EN MARCHA -->
-  <g id="danger-cortafiambres" transform="translate(160, 270)" class="cursor-pointer">
-    <rect x="0" y="40" width="160" height="15" fill="url(#inox)"/>
-    <rect x="30" y="0" width="85" height="42" rx="4" fill="url(#inox)" stroke="#475569" stroke-width="1.5"/>
-    <!-- Disco de acero sin carcasa de seguridad -->
-    <circle cx="115" cy="15" r="28" fill="#f8fafc" stroke="#dc2626" stroke-width="3"/>
-    <circle cx="115" cy="15" r="6" fill="#475569"/>
+  <!-- ITEM 7 (FOGONES GAS) + ITEM 11 (FREIDORA TERMOSTATO) -->
+  <g transform="translate(360, 230)">
+    <rect width="320" height="120" rx="4" fill="url(#cocInox)" stroke="#475569" stroke-width="2"/>
+    <circle cx="65" cy="24" r="26" fill="#1e293b"/><circle cx="65" cy="24" r="13" fill="#0284c7" opacity="0.85"/>
+    <circle cx="145" cy="24" r="26" fill="#1e293b"/><circle cx="145" cy="24" r="12" fill="#0284c7" opacity="0.85"/>
+    <!-- Freidora derecha con termostato 210°C -->
+    <rect x="225" y="10" width="76" height="48" rx="3" fill="#eab308" stroke="#ca8a04" stroke-width="2"/>
+    <circle cx="263" cy="82" r="10" fill="#0f172a" stroke="#e2e8f0" stroke-width="2"/>
+    <text x="263" y="103" font-size="8" font-weight="bold" fill="#0f172a" text-anchor="middle">MAX 210°C</text>
   </g>
 
-  <!-- PELIGRO 2: CHARCO DE GRASA Y AGUA FRENTE A FREIDORA -->
-  <g id="danger-grasa" transform="translate(420, 420)" class="cursor-pointer">
-    <path d="M20 50 C60 25, 180 20, 230 45 C270 70, 240 105, 180 115 C100 125, 20 100, 10 70 Z" fill="#eab308" opacity="0.75" stroke="#ca8a04"/>
+  <!-- ITEM 6 (SEGURO MESA INOX) + ITEM 1 (CORTAFIAMBRES) + ITEM 12 (CUCHILLA DISCO SIN RESGUARDO) -->
+  <g transform="translate(80, 295)">
+    <rect x="0" y="38" width="240" height="16" fill="url(#cocInox)" stroke="#475569" stroke-width="1.5"/>
+    <rect x="12" y="54" width="12" height="115" fill="#94a3b8"/><rect x="216" y="54" width="12" height="115" fill="#94a3b8"/>
+    <g transform="translate(65, -35)">
+      <rect x="10" y="12" width="90" height="50" rx="4" fill="url(#cocInox)" stroke="#475569" stroke-width="2"/>
+      <circle cx="105" cy="30" r="30" fill="#f8fafc" stroke="#dc2626" stroke-width="3.5"/>
+      <circle cx="105" cy="30" r="6" fill="#475569"/>
+    </g>
   </g>
 
-  <!-- PELIGRO 4: ENCHUFE TRIFÁSICO EN CONTACTO CON AGUA -->
-  <g id="danger-enchufe" transform="translate(770, 360)" class="cursor-pointer">
-    <rect width="80" height="24" rx="4" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
-    <path d="M40 24 Q30 80 50 110" fill="none" stroke="#0f172a" stroke-width="5"/>
-    <ellipse cx="50" cy="115" rx="35" ry="15" fill="#38bdf8" opacity="0.6"/>
+  <!-- ITEM 9 (SEGURO): Sumidero sifónico con rejilla inox en suelo -->
+  <g transform="translate(215, 495)">
+    <rect width="68" height="32" rx="3" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
+    <line x1="10" y1="6" x2="10" y2="26" stroke="#1e293b" stroke-width="3"/>
+    <line x1="22" y1="6" x2="22" y2="26" stroke="#1e293b" stroke-width="3"/>
+    <line x1="34" y1="6" x2="34" y2="26" stroke="#1e293b" stroke-width="3"/>
+    <line x1="46" y1="6" x2="46" y2="26" stroke="#1e293b" stroke-width="3"/>
+    <line x1="58" y1="6" x2="58" y2="26" stroke="#1e293b" stroke-width="3"/>
   </g>
 
-  <!-- PELIGRO 5: TABLAS DE MADERA CONTAMINADAS -->
-  <g id="danger-tablas" transform="translate(680, 280)" class="cursor-pointer">
-    <rect width="85" height="14" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
-    <circle cx="30" cy="4" r="5" fill="#ef4444"/> <!-- Carne cruda -->
-    <circle cx="60" cy="4" r="5" fill="#22c55e"/> <!-- Verdura en la misma tabla -->
+  <!-- ITEM 2 (PELIGRO): Charco de aceite y grasa en suelo frente a freidora -->
+  <g id="danger-grasa" transform="translate(410, 425)">
+    <path d="M20 48 C60 22, 180 18, 230 44 C270 68, 240 102, 180 112 C100 122, 20 96, 10 68 Z" fill="#eab308" opacity="0.8" stroke="#ca8a04" stroke-width="2"/>
+  </g>
+
+  <!-- ITEM 8 (GRIFO MUELLE COMPENSADOR) + ITEM 5 (TABLA POLLO/ENSALADA) + ITEM 4 (ENCHUFE 400V EN AGUA) -->
+  <g transform="translate(705, 225)">
+    <rect x="0" y="62" width="230" height="75" fill="url(#cocInox)" stroke="#475569" stroke-width="2"/>
+    <!-- Grifo ducha con muelle compensador -->
+    <path d="M165 62 L165 -22 Q165 -42 135 -42 L120 -25" fill="none" stroke="#e2e8f0" stroke-width="6" stroke-linecap="round"/>
+    <path d="M160 15 L170 20 L160 25 L170 30 L160 35" fill="none" stroke="#475569" stroke-width="3"/>
+    <!-- Tabla de madera contaminada (ITEM 5) -->
+    <g transform="translate(12, 46)">
+      <rect width="88" height="14" rx="2" fill="#78350f" stroke="#451a03" stroke-width="1.5"/>
+      <ellipse cx="26" cy="2" rx="12" ry="6" fill="#fda4af" stroke="#e11d48"/> <!-- Pollo crudo -->
+      <circle cx="64" cy="2" r="7" fill="#22c55e"/> <!-- Ensalada -->
+    </g>
+    <!-- Enchufe trifásico 400V caído en charco de baldeo (ITEM 4) -->
+    <g transform="translate(95, 165)">
+      <rect width="75" height="26" rx="4" fill="#ef4444" stroke="#991b1b" stroke-width="2"/>
+      <path d="M38 26 Q30 70 50 96" fill="none" stroke="#0f172a" stroke-width="5"/>
+      <ellipse cx="52" cy="100" rx="42" ry="15" fill="#38bdf8" opacity="0.72"/>
+    </g>
   </g>
 </svg>
 `;
 
-// 7. TALLER MECÁNICO E INDUSTRIAL
+// 7. TALLER MECÁNICO E INDUSTRIAL (COMPLETAMENTE REDISEÑADO CON TODOS LOS 12 ITEMS)
 const svgTaller = `
 <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" class="w-full h-full select-none">
   <defs>
@@ -692,653 +808,227 @@ const svgTaller = `
       <stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
     <linearGradient id="talFloor" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#475569"/><stop offset="100%" stop-color="#1e293b"/>
+      <stop offset="0%" stop-color="#475569"/><stop offset="100%" stop-color="#334155"/>
     </linearGradient>
-    <filter id="talShadow">
-      <feDropShadow dx="3" dy="6" stdDeviation="5" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
+  <!-- Pared y suelo epoxi antideslizante (ITEM 10) -->
   <rect x="0" y="0" width="1000" height="340" fill="url(#talWall)"/>
+  <g stroke="#334155" stroke-width="1" opacity="0.35">
+    <line x1="0" y1="80" x2="1000" y2="80"/><line x1="0" y1="160" x2="1000" y2="160"/>
+    <line x1="250" y1="0" x2="250" y2="340"/><line x1="750" y1="0" x2="750" y2="340"/>
+  </g>
   <rect x="0" y="340" width="1000" height="260" fill="url(#talFloor)"/>
+  <rect x="0" y="336" width="1000" height="8" fill="#0f172a"/>
 
-  <!-- PELIGRO 2: PUENTE ELEVADOR CON COCHE SIN TRINQUETE DE SEGURIDAD -->
-  <g id="danger-elevador" transform="translate(420, 110)" class="cursor-pointer">
-    <!-- Columnas azules del elevador de 2 postes -->
-    <rect x="0" y="0" width="22" height="350" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
-    <rect x="260" y="0" width="22" height="350" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
-    <!-- Coche elevado a 1.8m -->
-    <g transform="translate(10, 40)">
+  <!-- ITEM 8 (SEGURO): Enrollador automático de manguera neumática en techo derecha -->
+  <g transform="translate(835, 25)">
+    <rect x="20" y="0" width="36" height="12" fill="#64748b"/>
+    <circle cx="38" cy="40" r="28" fill="#0284c7" stroke="#e2e8f0" stroke-width="3"/>
+    <circle cx="38" cy="40" r="14" fill="#facc15"/>
+    <path d="M56 54 Q75 95 62 125" fill="none" stroke="#eab308" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- ITEM 5 (PELIGRO): Cuba de desengrase abierta sin extracción a la izquierda -->
+  <g id="danger-cuba" transform="translate(28, 210)">
+    <rect width="105" height="90" rx="4" fill="#475569" stroke="#1e293b" stroke-width="3"/>
+    <ellipse cx="52" cy="14" rx="44" ry="12" fill="#0284c7" opacity="0.88"/>
+    <path d="M35 8 Q25 -18 42 -32 M65 8 Q78 -16 58 -30" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.8"/>
+    <rect x="14" y="90" width="10" height="45" fill="#334155"/><rect x="82" y="90" width="10" height="45" fill="#334155"/>
+  </g>
+
+  <!-- ITEM 9 (SEGURO): Carro de herramientas rojo con cajones bloqueables (izquierda primer plano) -->
+  <g transform="translate(26, 375)">
+    <rect width="112" height="120" rx="4" fill="#dc2626" stroke="#7f1d1d" stroke-width="2.5"/>
+    <rect x="8" y="10" width="96" height="16" rx="2" fill="#ef4444" stroke="#991b1b"/>
+    <rect x="8" y="32" width="96" height="16" rx="2" fill="#ef4444" stroke="#991b1b"/>
+    <rect x="8" y="54" width="96" height="22" rx="2" fill="#ef4444" stroke="#991b1b"/>
+    <rect x="8" y="82" width="96" height="28" rx="2" fill="#ef4444" stroke="#991b1b"/>
+    <circle cx="100" cy="6" r="3" fill="#facc15"/> <!-- Cerradura bloqueo -->
+    <circle cx="20" cy="126" r="10" fill="#0f172a"/><circle cx="92" cy="126" r="10" fill="#0f172a"/>
+  </g>
+
+  <!-- ITEM 7 (BANCO TRABAJO CON TORNILLO) + ITEM 2 (RADIAL SIN PROTECTOR) + ITEM 12 (DISCO FISURADO) -->
+  <g id="danger-radial" transform="translate(175, 315)">
+    <rect width="205" height="18" rx="3" fill="#64748b" stroke="#334155" stroke-width="2"/>
+    <rect x="12" y="18" width="14" height="120" fill="#475569"/><rect x="180" y="18" width="14" height="120" fill="#475569"/>
+    <!-- Tornillo de banco metálico (ITEM 7) -->
+    <g transform="translate(18, -28)">
+      <rect x="0" y="16" width="38" height="12" fill="#0284c7" stroke="#0369a1"/>
+      <rect x="6" y="0" width="14" height="18" fill="#1e293b"/>
+      <line x1="20" y1="8" x2="48" y2="8" stroke="#cbd5e1" stroke-width="3"/>
+    </g>
+    <!-- Amoladora sin protector + disco con fisura -->
+    <g transform="translate(75, -24)">
+      <rect x="0" y="6" width="70" height="22" rx="4" fill="#0284c7"/>
+      <circle cx="88" cy="16" r="24" fill="#334155" stroke="#ef4444" stroke-width="2.5"/>
+      <path d="M88 16 L104 2 L108 8" fill="none" stroke="#facc15" stroke-width="2.5"/> <!-- Grieta en el borde del disco -->
+    </g>
+  </g>
+
+  <!-- ITEM 1 (COCHE ELEVADO SIN SEGURO) + ITEM 6 (COLUMNAS ANCLADAS) + ITEM 11 (BRAZO CON GOMA APOYO) -->
+  <g id="danger-elevador" transform="translate(415, 110)">
+    <!-- Columnas azules ancladas con pernos al suelo (ITEM 6) -->
+    <rect x="0" y="0" width="24" height="340" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+    <rect x="-8" y="336" width="40" height="10" fill="#94a3b8"/>
+    <rect x="260" y="0" width="24" height="340" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+    <rect x="252" y="336" width="40" height="10" fill="#94a3b8"/>
+    <!-- Coche rojo elevado -->
+    <g transform="translate(12, 36)">
       <path d="M20 70 Q50 30 110 25 Q180 20 230 70 Z" fill="#dc2626" stroke="#991b1b" stroke-width="2"/>
       <rect x="10" y="70" width="240" height="35" rx="6" fill="#ef4444"/>
       <circle cx="50" cy="105" r="22" fill="#0f172a"/><circle cx="210" cy="105" r="22" fill="#0f172a"/>
     </g>
-    <!-- Brazos de elevación sin el pasador de bloqueo mecánico echado -->
-    <line x1="20" y1="175" x2="260" y2="175" stroke="#facc15" stroke-width="10"/>
+    <!-- Brazos amarillos y tacos de goma negra de apoyo (ITEM 11) -->
+    <line x1="20" y1="165" x2="260" y2="165" stroke="#facc15" stroke-width="10"/>
+    <rect x="42" y="148" width="24" height="12" rx="2" fill="#0f172a" stroke="#64748b"/>
+    <rect x="218" y="148" width="24" height="12" rx="2" fill="#0f172a" stroke="#64748b"/>
   </g>
 
-  <!-- PELIGRO 1: AMOLADORA (RADIAL) SIN PROTECTOR DE DISCO -->
-  <g id="danger-radial" transform="translate(180, 310)" class="cursor-pointer">
-    <rect width="180" height="20" rx="3" fill="#64748b"/>
-    <g transform="translate(40, -15)">
-      <rect x="0" y="0" width="70" height="24" rx="4" fill="#0284c7"/>
-      <!-- Disco abrasivo completamente descubierto sin carcasa -->
-      <circle cx="85" cy="12" r="24" fill="#334155" stroke="#ef4444" stroke-width="2"/>
-    </g>
+  <!-- ITEM 3 (PELIGRO): Botellas de oxicorte con manguera agrietada derecha -->
+  <g id="danger-oxicorte" transform="translate(795, 185)">
+    <rect x="0" y="210" width="95" height="12" fill="#475569"/>
+    <rect x="10" y="55" width="32" height="165" rx="10" fill="#0284c7" stroke="#0369a1" stroke-width="2"/>
+    <rect x="48" y="75" width="36" height="145" rx="10" fill="#b91c1c" stroke="#7f1d1d" stroke-width="2"/>
+    <circle cx="26" cy="48" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+    <circle cx="66" cy="68" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="1.5"/>
+    <path d="M26 42 Q12 10 66 36 Q95 60 88 120" fill="none" stroke="#ef4444" stroke-width="4.5"/>
+    <rect x="48" y="22" width="12" height="8" fill="#0f172a"/> <!-- Cinta aislante reparando manguera -->
   </g>
 
-  <!-- PELIGRO 3: BOTELLAS DE OXICORTE SIN VÁLVULA ANTIRRETROCESO -->
-  <g id="danger-oxicorte" transform="translate(800, 180)" class="cursor-pointer">
-    <rect x="10" y="60" width="30" height="180" rx="10" fill="#0284c7"/> <!-- Oxígeno -->
-    <rect x="45" y="80" width="35" height="160" rx="10" fill="#b91c1c"/> <!-- Acetileno -->
-    <path d="M25 60 Q10 20 60 40" fill="none" stroke="#ef4444" stroke-width="4"/> <!-- Manguera agrietada -->
-  </g>
-
-  <!-- PELIGRO 4: FOSO DE INSPECCIÓN ABIERTO SIN VALLA -->
-  <g id="danger-foso" transform="translate(80, 440)" class="cursor-pointer">
-    <polygon points="0,0 280,0 260,120 20,120" fill="#09090b" stroke="#facc15" stroke-width="4" stroke-dasharray="15,10"/>
-  </g>
-
-  <!-- PELIGRO 5: CUBA DE DESENGRASE ABIERTA -->
-  <g id="danger-cuba" transform="translate(20, 260)" class="cursor-pointer">
-    <rect width="90" height="80" rx="4" fill="#475569" stroke="#1e293b" stroke-width="2"/>
-    <ellipse cx="45" cy="10" rx="40" ry="10" fill="#0284c7" opacity="0.8"/>
+  <!-- ITEM 4 (PELIGRO): Foso de inspección abierto sin barandilla (centro abajo) -->
+  <g id="danger-foso" transform="translate(415, 465)">
+    <polygon points="0,0 280,0 255,105 25,105" fill="#09090b" stroke="#facc15" stroke-width="4" stroke-dasharray="16,10"/>
   </g>
 </svg>
 `;
 
-// 8. TRABAJOS EN CUBIERTAS Y ALTURAS
+// 8. CUBIERTAS Y TRABAJOS EN ALTURA (COMPLETAMENTE REDISEÑADO CON PERSPECTIVA Y 12 ITEMS CLAROS)
 const svgAlturas = `
 <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg" class="w-full h-full select-none">
   <defs>
-    <linearGradient id="skyAlt" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0284c7"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#bae6fd"/>
+    <linearGradient id="altSky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0284c7"/><stop offset="55%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#bae6fd"/>
     </linearGradient>
-    <linearGradient id="tilesRoof" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="altRoof" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#c2410c"/><stop offset="50%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/>
     </linearGradient>
-    <filter id="altShadow">
-      <feDropShadow dx="3" dy="5" stdDeviation="4" flood-opacity="0.35"/>
-    </filter>
   </defs>
 
-  <rect x="0" y="0" width="1000" height="600" fill="url(#skyAlt)"/>
-  
-  <!-- Cubierta inclinada de teja cerámica -->
-  <polygon points="0,320 1000,180 1000,600 0,600" fill="url(#tilesRoof)"/>
-  <g stroke="#7c2d12" stroke-width="2" opacity="0.5">
-    <line x1="0" y1="360" x2="1000" y2="220"/><line x1="0" y1="410" x2="1000" y2="270"/>
-    <line x1="0" y1="460" x2="1000" y2="320"/><line x1="0" y1="510" x2="1000" y2="370"/>
+  <!-- Cielo y vacío exterior derecha/abajo -->
+  <rect x="0" y="0" width="1000" height="600" fill="url(#altSky)"/>
+  <!-- Fachada del edificio de 12 metros bajo el alero -->
+  <polygon points="0,420 880,420 880,600 0,600" fill="#cbd5e1" stroke="#64748b" stroke-width="2"/>
+  <!-- Caída libre a la calle derecha -->
+  <rect x="880" y="420" width="120" height="180" fill="#334155" opacity="0.35"/>
+
+  <!-- Tejado de tejas inclinadas (de y=125 cumbrera a y=410 alero) -->
+  <polygon points="40,125 875,125 895,410 15,410" fill="url(#altRoof)" stroke="#7c2d12" stroke-width="2"/>
+
+  <!-- ITEM 5 (SEGURO): Hiladas de tejas cerámicas fijadas -->
+  <g stroke="#7c2d12" stroke-width="2" opacity="0.65">
+    <line x1="36" y1="185" x2="879" y2="185"/>
+    <line x1="32" y1="245" x2="884" y2="245"/>
+    <line x1="28" y1="305" x2="889" y2="305"/>
+    <line x1="22" y1="365" x2="893" y2="365"/>
   </g>
 
-  <!-- PELIGRO 3: LÍNEA DE VIDA ATADA A CHIMENEA PRECARIA -->
-  <g id="danger-chimenea" transform="translate(630, 90)" class="cursor-pointer">
-    <rect width="90" height="130" fill="#991b1b" stroke="#7f1d1d" stroke-width="2"/>
-    <!-- Grietas profundas en el ladrillo -->
-    <path d="M20 20 L40 50 L30 80 M60 40 L75 70" stroke="#000000" stroke-width="2.5" fill="none"/>
-    <!-- Cuerda amarrada a la chimenea que no resistirá un impacto de 12 kN -->
-    <ellipse cx="45" cy="70" rx="50" ry="12" fill="none" stroke="#facc15" stroke-width="6"/>
+  <!-- ITEM 10 (SEGURO): Línea de cumbrera ventilada superior -->
+  <g transform="translate(36, 108)">
+    <rect width="844" height="22" rx="6" fill="#7c2d12" stroke="#451a03" stroke-width="2"/>
+    <rect x="6" y="4" width="832" height="6" fill="#c2410c"/>
   </g>
 
-  <!-- PELIGRO 1: LUCERNARIO FRÁGIL SIN RED ANTICAÍDAS -->
-  <g id="danger-lucernario" transform="translate(380, 240)" class="cursor-pointer">
-    <polygon points="0,60 160,35 180,110 20,135" fill="#38bdf8" opacity="0.5" stroke="#0284c7" stroke-width="3"/>
-    <path d="M40 80 L70 95 L95 85" stroke="#ef4444" stroke-width="3" fill="none"/> <!-- Plástico quebrado -->
+  <!-- ITEM 7 (SEGURO): Peto perimetral de ladrillo en borde derecho -->
+  <g transform="translate(868, 120)">
+    <polygon points="0,0 32,0 52,290 18,290" fill="#b91c1c" stroke="#7f1d1d" stroke-width="2"/>
+    <rect x="-2" y="-6" width="36" height="10" rx="2" fill="#cbd5e1"/>
   </g>
 
-  <!-- PELIGRO 2: TRABAJADOR AL BORDE DEL VACÍO SIN ARNÉS CONECTADO -->
-  <g id="danger-vacio" transform="translate(800, 240)" class="cursor-pointer">
-    <circle cx="25" cy="20" r="14" fill="#fed7aa"/>
-    <rect x="10" y="34" width="30" height="60" rx="4" fill="#ea580c"/>
-    <!-- Al borde justo de la caída libre de 12 metros -->
-    <line x1="60" y1="0" x2="60" y2="150" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4"/>
+  <!-- ITEM 6 (SEGURO): Canalón metálico de recogida de aguas pluviales en el alero -->
+  <g transform="translate(12, 404)">
+    <rect width="890" height="14" rx="4" fill="#94a3b8" stroke="#475569" stroke-width="2"/>
+    <rect x="140" y="14" width="12" height="182" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/> <!-- Bajante -->
   </g>
 
-  <!-- PELIGRO 4: ESCALERA QUE NO SOBREPASA 1 METRO -->
-  <g id="danger-escalera-altura" transform="translate(40, 290)" class="cursor-pointer">
-    <line x1="20" y1="20" x2="20" y2="280" stroke="#94a3b8" stroke-width="6"/>
-    <line x1="50" y1="20" x2="50" y2="280" stroke="#94a3b8" stroke-width="6"/>
-    <line x1="20" y1="50" x2="50" y2="50" stroke="#cbd5e1" stroke-width="4"/>
-    <line x1="20" y1="90" x2="50" y2="90" stroke="#cbd5e1" stroke-width="4"/>
+  <!-- ITEM 3 (CUERDA AMARRADA) + ITEM 12 (GRIETAS PROFUNDAS CHIMENEA) -->
+  <g id="danger-chimenea" transform="translate(595, 65)">
+    <rect width="92" height="125" fill="#991b1b" stroke="#7f1d1d" stroke-width="2.5"/>
+    <rect x="-6" y="-8" width="104" height="12" fill="#475569"/>
+    <!-- Grietas profundas en ladrillo (ITEM 12) -->
+    <path d="M55 18 L72 48 L60 82 M20 35 L35 60" stroke="#0f172a" stroke-width="3" fill="none"/>
+    <!-- Cuerda amarilla de falsa línea de vida atada al tiro (ITEM 3) -->
+    <ellipse cx="46" cy="70" rx="50" ry="11" fill="none" stroke="#facc15" stroke-width="6"/>
+    <path d="M-4 72 Q-80 120 -130 165" fill="none" stroke="#facc15" stroke-width="3.5" stroke-dasharray="6,3"/>
+  </g>
+
+  <!-- ITEM 1 (PELIGRO): Lucernario de plástico frágil sin red anticaídas -->
+  <g id="danger-lucernario" transform="translate(340, 215)">
+    <polygon points="15,0 165,0 185,95 0,95" fill="#38bdf8" opacity="0.6" stroke="#0284c7" stroke-width="3"/>
+    <path d="M45 35 L78 58 L112 42" stroke="#ef4444" stroke-width="3.5" fill="none"/>
+  </g>
+
+  <!-- ITEM 11 (PELIGRO): Herramientas sueltas (taladro y martillo) en la pendiente de teja -->
+  <g transform="translate(235, 315)">
+    <!-- Taladro a batería amarillo -->
+    <rect x="0" y="10" width="44" height="14" rx="2" fill="#facc15" stroke="#854d0e" stroke-width="1.5"/>
+    <rect x="14" y="24" width="10" height="18" rx="1" fill="#0f172a"/>
+    <rect x="44" y="14" width="16" height="5" fill="#94a3b8"/>
+    <!-- Martillo suelto -->
+    <g transform="translate(65, 16) rotate(28)">
+      <rect x="0" y="6" width="38" height="6" rx="1" fill="#b45309"/>
+      <rect x="30" y="0" width="10" height="18" rx="2" fill="#475569"/>
+    </g>
+  </g>
+
+  <!-- ITEM 4 (PELIGRO): Escalera que NO sobrepasa 1m el alero -->
+  <g id="danger-escalera-altura" transform="translate(45, 398)">
+    <line x1="16" y1="6" x2="16" y2="195" stroke="#e2e8f0" stroke-width="6"/>
+    <line x1="50" y1="6" x2="50" y2="195" stroke="#e2e8f0" stroke-width="6"/>
+    <line x1="16" y1="28" x2="50" y2="28" stroke="#94a3b8" stroke-width="4"/>
+    <line x1="16" y1="62" x2="50" y2="62" stroke="#94a3b8" stroke-width="4"/>
+    <line x1="16" y1="96" x2="50" y2="96" stroke="#94a3b8" stroke-width="4"/>
+    <line x1="16" y1="130" x2="50" y2="130" stroke="#94a3b8" stroke-width="4"/>
+    <line x1="16" y1="164" x2="50" y2="164" stroke="#94a3b8" stroke-width="4"/>
+  </g>
+
+  <!-- ITEM 2 (OPERARIO EN ALERO SIN ARNÉS) + ITEM 8 (CASCO CON BARBOQUEJO) + ITEM 9 (BOTAS DE TEJADOR) -->
+  <g id="danger-vacio" transform="translate(765, 255)">
+    <!-- Piernas y botas de tejador (ITEM 9) -->
+    <rect x="18" y="88" width="12" height="36" fill="#1e3a8a"/>
+    <rect x="36" y="88" width="12" height="36" fill="#1e40af"/>
+    <rect x="14" y="122" width="20" height="11" rx="3" fill="#0f172a" stroke="#facc15" stroke-width="1"/>
+    <rect x="34" y="122" width="20" height="11" rx="3" fill="#0f172a" stroke="#facc15" stroke-width="1"/>
+    <!-- Chaqueta naranja sin arnés -->
+    <rect x="14" y="34" width="38" height="56" rx="5" fill="#f97316" stroke="#c2410c" stroke-width="2"/>
+    <!-- Cabeza y casco amarillo con barboquejo negro visible (ITEM 8) -->
+    <circle cx="33" cy="18" r="14" fill="#fed7aa" stroke="#ea580c" stroke-width="1"/>
+    <path d="M18 14 Q33 -4 48 14 Z" fill="#facc15" stroke="#ca8a04" stroke-width="1.5"/>
+    <path d="M22 14 Q33 34 44 14" fill="none" stroke="#0f172a" stroke-width="2"/> <!-- Barboquejo -->
+    <!-- Línea discontinua roja de peligro de caída al vacío -->
+    <line x1="88" y1="-20" x2="88" y2="195" stroke="#ef4444" stroke-width="3.5" stroke-dasharray="7,5"/>
   </g>
 </svg>
 `;
 
 // Exportar base de datos con los 8 escenarios enriquecidos
 const allScenarios = [
-  {
-    id: 'oficina',
-    name: 'Oficina y Despachos',
-    subtitle: 'Administración y Gestión Corporativa',
-    description: 'Espacio de trabajo administrativo común con equipos ofimáticos, zonas de tránsito, archivadores y medios de protección.',
-    badgeColor: 'sky',
-    icon: 'briefcase',
-    timeLimit: 90,
-    svgContent: svgOficina.trim(),
-    hazards: [
-      {
-        id: 'oficina-cables',
-        name: 'Cables sueltos cruzando zona de paso',
-        category: 'Orden y Limpieza',
-        severity: 'Grave',
-        rect: { left: 35, top: 72, width: 28, height: 22 },
-        description: 'Múltiples cables de alimentación y red cruzando libremente el suelo en el pasillo principal entre mesas sin protección ni pasacables homologado.',
-        consequences: 'Tropiezos, caídas al mismo nivel con contusiones o fracturas óseas, y desconexiones bruscas de equipos.',
-        regulation: 'RD 486/1997 sobre disposiciones mínimas de seguridad en los lugares de trabajo (Anexo I). Los pasillos deben permanecer expeditos y limpios.',
-        prevention: 'Canalizar el cableado mediante pasacables de suelo homologados biselados o cajas empotradas en suelo técnico.'
-      },
-      {
-        id: 'oficina-cafe',
-        name: 'Líquido derramado junto a regleta eléctrica',
-        category: 'Riesgo Eléctrico',
-        severity: 'Muy Grave',
-        rect: { left: 12, top: 60, width: 18, height: 24 },
-        description: 'Taza de café derramada en el suelo fluyendo directamente hacia una regleta con enchufes conectados bajo la mesa.',
-        consequences: 'Electrocución por contacto indirecto, cortocircuito e ignición de fuego en la moqueta.',
-        regulation: 'RD 614/2001 sobre protección frente al riesgo eléctrico y RD 486/1997.',
-        prevention: 'Prohibir recipientes de líquidos sobre regletas y elevar las tomas a bandejas pasacables bajo tablero.'
-      },
-      {
-        id: 'oficina-extintor',
-        name: 'Extintor bloqueado por cajas de archivo',
-        category: 'Protección contra Incendios',
-        severity: 'Muy Grave',
-        rect: { left: 80, top: 25, width: 17, height: 48 },
-        description: 'Pila de cajas de cartón apiladas frente al extintor mural impidiendo su acceso inmediato en caso de conato de incendio.',
-        consequences: 'Retraso crítico en la extinción de un fuego incipiente, propagación incontrolada y atrapamiento por humo.',
-        regulation: 'RD 513/2017 (RIPCI) y RD 486/1997. Los medios de protección contra incendios deben estar permanentemente despejados y señalizados.',
-        prevention: 'Mantener un perímetro libre de obstáculos de al menos 1 metro alrededor de todos los extintores y BIEs.'
-      },
-      {
-        id: 'oficina-archivador',
-        name: 'Archivador venciendo con cajones abiertos',
-        category: 'Equipos de Trabajo',
-        severity: 'Grave',
-        rect: { left: 24, top: 22, width: 14, height: 35 },
-        description: 'Archivador metálico con varios cajones superiores extraídos a la vez, desplazando el centro de gravedad e inclinándose hacia adelante sin anclaje a pared.',
-        consequences: 'Vuelco del armario sobre el trabajador, provocando traumatismos severos por aplastamiento.',
-        regulation: 'RD 486/1997 y NTP 481 del INSST sobre orden y limpieza.',
-        prevention: 'Fijar archivadores altos a pared e instalar sistemas de bloqueo que impidan abrir más de un cajón simultáneamente.'
-      },
-      {
-        id: 'oficina-ergonomia',
-        name: 'Puesto con pantalla deslumbrante y silla rota',
-        category: 'Ergonomía y PVD',
-        severity: 'Leve',
-        rect: { left: 64, top: 40, width: 17, height: 32 },
-        description: 'Puesto de ordenador portátil bajo sin elevador ni teclado auxiliar, expuesto a deslumbramiento directo de ventana y con silla inestable de rueda rota.',
-        consequences: 'Trastornos musculoesqueléticos cervicales y dorsolumbares, fatiga visual severa.',
-        regulation: 'RD 488/1997 sobre trabajo con equipos que incluyen pantallas de visualización (PVD).',
-        prevention: 'Disponer de soporte elevador de portátil con teclado/ratón independiente y sustitución por silla ergonómica de 5 ruedas ajustable.'
-      }
-    ]
-  },
-  {
-    id: 'obra',
-    name: 'Obra de Construcción',
-    subtitle: 'Edificación y Obra Civil',
-    description: 'Entorno de obra con maquinaria pesada, trabajos en altura, excavaciones y cuadros eléctricos temporales.',
-    badgeColor: 'amber',
-    icon: 'hard-hat',
-    timeLimit: 90,
-    svgContent: svgObra.trim(),
-    hazards: [
-      {
-        id: 'obra-sin-casco',
-        name: 'Operario sin casco bajo carga suspendida',
-        category: 'EPIs y Cargas Suspendidas',
-        severity: 'Muy Grave',
-        rect: { left: 45, top: 48, width: 14, height: 35 },
-        description: 'Peón caminando distraído por teléfono sin casco de seguridad bajo el radio de acción de la grúa con cubilote de hormigón en suspensión.',
-        consequences: 'Muerte instantánea o traumatismo craneoencefálico irreversible por desprendimiento de carga.',
-        regulation: 'RD 1627/1997 (Seguridad en obras de construcción) y RD 773/1997 (EPIs). Prohibido transitar bajo cargas suspendidas; uso obligatorio de casco.',
-        prevention: 'Delimitar el radio de la pluma de grúa y prohibir el acceso sin casco homologado EN 397.'
-      },
-      {
-        id: 'obra-andamio',
-        name: 'Andamio a 4m sin barandillas perimetrales',
-        category: 'Caídas en Altura',
-        severity: 'Muy Grave',
-        rect: { left: 8, top: 22, width: 26, height: 42 },
-        description: 'Plataforma de andamio tubular carente de barandilla superior de 1 m, listón intermedio y rodapié.',
-        consequences: 'Caída a distinto nivel con resultado mortal o lesiones medulares permanentes.',
-        regulation: 'RD 2177/2004 sobre trabajos temporales en altura y RD 1627/1997.',
-        prevention: 'Montar barandillas completas homologadas antes de acceder a la plataforma y utilizar arnés anticaídas conectado a línea de vida.'
-      },
-      {
-        id: 'obra-zanja',
-        name: 'Zanja profunda sin entibar ni señalizar',
-        category: 'Movimiento de Tierras',
-        severity: 'Muy Grave',
-        rect: { left: 68, top: 60, width: 30, height: 35 },
-        description: 'Excavación de más de 2 metros de profundidad en terreno inestable sin entibación ni valla perimetral.',
-        consequences: 'Sepultamiento por desprendimiento de tierras con asfixia mecánica.',
-        regulation: 'RD 1627/1997 (Anexo IV, Parte C). Toda zanja de más de 1.30 m debe entibarse o tener talud adecuado.',
-        prevention: 'Colocar cajones de entibación prefabricados y vallar el perímetro a 1 metro del borde.'
-      },
-      {
-        id: 'obra-cuadro',
-        name: 'Cuadro eléctrico provisional en charco de lluvia',
-        category: 'Riesgo Eléctrico',
-        severity: 'Muy Grave',
-        rect: { left: 78, top: 32, width: 16, height: 28 },
-        description: 'Cuadro de distribución eléctrica abierto con cables pelados apoyado directamente en charco de agua de lluvia.',
-        consequences: 'Electrocución por tensión de contacto de 400V en intemperie.',
-        regulation: 'Reglamento Electrotécnico de Baja Tensión (ITC-BT-33) y RD 614/2001.',
-        prevention: 'Instalar cuadros con grado de protección IP65 elevados del suelo con diferenciales de alta sensibilidad de 30 mA.'
-      },
-      {
-        id: 'obra-escalera',
-        name: 'Escalera apoyada sobre bidones inestables',
-        category: 'Medios de Acceso',
-        severity: 'Grave',
-        rect: { left: 32, top: 36, width: 14, height: 38 },
-        description: 'Escalera de mano apoyada sobre la tapa metálica aceitosa de bidones vacíos para alcanzar un pilar.',
-        consequences: 'Deslizamiento de la base y caída del trabajador.',
-        regulation: 'RD 2177/2004. Las escaleras deben asentarse sobre superficies planas, sólidas y estables.',
-        prevention: 'Utilizar andamios de borriquetas o plataformas elevadoras móviles de personal (PEMP).'
-      }
-    ]
-  },
-  {
-    id: 'almacen',
-    name: 'Almacén Logístico',
-    subtitle: 'Almacenamiento y Manutención',
-    description: 'Nave logística de alta rotación con carretillas elevadoras, estanterías pesadas y pasillos de tránsito.',
-    badgeColor: 'emerald',
-    icon: 'archive',
-    timeLimit: 90,
-    svgContent: svgAlmacen.trim(),
-    hazards: [
-      {
-        id: 'almacen-palet',
-        name: 'Palet deformado y escorado en altura',
-        category: 'Almacenamiento en Estanterías',
-        severity: 'Muy Grave',
-        rect: { left: 18, top: 12, width: 22, height: 26 },
-        description: 'Palet de madera con tacos fisurados y carga deformada a 5 metros de altura inclinado hacia el pasillo.',
-        consequences: 'Caída de palet de 800 kg sobre operarios que transiten por debajo.',
-        regulation: 'Norma UNE-EN 15635 (Inspección de estanterías) y RD 1215/1997.',
-        prevention: 'Rechazar palets en mal estado y disponer de topes traseros y mallas anticaídas en bastidores.'
-      },
-      {
-        id: 'almacen-aceite',
-        name: 'Derrame de aceite hidráulico en pasillo',
-        category: 'Orden y Limpieza',
-        severity: 'Grave',
-        rect: { left: 39, top: 70, width: 26, height: 22 },
-        description: 'Charco extenso de aceite en zona de cruce de peatones y carretillas sin delimitar ni recoger.',
-        consequences: 'Resbalones con caída y pérdida de frenada de carretillas.',
-        regulation: 'RD 486/1997 sobre lugares de trabajo.',
-        prevention: 'Aplicar sepiolita/absorbente granulado de inmediato y señalizar con cono de advertencia.'
-      },
-      {
-        id: 'almacen-carretilla',
-        name: 'Carretilla con horquillas altas y llave puesta',
-        category: 'Maquinaria de Manutención',
-        severity: 'Muy Grave',
-        rect: { left: 64, top: 40, width: 28, height: 38 },
-        description: 'Carretilla elevadora parada con las horquillas levantadas a 1.6 m sin conductor y con la llave en el contacto.',
-        consequences: 'Empalamiento frontal a la altura del tórax de peatones y uso por personal no autorizado.',
-        regulation: 'RD 1215/1997 y NTP 714 del INSST sobre carretillas automotoras.',
-        prevention: 'Bajar las horquillas a ras de suelo al estacionar y retirar siempre la llave de arranque.'
-      },
-      {
-        id: 'almacen-salida',
-        name: 'Puerta de emergencia bloqueada por palets',
-        category: 'Evacuación y Emergencias',
-        severity: 'Muy Grave',
-        rect: { left: 2, top: 35, width: 14, height: 48 },
-        description: 'Salida de emergencia señalizada obstaculizada por pilas de palets vacíos.',
-        consequences: 'Imposibilidad de evacuar la nave en caso de incendio o derrame tóxico.',
-        regulation: 'RD 486/1997 y Código Técnico de la Edificación (DB-SI).',
-        prevention: 'Pintar zona cebreada en suelo de prohibido el depósito frente a toda vía de evacuación.'
-      },
-      {
-        id: 'almacen-espalda',
-        name: 'Levantamiento de 40 kg sin flexión de piernas',
-        category: 'Manipulación Manual de Cargas',
-        severity: 'Grave',
-        rect: { left: 48, top: 46, width: 14, height: 32 },
-        description: 'Operario levantando una caja de 40 kg doblando la cintura con piernas rectas y carga alejada del cuerpo.',
-        consequences: 'Hernia discal lumbar aguda, lumbalgia incapacitante.',
-        regulation: 'RD 487/1997 sobre manipulación manual de cargas. Límite general máximo de 25 kg para hombres (15 kg para mujeres/jóvenes).',
-        prevention: 'Fraccionar la carga o utilizar transpaletas y carros de transporte hidráulicos.'
-      }
-    ]
-  },
-  {
-    id: 'laboratorio',
-    name: 'Laboratorio Químico y Biológico',
-    subtitle: 'Ensayos y Análisis de Riesgo Químico',
-    description: 'Laboratorio de control y análisis con reactivos peligrosos, campana extractora y material biológico.',
-    badgeColor: 'purple',
-    icon: 'flask',
-    timeLimit: 90,
-    svgContent: svgLaboratorio.trim(),
-    hazards: [
-      {
-        id: 'lab-campana',
-        name: 'Campana extractora abierta emitiendo vapores',
-        category: 'Riesgo Químico',
-        severity: 'Muy Grave',
-        rect: { left: 22, top: 18, width: 20, height: 36 },
-        description: 'Guillotina de campana levantada al máximo con reacción química emitiendo vapores tóxicos hacia el operador.',
-        consequences: 'Intoxicación aguda por inhalación de gases irritantes o asfixiantes.',
-        regulation: 'RD 374/2001 sobre protección contra agentes químicos y NTP 672.',
-        prevention: 'Trabajar con la guillotina al nivel de seguridad marcado (máximo 30-40 cm) y verificar el anemómetro.'
-      },
-      {
-        id: 'lab-incompatibles',
-        name: 'Ácido nítrico y disolventes almacenados juntos',
-        category: 'Almacenamiento Químico',
-        severity: 'Muy Grave',
-        rect: { left: 76, top: 18, width: 18, height: 40 },
-        description: 'Reactivos oxidantes fuertes y disolventes inflamables almacenados juntos en el mismo estante sin cubetos.',
-        consequences: 'Reacción exotérmica violenta, explosión e incendio químico incontrolado.',
-        regulation: 'RD 656/2017 (Reglamento de almacenamiento de productos químicos - APQ).',
-        prevention: 'Segregar químicamente los productos incompatibles en armarios de seguridad independientes RF-90.'
-      },
-      {
-        id: 'lab-ducha',
-        name: 'Ducha de emergencia bloqueada por carro',
-        category: 'Primeros Auxilios',
-        severity: 'Grave',
-        rect: { left: 2, top: 20, width: 16, height: 50 },
-        description: 'Carro de laboratorio aparcado bajo la ducha de emergencia y lavaojos impidiendo su acceso rápido.',
-        consequences: 'Agravamiento severo de quemaduras químicas por demora en la descontaminación cutánea/ocular.',
-        regulation: 'Norma UNE-EN 15154 y NTP 500 del INSST.',
-        prevention: 'Mantener despejado permanentemente el espacio de acceso a la ducha en un radio de 1 metro.'
-      },
-      {
-        id: 'lab-derrame',
-        name: 'Matraz roto con ácido corrosivo en encimera',
-        category: 'Riesgo Químico',
-        severity: 'Grave',
-        rect: { left: 46, top: 52, width: 18, height: 24 },
-        description: 'Rotura de matraz con derrame de ácido sin neutralizar ni recoger sobre la encimera.',
-        consequences: 'Cortes en manos contaminados con químicos y quemaduras por salpicadura.',
-        regulation: 'RD 374/2001 sobre agentes químicos.',
-        prevention: 'Neutralizar inmediatamente con absorbente específico y retirar vidrios con pinzas.'
-      },
-      {
-        id: 'lab-pipeteo',
-        name: 'Pipeteo bucal sin equipo de protección',
-        category: 'Buenas Prácticas de Laboratorio',
-        severity: 'Muy Grave',
-        rect: { left: 58, top: 35, width: 16, height: 32 },
-        description: 'Investigador aspirando reactivo líquido directamente con la boca a través de una pipeta de vidrio.',
-        consequences: 'Ingestión accidental de sustancias corrosivas, cancerígenas o mutágenas.',
-        regulation: 'RD 374/2001 y RD 664/1997. Prohibición expresa y absoluta del pipeteo con la boca.',
-        prevention: 'Utilizar exclusivamente propipetas automáticas, peras de goma de tres vías o micropipetas.'
-      }
-    ]
-  },
-  {
-    id: 'cocina',
-    name: 'Cocina Industrial',
-    subtitle: 'Hostelería y Restauración Colectiva',
-    description: 'Cocina profesional con fogones de gas, freidoras, maquinaria de corte y suelo húmedo.',
-    badgeColor: 'amber',
-    icon: 'fire',
-    timeLimit: 90,
-    svgContent: svgCocina.trim(),
-    hazards: [
-      {
-        id: 'cocina-cortafiambres',
-        name: 'Cortafiambres con cuchilla expuesta sin protector',
-        category: 'Equipos de Trabajo',
-        severity: 'Muy Grave',
-        rect: { left: 16, top: 45, width: 18, height: 25 },
-        description: 'Máquina cortadora en funcionamiento con la cuchilla circular girando sin resguardo ni empujador.',
-        consequences: 'Amputación traumática de falanges de los dedos por atrapamiento y corte severo.',
-        regulation: 'RD 1215/1997 sobre seguridad en equipos de trabajo.',
-        prevention: 'Utilizar siempre el carro de empuje y guante de malla metálica anticorte homologado EN 1082.'
-      },
-      {
-        id: 'cocina-grasa',
-        name: 'Charco de aceite y grasa en suelo resbaladizo',
-        category: 'Caídas al Mismo Nivel',
-        severity: 'Grave',
-        rect: { left: 42, top: 70, width: 24, height: 22 },
-        description: 'Suelo de baldosas cubierto de película de aceite caliente frente a la freidora sin calzado antideslizante.',
-        consequences: 'Caída al mismo nivel con fractura y posible contacto de manos con el aceite hirviendo.',
-        regulation: 'RD 486/1997 sobre lugares de trabajo.',
-        prevention: 'Limpieza inmediata con desengrasante y uso obligatorio de calzado de seguridad con suela SRC antideslizante.'
-      },
-      {
-        id: 'cocina-campana',
-        name: 'Filtros de campana saturados de grasa goteando',
-        category: 'Riesgo de Incendio',
-        severity: 'Muy Grave',
-        rect: { left: 38, top: 10, width: 35, height: 26 },
-        description: 'Filtros de extracción saturados de grasa combustible goteando directamente sobre los quemadores de gas activos.',
-        consequences: 'Inflamación súbita del conducto de extracción con incendio generalizado de cocina.',
-        regulation: 'Código Técnico de la Edificación (DB-SI) y RD 513/2017.',
-        prevention: 'Limpieza y desengrase periódico reglamentario de filtros y conductos.'
-      },
-      {
-        id: 'cocina-enchufe',
-        name: 'Enchufe trifásico en contacto con agua',
-        category: 'Riesgo Eléctrico',
-        severity: 'Muy Grave',
-        rect: { left: 77, top: 58, width: 16, height: 25 },
-        description: 'Toma eléctrica industrial de 400V sumergida en charco de baldeo de suelo junto al fregadero.',
-        consequences: 'Electrocución de operarios descalzos o con calzado húmedo.',
-        regulation: 'Reglamento Electrotécnico de Baja Tensión y RD 614/2001.',
-        prevention: 'Instalar tomas estancas IP67 a una altura mínima de 1.5 metros del suelo en zonas húmedas.'
-      },
-      {
-        id: 'cocina-tablas',
-        name: 'Contaminación cruzada en tabla de madera',
-        category: 'Higiene y Salud Pública',
-        severity: 'Leve',
-        rect: { left: 68, top: 48, width: 15, height: 20 },
-        description: 'Uso de tabla de madera porosa cortando pollo crudo y ensalada simultáneamente.',
-        consequences: 'Intoxicación alimentaria grave por Salmonella o Campylobacter.',
-        regulation: 'Reglamento CE 852/2004 relativo a la higiene de los productos alimenticios.',
-        prevention: 'Prohibir tablas de madera; utilizar tablas de polietileno de colores según alimento (rojo: carne, verde: verdura).'
-      }
-    ]
-  },
-  {
-    id: 'hospital',
-    name: 'Hospital y Urgencias',
-    subtitle: 'Atención Sanitaria y Hospitalización',
-    description: 'Área clínica de urgencias con pacientes encamados, gases medicinales y residuos biosanitarios.',
-    badgeColor: 'sky',
-    icon: 'heart-pulse',
-    timeLimit: 90,
-    svgContent: svgHospital.trim(),
-    hazards: [
-      {
-        id: 'hosp-aguja',
-        name: 'Aguja hipodérmica usada abandonada sin encapuchar',
-        category: 'Riesgo Biológico',
-        severity: 'Muy Grave',
-        rect: { left: 12, top: 50, width: 18, height: 26 },
-        description: 'Aguja de punción venosa con restos de sangre sobre batea en mesa auxiliar sin contenedor de punzantes.',
-        consequences: 'Inoculación accidental de patógenos de transmisión hemática (VIH, Hepatitis B, Hepatitis C) por pinchazo.',
-        regulation: 'Orden ESS/1451/2013 y RD 664/1997 sobre protección frente a agentes biológicos. Prohibición estricta de reencapuchar.',
-        prevention: 'Utilizar exclusivamente material punzante con mecanismo pasivo de bioseguridad y desechar en contenedor rígido de inmediato.'
-      },
-      {
-        id: 'hosp-oxigeno',
-        name: 'Botella de oxígeno medicinal sin cadena antivuelco',
-        category: 'Equipos a Presión',
-        severity: 'Muy Grave',
-        rect: { left: 78, top: 20, width: 15, height: 50 },
-        description: 'Botella de oxígeno a 200 bar de presión de pie sin cadena de sujeción mural con cadena rota colgando.',
-        consequences: 'Caída de la botella, cizallamiento del manorreductor y conversión del cilindro en un proyectil de alta velocidad.',
-        regulation: 'RD 2060/2008 (Reglamento de equipos a presión, ITC-EP-6) y NTP 368 del INSST.',
-        prevention: 'Fijar sólidamente a pared con doble cadena metálica tensa o trasladar en carros con abrazadera.'
-      },
-      {
-        id: 'hosp-residuos',
-        name: 'Bolsa de residuos biosanitarios rota en el suelo',
-        category: 'Residuos Sanitarios',
-        severity: 'Muy Grave',
-        rect: { left: 36, top: 68, width: 22, height: 26 },
-        description: 'Bolsa amarilla de residuos infecciosos Grupo III desgarrada en el suelo con líquido hemático rezumando.',
-        consequences: 'Contaminación biológica ambiental y contacto dérmico con fluidos infecciosos.',
-        regulation: 'Normativa autonómica de gestión de residuos sanitarios y RD 664/1997.',
-        prevention: 'Utilizar bolsas de galga homologada resistentes al desgarro y cubetas de transporte rígidas.'
-      },
-      {
-        id: 'hosp-camilla',
-        name: 'Camilla con freno desactivado y barandilla bajada',
-        category: 'Seguridad del Paciente y Transporte',
-        severity: 'Grave',
-        rect: { left: 48, top: 46, width: 26, height: 28 },
-        description: 'Camilla hospitalaria en zona de tránsito con los pedales de freno rojos levantados (libres) y barandillas bajadas.',
-        consequences: 'Desplazamiento involuntario en rampa y precipitación del paciente al suelo.',
-        regulation: 'RD 1215/1997 sobre equipos de trabajo y protocolos de seguridad del paciente del SNS.',
-        prevention: 'Bloquear siempre los frenos de las ruedas en reposo y subir las barandillas de protección lateral.'
-      },
-      {
-        id: 'hosp-ergonomia',
-        name: 'Celador en sobreesfuerzo lumbar movilizando paciente',
-        category: 'Ergonomía Sanitaria',
-        severity: 'Grave',
-        rect: { left: 28, top: 32, width: 18, height: 36 },
-        description: 'Trabajador doblando la espalda en ángulo de 90° sin flexionar rodillas realizando movilización manual solo.',
-        consequences: 'Lumbalgia aguda, protusión discal lumbar y bajas laborales prolongadas.',
-        regulation: 'RD 487/1997 sobre manipulación manual de cargas y Guía Técnica del INSST.',
-        prevention: 'Utilizar grúas mecánicas de transferencia de pacientes, sábanas deslizantes y trabajar en parejas.'
-      }
-    ]
-  },
-  {
-    id: 'taller',
-    name: 'Taller Mecánico e Industrial',
-    subtitle: 'Mantenimiento y Reparación de Vehículos',
-    description: 'Taller de automoción con elevadores hidráulicos, herramientas rotativas, oxicorte y fosos.',
-    badgeColor: 'sky',
-    icon: 'wrench',
-    timeLimit: 90,
-    svgContent: svgTaller.trim(),
-    hazards: [
-      {
-        id: 'taller-elevador',
-        name: 'Coche elevado sin seguro mecánico enclavado',
-        category: 'Aparatos de Elevación',
-        severity: 'Muy Grave',
-        rect: { left: 42, top: 18, width: 32, height: 52 },
-        description: 'Vehículo sobre puente de 2 columnas suspendido solo por presión hidráulica sin el trinquete mecánico bloqueado.',
-        consequences: 'Aplastamiento mortal por descenso intempestivo del vehículo por fallo de un manguito hidráulico.',
-        regulation: 'Norma UNE-EN 1493 (Elevadores de vehículos) y RD 1215/1997.',
-        prevention: 'Bajar siempre el elevador hasta apoyar mecánicamente en los trinquetes de seguridad antes de trabajar debajo.'
-      },
-      {
-        id: 'taller-radial',
-        name: 'Amoladora angular en marcha sin carcasa protectora',
-        category: 'Herramientas Mecánicas',
-        severity: 'Muy Grave',
-        rect: { left: 18, top: 48, width: 18, height: 22 },
-        description: 'Radial sobre banco con el protector de disco de 230 mm retirado.',
-        consequences: 'Impacto de fragmentos del disco roto a 80 m/s en cara y cuello, y cortes severos.',
-        regulation: 'RD 1215/1997 y NTP 86 del INSST.',
-        prevention: 'Prohibir terminantemente el desmontaje de la carcasa protectora de disco y usar pantalla facial homologada.'
-      },
-      {
-        id: 'taller-oxicorte',
-        name: 'Equipo de oxicorte sin válvulas antirretroceso',
-        category: 'Trabajos en Caliente',
-        severity: 'Muy Grave',
-        rect: { left: 80, top: 25, width: 16, height: 45 },
-        description: 'Carro de botellas de oxígeno y acetileno con mangueras agrietadas y sin apagallamas de seguridad.',
-        consequences: 'Retroceso de la llama hacia el interior de la botella de acetileno provocando una explosión demoledora.',
-        regulation: 'RD 2060/2008 y NTP 495 sobre soldadura oxiacetilénica.',
-        prevention: 'Instalar válvulas antirretroceso en soplete y manómetros, y sustituir mangueras caducadas.'
-      },
-      {
-        id: 'taller-foso',
-        name: 'Foso de inspección abierto sin barandilla perimetral',
-        category: 'Caídas a Distinto Nivel',
-        severity: 'Grave',
-        rect: { left: 8, top: 72, width: 35, height: 24 },
-        description: 'Foso de reparación de camiones de 1.6 m de profundidad abierto en zona de paso con iluminación deficiente.',
-        consequences: 'Caída de operarios al fondo del foso con fracturas múltiples.',
-        regulation: 'RD 486/1997 sobre lugares de trabajo.',
-        prevention: 'Cubrir el foso con tablones resistentes o instalar barandillas y cadenas perimetrales retráctiles cuando no haya vehículo.'
-      },
-      {
-        id: 'taller-cuba',
-        name: 'Cuba de desengrase con disolventes sin aspiración',
-        category: 'Riesgo Químico e Incendio',
-        severity: 'Grave',
-        rect: { left: 2, top: 42, width: 16, height: 28 },
-        description: 'Depósito de limpieza de piezas con disolventes volátiles abierto sin extracción localizada ni tapa cerrada.',
-        consequences: 'Inhalación crónica de vapores de hidrocarburos e ignición de atmósfera inflamable.',
-        regulation: 'RD 374/2001 y RD 1215/1997.',
-        prevention: 'Disponer de cubas con tapa de cierre automático con fusible térmico y campana de extracción forzada.'
-      }
-    ]
-  },
-  {
-    id: 'alturas',
-    name: 'Cubiertas y Tejados',
-    subtitle: 'Trabajos Verticales y Rehabilitación',
-    description: 'Cubierta inclinada de teja con claraboyas frágiles, chimeneas y riesgo de caída en altura.',
-    badgeColor: 'amber',
-    icon: 'mountain',
-    timeLimit: 90,
-    svgContent: svgAlturas.trim(),
-    hazards: [
-      {
-        id: 'alturas-lucernario',
-        name: 'Lucernario de plástico frágil sin red de protección',
-        category: 'Superficies Frágiles',
-        severity: 'Muy Grave',
-        rect: { left: 38, top: 38, width: 22, height: 25 },
-        description: 'Claraboya de policarbonato translúcido envejecido sin reja ni malla metálica de resistencia en cubierta.',
-        consequences: 'Rotura inmediata de la placa bajo el peso del trabajador y precipitación al vacío de 8 metros.',
-        regulation: 'RD 2177/2004 y RD 1627/1997. Las superficies no transitables deben protegerse con redes o pasarelas.',
-        prevention: 'Instalar redes bajo cubierta antes de pisar el tejado y pasarelas de reparto de carga de madera.'
-      },
-      {
-        id: 'alturas-vacio',
-        name: 'Trabajador en el alero sin línea de vida ni arnés',
-        category: 'Caídas en Altura',
-        severity: 'Muy Grave',
-        rect: { left: 78, top: 42, width: 18, height: 35 },
-        description: 'Operario arrodillado en el borde del tejado a 12 metros de altura sin arnés anticaídas ni barandilla.',
-        consequences: 'Caída vertical al vacío con resultado de muerte instantánea.',
-        regulation: 'RD 2177/2004 sobre trabajos en altura. Obligación de protección colectiva o individual a partir de 2 metros.',
-        prevention: 'Instalar redes de seguridad perimetrales de horca tipo V o línea de vida con arnés anticaídas EN 361.'
-      },
-      {
-        id: 'alturas-chimenea',
-        name: 'Línea de vida atada a chimenea antigua agrietada',
-        category: 'Puntos de Anclaje',
-        severity: 'Muy Grave',
-        rect: { left: 63, top: 15, width: 15, height: 32 },
-        description: 'Cuerda amarrada al tiro de una chimenea de ladrillo con grietas profundas como falso anclaje.',
-        consequences: 'Colapso de la chimenea al recibir el impacto de una caída, arrastrando al operario.',
-        regulation: 'Norma UNE-EN 795 sobre dispositivos de anclaje. Resistencia estática mínima requerida de 12 kN.',
-        prevention: 'Prohibir el anclaje a elementos de fábrica de ladrillo; taladrar anclajes químicos en vigas maestras.'
-      },
-      {
-        id: 'alturas-escalera',
-        name: 'Escalera de acceso que no sobrepasa 1 metro',
-        category: 'Acceso a Cubiertas',
-        severity: 'Grave',
-        rect: { left: 4, top: 50, width: 14, height: 42 },
-        description: 'Escalera de mano que finaliza a ras del alero sin sobrepasar la altura reglamentaria ni estar amarrada.',
-        consequences: 'Deslizamiento lateral de la escalera o caída durante la transición al tejado.',
-        regulation: 'RD 2177/2004. Las escaleras deben sobrepasar al menos 1 metro por encima del plano de desembarco.',
-        prevention: 'Utilizar escaleras con prolongación de 1 metro y fijar firmemente la cabeza con abrazadera.'
-      }
-    ]
-  }
+  { id: 'hospital', name: 'Hospital y Urgencias', subtitle: 'Atención Sanitaria y Hospitalización', description: 'Área clínica de urgencias con pacientes encamados, gases medicinales y residuos biosanitarios.', badgeColor: 'sky', icon: 'heart-pulse', timeLimit: 90, svgContent: svgHospital.trim(), hazards: [] },
+  { id: 'oficina', name: 'Oficina y Despachos', subtitle: 'Administración y Gestión Corporativa', description: 'Espacio de trabajo administrativo común con equipos ofimáticos, zonas de tránsito, archivadores y medios de protección.', badgeColor: 'sky', icon: 'briefcase', timeLimit: 90, svgContent: svgOficina.trim(), hazards: [] },
+  { id: 'obra', name: 'Obra de Construcción', subtitle: 'Edificación y Obra Civil', description: 'Entorno de obra con maquinaria pesada, trabajos en altura, excavaciones y cuadros eléctricos temporales.', badgeColor: 'amber', icon: 'hard-hat', timeLimit: 90, svgContent: svgObra.trim(), hazards: [] },
+  { id: 'almacen', name: 'Almacén Logístico', subtitle: 'Almacenamiento y Manutención', description: 'Nave logística de alta rotación con carretillas elevadoras, estanterías pesadas y pasillos de tránsito.', badgeColor: 'emerald', icon: 'archive', timeLimit: 90, svgContent: svgAlmacen.trim(), hazards: [] },
+  { id: 'laboratorio', name: 'Laboratorio Químico y Biológico', subtitle: 'Ensayos y Análisis de Riesgo Químico', description: 'Laboratorio de control y análisis con reactivos peligrosos, campana extractora y material biológico.', badgeColor: 'purple', icon: 'flask', timeLimit: 90, svgContent: svgLaboratorio.trim(), hazards: [] },
+  { id: 'cocina', name: 'Cocina Industrial', subtitle: 'Hostelería y Restauración Colectiva', description: 'Cocina profesional con fogones de gas, freidoras, maquinaria de corte y suelo húmedo.', badgeColor: 'amber', icon: 'fire', timeLimit: 90, svgContent: svgCocina.trim(), hazards: [] },
+  { id: 'taller', name: 'Taller Mecánico e Industrial', subtitle: 'Mantenimiento y Reparación de Vehículos', description: 'Taller de automoción con elevadores hidráulicos, herramientas rotativas, oxicorte y fosos.', badgeColor: 'sky', icon: 'wrench', timeLimit: 90, svgContent: svgTaller.trim(), hazards: [] },
+  { id: 'alturas', name: 'Cubiertas y Tejados', subtitle: 'Trabajos Verticales y Rehabilitación', description: 'Cubierta inclinada de teja con claraboyas frágiles, chimeneas y riesgo de caída en altura.', badgeColor: 'amber', icon: 'mountain', timeLimit: 90, svgContent: svgAlturas.trim(), hazards: [] }
 ];
 
 const outputContent = `/**
  * BANCO DE DATOS DE ESCENARIOS Y PELIGROS DE PRL - 8 ESCENARIOS REALISTAS MULTIPLATAFORMA
- * Generado con arte vectorial de alta definición, iluminación ambiental y sin textos spoiler.
+ * Generado con arte vectorial detallado para todos los objetos interactivos.
  */
 window.PRL_SCENARIOS = ${JSON.stringify(allScenarios, null, 2)};
 `;
 
 fs.writeFileSync(path.join(__dirname, 'js', 'scenarios.js'), outputContent, 'utf-8');
-console.log('✅ Generated 8 highly realistic scenarios in js/scenarios.js!');
+console.log('✅ Generated 8 rich complete SVG scenarios in js/scenarios.js!');

@@ -27,11 +27,32 @@ class PRLClassroomApp {
     // Escenario actual de la ronda
     this.currentScenario = null;
     this.activeRevealedHazard = null;
+    this.gamePhase = 'lobby';
+    this.roundToken = 0;
+    this.botTimers = [];
+    this.syncRetryTimer = null;
 
     this.initDOM();
     this.bindNetworkEvents();
     this.bindUIEvents();
     this.restoreSessionOrShowRoleSelect();
+  }
+
+  escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  clearBotTimers() {
+    if (Array.isArray(this.botTimers) && this.botTimers.length > 0) {
+      this.botTimers.forEach(t => clearTimeout(t));
+      this.botTimers = [];
+    }
   }
 
   initDOM() {
@@ -61,6 +82,8 @@ class PRLClassroomApp {
 
       studentLobbyPin: document.getElementById('student-lobby-pin'),
       studentLobbyName: document.getElementById('student-lobby-name'),
+      studentJoinError: document.getElementById('student-join-error'),
+      studentLobbyConnection: document.getElementById('student-lobby-connection'),
 
       // Simulación en juego
       hudScenarioBadge: document.getElementById('hud-scenario-badge'),
@@ -127,7 +150,8 @@ class PRLClassroomApp {
   restoreSessionOrShowRoleSelect() {
     // Si el alumno abre un enlace con ?pin=XXXX o #pin=XXXX, autocompletar e ir directo a unirse
     const urlParams = new URLSearchParams(window.location.search);
-    const pin = urlParams.get('pin') || (window.location.hash.startsWith('#pin=') ? window.location.hash.split('=')[1] : null);
+    const rawPin = urlParams.get('pin') || (window.location.hash.startsWith('#pin=') ? window.location.hash.split('=')[1] : null);
+    const pin = rawPin ? rawPin.trim().replace(/[^0-9A-Z]/gi, '').toUpperCase().slice(0, 4) : null;
     if (pin && pin.length === 4) {
       if (this.dom.roomCodeInput) this.dom.roomCodeInput.value = pin;
       this.showScreen('student-join');
@@ -152,20 +176,68 @@ class PRLClassroomApp {
     });
 
     document.getElementById('btn-cancel-student')?.addEventListener('click', () => {
+      if (this.dom.studentJoinError) this.dom.studentJoinError.classList.add('hidden');
       this.showScreen('role-select');
     });
 
-    // Copiar enlace directo de invitación
-    document.getElementById('btn-copy-link')?.addEventListener('click', () => {
+    // Envío rápido con Enter en formularios y sanitización de PIN
+    this.dom.hostNameInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.handleCreateRoom();
+      }
+    });
+
+    this.dom.studentNameInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (this.dom.roomCodeInput && this.dom.roomCodeInput.value.trim().length < 4) {
+          this.dom.roomCodeInput.focus();
+        } else {
+          this.handleJoinRoom();
+        }
+      }
+    });
+
+    this.dom.studentNameInput?.addEventListener('input', () => {
+      if (this.dom.studentJoinError) this.dom.studentJoinError.classList.add('hidden');
+    });
+
+    this.dom.roomCodeInput?.addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9A-Z]/gi, '').toUpperCase().slice(0, 4);
+      if (this.dom.studentJoinError) this.dom.studentJoinError.classList.add('hidden');
+    });
+
+    this.dom.roomCodeInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.handleJoinRoom();
+      }
+    });
+
+    // Copiar enlace directo de invitación (sin diálogo bloqueante alert)
+    const copyBtn = document.getElementById('btn-copy-link');
+    copyBtn?.addEventListener('click', () => {
       const inviteUrl = `${window.location.origin}${window.location.pathname}?pin=${this.roomCode}`;
+      const showCopiedFeedback = () => {
+        const label = copyBtn.querySelector('span');
+        if (label) {
+          const orig = label.textContent;
+          label.textContent = `✓ ¡Enlace PIN ${this.roomCode} copiado!`;
+          copyBtn.classList.add('border-emerald-500/60', 'text-emerald-300');
+          setTimeout(() => {
+            label.textContent = orig;
+            copyBtn.classList.remove('border-emerald-500/60', 'text-emerald-300');
+          }, 2600);
+        }
+      };
+
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(inviteUrl).then(() => {
-          alert(`¡Enlace directo copiado al portapapeles!\n\n${inviteUrl}\n\nPuedes enviarlo por WhatsApp, Teams o chat. Los alumnos podrán unirse desde cualquier red 4G/5G o Wi-Fi con el PIN ya introducido.`);
-        }).catch(() => {
-          prompt('Copia este enlace para tus alumnos:', inviteUrl);
+        navigator.clipboard.writeText(inviteUrl).then(showCopiedFeedback).catch(() => {
+          window.prompt('Copia este enlace para tus alumnos:', inviteUrl);
         });
       } else {
-        prompt('Copia este enlace para tus alumnos:', inviteUrl);
+        window.prompt('Copia este enlace para tus alumnos:', inviteUrl);
       }
     });
 
@@ -256,10 +328,12 @@ class PRLClassroomApp {
   // =========================================================================
 
   handleCreateRoom() {
+    this.clearBotTimers();
     const hostName = this.dom.hostNameInput.value.trim() || 'Profesor PRL';
     this.myName = hostName;
     this.hostParticipates = this.dom.hostParticipatesCheck.checked;
     this.role = 'host';
+    this.gamePhase = 'lobby';
     this.roomCode = this.net.generateRoomCode();
     this.net.isHost = true;
     this.net.setRoom(this.roomCode);
@@ -282,7 +356,8 @@ class PRLClassroomApp {
         isFinished: false,
         hits: new Set(),
         misses: 0,
-        clicks: []
+        clicks: [],
+        markedItemIds: new Set()
       });
     }
 
@@ -297,20 +372,31 @@ class PRLClassroomApp {
     });
   }
 
+  showStudentJoinError(msg) {
+    if (this.dom.studentJoinError) {
+      this.dom.studentJoinError.textContent = msg;
+      this.dom.studentJoinError.classList.remove('hidden');
+    } else {
+      alert(msg);
+    }
+  }
+
   handleJoinRoom() {
     const studentName = this.dom.studentNameInput.value.trim();
     const code = this.dom.roomCodeInput.value.trim().toUpperCase();
 
     if (!studentName) {
-      alert('Por favor, introduce tu nombre.');
+      this.showStudentJoinError('Por favor, introduce tu nombre completo antes de entrar.');
       this.dom.studentNameInput.focus();
       return;
     }
     if (!code || code.length !== 4) {
-      alert('Por favor, introduce un código de sala válido de 4 dígitos.');
+      this.showStudentJoinError('Por favor, introduce un código de sala válido de 4 caracteres.');
       this.dom.roomCodeInput.focus();
       return;
     }
+
+    if (this.dom.studentJoinError) this.dom.studentJoinError.classList.add('hidden');
 
     this.myName = studentName;
     this.roomCode = code;
@@ -319,7 +405,7 @@ class PRLClassroomApp {
     this.net.setRoom(this.roomCode);
     this.net.myName = this.myName;
 
-    // Intentar activar modo horizontal en móviles para la mejor experiencia
+    // En móviles/tablets intentar pasar a modo horizontal con el gesto del botón Entrar
     this.requestLandscapeMode();
 
     // EL ALUMNO DEBE PERMANECER 100% EN SILENCIO (Para evitar caos en el aula)
@@ -330,15 +416,29 @@ class PRLClassroomApp {
 
     if (this.dom.studentLobbyPin) this.dom.studentLobbyPin.textContent = this.roomCode;
     if (this.dom.studentLobbyName) this.dom.studentLobbyName.textContent = this.myName;
+    if (this.dom.studentLobbyConnection) {
+      this.dom.studentLobbyConnection.className = 'mb-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30 text-[11px] font-bold';
+      this.dom.studentLobbyConnection.innerHTML = '<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span><span>Sincronizando con la sala del profesor...</span>';
+    }
 
     this.showScreen('student-lobby');
 
-    // Notificar al Host que nos hemos unido
-    this.net.emit('STUDENT_JOIN', {
-      studentId: this.myId,
-      studentName: this.myName,
-      roomCode: this.roomCode
-    });
+    const sendJoin = () => {
+      if (this.role !== 'student' || this.roomCode !== code) return;
+      this.net.emit('STUDENT_JOIN', {
+        studentId: this.myId,
+        studentName: this.myName,
+        roomCode: this.roomCode
+      });
+    };
+
+    sendJoin();
+    clearTimeout(this.syncRetryTimer);
+    this.syncRetryTimer = setTimeout(() => {
+      if (this.role === 'student' && this.gamePhase === 'lobby') {
+        sendJoin();
+      }
+    }, 1800);
   }
 
   renderHostStudentsList() {
@@ -357,14 +457,17 @@ class PRLClassroomApp {
       return;
     }
 
-    const html = Array.from(this.students.values()).map(st => `
-      <div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-800/90 border border-slate-700 animate-[bounce-in_0.3s_ease-out]">
-        <div class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs border border-amber-500/30">
-          ${st.name.charAt(0).toUpperCase()}
+    const html = Array.from(this.students.values()).map(st => {
+      const safeName = this.escapeHtml(st.name);
+      return `
+        <div class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-slate-800/90 border border-slate-700 animate-[bounce-in_0.3s_ease-out]">
+          <div class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-xs border border-amber-500/30 shrink-0">
+            ${this.escapeHtml(st.name.charAt(0).toUpperCase())}
+          </div>
+          <span class="text-xs font-bold text-white truncate max-w-[140px]">${safeName}</span>
         </div>
-        <span class="text-xs font-bold text-white truncate max-w-[140px]">${st.name}</span>
-      </div>
-    `).join('');
+      `;
+    }).join('');
 
     this.dom.hostLobbyStudentsList.innerHTML = html;
   }
@@ -447,6 +550,9 @@ class PRLClassroomApp {
   handleHostStartScenario() {
     if (!this.selectedScenario) return;
 
+    this.clearBotTimers();
+    this.roundToken++;
+    this.gamePhase = 'playing';
     this.currentScenario = this.selectedScenario;
 
     // Resetear estado de respuestas de los alumnos
@@ -476,6 +582,10 @@ class PRLClassroomApp {
   handleHostEndScenario() {
     if (!this.currentScenario) return;
 
+    this.clearBotTimers();
+    this.roundToken++;
+    this.gamePhase = 'results';
+
     // Audio Host: Efecto dramático de parada y música de victoria final
     window.prlAudio?.playDramaticStop();
     setTimeout(() => {
@@ -493,6 +603,9 @@ class PRLClassroomApp {
   }
 
   handleHostNextScenario() {
+    this.clearBotTimers();
+    this.roundToken++;
+    this.gamePhase = 'lobby';
     this.selectedScenario = null;
     if (this.dom.resultsSvgContainer) this.dom.resultsSvgContainer.innerHTML = '';
     if (this.dom.sceneSvgContainer) this.dom.sceneSvgContainer.innerHTML = '';
@@ -564,6 +677,15 @@ class PRLClassroomApp {
   }
 
   // Renderizar los 10-12 objetos interactivos numerados con sus etiquetas
+  getAlignPositionClasses(badgeAlign) {
+    switch (badgeAlign) {
+      case 'tr': return 'top-0 right-0';
+      case 'bl': return 'bottom-0 left-0';
+      case 'br': return 'bottom-0 right-0';
+      default:   return 'top-0 left-0';
+    }
+  }
+
   renderScenarioInteractiveItems() {
     if (!this.dom.hotspotLayer || !this.currentScenario) return;
 
@@ -573,35 +695,40 @@ class PRLClassroomApp {
       isHazard: true
     }));
 
-    // 1. Renderizar en el SVG badges individuales tipo pin SIN cajas gigantes que se solapen
+    // 1. Renderizar hitboxes exactos sobre cada objeto SVG y anclar la chapa según badgeAlign
     this.dom.hotspotLayer.innerHTML = items.map(item => {
       const isSelected = this.selectedItemIds && this.selectedItemIds.has(item.id);
       const isHostObserving = (this.role === 'host' && !this.hostParticipates);
+      const safeName = this.escapeHtml(item.name);
+      const alignPos = this.getAlignPositionClasses(item.badgeAlign);
+      const rect = item.rect || { left: 10, top: 10, width: 10, height: 10 };
 
       return `
         <div 
           id="item-hotspot-${item.id}"
           onclick="window.prlApp.toggleItemSelection('${item.id}', event)"
-          class="item-hotspot absolute z-20 select-none transition-all duration-150 ${
-            isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:scale-105 active:scale-95'
+          class="item-hotspot absolute select-none transition-all duration-150 rounded-lg ${
+            isSelected ? 'z-30' : 'z-20 hover:z-40'
+          } ${
+            isHostObserving ? 'cursor-default pointer-events-none' : 'cursor-pointer hover:bg-amber-400/15 hover:ring-1 hover:ring-amber-400/50 active:scale-[0.99]'
           }"
-          style="left: ${item.rect.left}%; top: ${item.rect.top}%;"
-          title="Toca para evaluar: ${item.name}"
+          style="left: ${rect.left}%; top: ${rect.top}%; width: ${rect.width || 10}%; height: ${rect.height || 10}%;"
+          title="Toca para evaluar: ${safeName}"
         >
-          <!-- Chapa del número con diseño de chapa de seguridad (Visible SIEMPRE) -->
-          <div class="inline-flex items-center p-0.5 sm:px-1.5 sm:py-0.5 rounded-md sm:rounded-lg shadow-lg border backdrop-blur-md transition-all ${
+          <!-- Chapa anclada a una esquina exacta del objeto sin solaparse ni salirse -->
+          <div class="hotspot-badge-chip absolute ${alignPos} pointer-events-auto inline-flex items-center p-0.5 sm:px-1.5 sm:py-0.5 rounded-md sm:rounded-lg shadow-lg border backdrop-blur-md transition-all ${
             isSelected 
-              ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-110' 
+              ? 'bg-amber-950/95 border-amber-400 ring-2 ring-amber-400/50 text-amber-200 shadow-amber-500/30 scale-105' 
               : 'bg-slate-950/90 border-slate-700/80 hover:border-amber-400 hover:bg-slate-900 text-slate-100'
           }">
-            <span class="w-6 h-6 sm:w-5 sm:h-5 rounded-md ${
+            <span class="badge-num-pill w-6 h-6 sm:w-5 sm:h-5 rounded-md ${
               isSelected ? 'bg-amber-500 text-slate-950 font-black' : 'bg-red-600 text-white font-black'
             } text-xs sm:text-[10px] flex items-center justify-center shrink-0 shadow">
               ${isSelected ? '⚠️' : item.num}
             </span>
             <!-- Nombre del elemento: Visible en horizontal en móvil y en pantallas de PC -->
             <span class="badge-item-name text-white">
-              ${item.name}
+              ${safeName}
             </span>
           </div>
         </div>
@@ -726,14 +853,6 @@ class PRLClassroomApp {
     if (item) {
       const statusText = !wasSelected ? '⚠️ Marcado como Riesgo' : '🛡️ Desmarcado (Seguro)';
       this.showSceneToast(`[#${item.num}] ${item.name} → ${statusText}`);
-
-      // En móviles, sincronizar vista haciendo scroll suave al elemento en la bandeja
-      if (window.innerWidth < 768) {
-        const trayCard = document.getElementById(`tray-item-${itemId}`);
-        if (trayCard) {
-          trayCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-      }
     }
 
     // Refrescar el estado visual de los hotspots
@@ -772,6 +891,8 @@ class PRLClassroomApp {
   }
 
   async requestLandscapeMode() {
+    const isMobileOrTouch = (window.innerWidth < 1024) || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if (!isMobileOrTouch) return;
     try {
       if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
         await document.documentElement.requestFullscreen().catch(() => {});
@@ -854,7 +975,7 @@ class PRLClassroomApp {
               : 'bg-slate-800 text-slate-300 border-slate-700'
           }">
             <span class="w-2 h-2 rounded-full ${st.isFinished ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}"></span>
-            <span class="truncate max-w-[120px]">${st.name}</span>
+            <span class="truncate max-w-[120px]">${this.escapeHtml(st.name)}</span>
             <span class="text-[10px] opacity-75 font-mono">(${markedCount} marcados)</span>
           </div>
         `;
@@ -884,6 +1005,8 @@ class PRLClassroomApp {
   }
 
   runBotSimulationResponses() {
+    this.clearBotTimers();
+    const myToken = this.roundToken;
     const bots = Array.from(this.students.values()).filter(st => st.id.startsWith('bot_'));
     if (bots.length === 0 || !this.currentScenario) return;
 
@@ -905,19 +1028,22 @@ class PRLClassroomApp {
       const botChoices = [...chosenHazards, ...pickSafe];
 
       botChoices.forEach((item, i) => {
-        setTimeout(() => {
-          if (!this.currentScenario) return;
+        const t = setTimeout(() => {
+          if (this.roundToken !== myToken || this.gamePhase !== 'playing' || !this.currentScenario) return;
           bot.markedItemIds.add(item.id);
           this.recalculateStudentScore(bot);
           this.updateHostResponseCounter();
         }, (i + 1) * 2000 + Math.random() * 1200);
+        this.botTimers.push(t);
       });
 
       // Marcar al bot como finalizado tras completar su evaluación
-      setTimeout(() => {
+      const finishTimer = setTimeout(() => {
+        if (this.roundToken !== myToken || this.gamePhase !== 'playing') return;
         bot.isFinished = true;
         this.updateHostResponseCounter();
       }, (botChoices.length + 1) * 2200 + 1000);
+      this.botTimers.push(finishTimer);
     });
   }
 
@@ -943,12 +1069,14 @@ class PRLClassroomApp {
     // Recalcular puntuación final de cada alumno
     this.students.forEach(st => this.recalculateStudentScore(st));
 
-    // Renderizar pins compactos de revelación (SIN solapamientos de texto)
+    // Renderizar pins compactos de revelación anclados sin solapamientos ni recortes
     if (this.dom.resultsHotspotLayer) {
       this.dom.resultsHotspotLayer.innerHTML = items.map(item => {
-        const { left, top } = item.rect;
+        const rect = item.rect || { left: 10, top: 10, width: 10, height: 10 };
         const isHazard = item.isHazard;
-        
+        const alignPos = this.getAlignPositionClasses(item.badgeAlign);
+        const safeName = this.escapeHtml(item.name);
+
         // Contar cuántos alumnos marcaron este objeto concreto
         let markedCount = 0;
         this.students.forEach(st => {
@@ -957,25 +1085,28 @@ class PRLClassroomApp {
 
         return `
           <div 
-            onclick="window.prlApp.revealHazardDetails('${item.id}')"
-            class="absolute z-20 cursor-pointer select-none transition-all hover:scale-115 active:scale-95 group -translate-x-1/2 -translate-y-1/2"
-            style="left: ${left}%; top: ${top}%;"
-            title="${item.name} (${isHazard ? 'Riesgo Real' : 'Elemento Seguro'}) - Haz clic para ver detalles"
+            class="absolute pointer-events-none"
+            style="left: ${rect.left}%; top: ${rect.top}%; width: ${rect.width || 10}%; height: ${rect.height || 10}%;"
           >
-            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full shadow-2xl border backdrop-blur-md transition-all ${
-              isHazard
-                ? 'bg-red-950/95 border-red-500 text-red-100 ring-2 ring-red-500/40 shadow-red-500/40 hover:border-red-400'
-                : 'bg-emerald-950/95 border-emerald-400 text-emerald-100 ring-2 ring-emerald-500/40 shadow-emerald-500/40 hover:border-emerald-300'
-            }">
-              <span class="w-5 h-5 rounded-full ${
+            <div 
+              data-result-pin="${item.id}"
+              onclick="window.prlApp.revealHazardDetails('${item.id}', true)"
+              class="results-pin-card pointer-events-auto absolute ${alignPos} z-20 cursor-pointer select-none transition-all hover:scale-105 hover:z-40 active:scale-95 group inline-flex items-center gap-1 px-1.5 py-0.5 rounded-lg shadow-xl border backdrop-blur-md ${
+                isHazard
+                  ? 'bg-red-950/95 border-red-500 text-red-100 ring-1 ring-red-500/40 shadow-red-500/30 hover:border-red-300'
+                  : 'bg-emerald-950/95 border-emerald-400 text-emerald-100 ring-1 ring-emerald-500/40 shadow-emerald-500/30 hover:border-emerald-200'
+              }"
+              title="${safeName} (${isHazard ? 'Riesgo Real' : 'Elemento Seguro'}) - Haz clic para ver detalles"
+            >
+              <span class="results-num-pill w-5 h-5 rounded-md ${
                 isHazard ? 'bg-red-600 text-white font-black' : 'bg-emerald-600 text-white font-black'
               } text-[10px] flex items-center justify-center shrink-0 shadow">
-                ${isHazard ? '⚠️' : '🛡️'}
+                ${item.num}
               </span>
-              <span class="text-[11px] font-black font-mono">
-                #${item.num}
+              <span class="results-item-label text-white">
+                ${safeName}
               </span>
-              <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
+              <span class="text-[9px] font-black font-mono px-1 py-0.5 rounded shrink-0 ${
                 isHazard ? 'bg-red-900/90 text-red-200' : 'bg-emerald-900/90 text-emerald-200'
               }">
                 ${markedCount}
@@ -994,13 +1125,13 @@ class PRLClassroomApp {
 
     // 5. Mostrar el primer elemento por defecto en el panel lateral de detalles
     if (items.length > 0) {
-      this.revealHazardDetails(items[0].id);
+      this.revealHazardDetails(items[0].id, false);
     }
 
     this.showScreen('host-results');
-    window.prlAudio?.playVictory();
+    window.prlAudio?.playVictoryMusic();
     if (window.confetti) {
-      window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      window.confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, zIndex: 100 });
     }
   }
 
@@ -1036,7 +1167,8 @@ class PRLClassroomApp {
 
           return `
             <div 
-              onclick="window.prlApp.revealHazardDetails('${item.id}')"
+              data-result-tray="${item.id}"
+              onclick="window.prlApp.revealHazardDetails('${item.id}', true)"
               class="flex items-center justify-between gap-2 p-2.5 rounded-xl border cursor-pointer transition-all hover:scale-[1.01] ${
                 isHazard 
                   ? 'bg-red-950/40 border-red-500/30 hover:border-red-400 text-red-200' 
@@ -1050,11 +1182,11 @@ class PRLClassroomApp {
                   #${item.num}
                 </span>
                 <div class="min-w-0">
-                  <div class="text-xs font-bold text-white truncate" title="${item.name}">
-                    ${item.name}
+                  <div class="text-xs font-bold text-white whitespace-normal leading-tight" title="${this.escapeHtml(item.name)}">
+                    ${this.escapeHtml(item.name)}
                   </div>
                   <div class="text-[10px] text-slate-400">
-                    ${item.category}
+                    ${this.escapeHtml(item.category)}
                   </div>
                 </div>
               </div>
@@ -1070,13 +1202,34 @@ class PRLClassroomApp {
     `;
   }
 
-  revealHazardDetails(itemId) {
+  revealHazardDetails(itemId, fromUserClick = false) {
     const items = this.currentScenario?.items || this.currentScenario?.hazards || [];
     const item = items.find(x => x.id === itemId);
     if (!item || !this.dom.hazardDetailContent) return;
 
+    this.activeRevealedHazard = itemId;
+
+    // Resaltar pin y tarjeta activa en resultados
+    document.querySelectorAll('[data-result-pin]').forEach(el => {
+      const active = el.getAttribute('data-result-pin') === itemId;
+      el.classList.toggle('ring-2', active);
+      el.classList.toggle('ring-amber-400', active);
+      el.classList.toggle('scale-105', active);
+      el.classList.toggle('z-30', active);
+    });
+    document.querySelectorAll('[data-result-tray]').forEach(el => {
+      const active = el.getAttribute('data-result-tray') === itemId;
+      el.classList.toggle('ring-2', active);
+      el.classList.toggle('ring-amber-400', active);
+    });
+
     // Efecto de audio en el Host al examinar un peligro o elemento seguro
-    window.prlAudio?.playHazardReveal();
+    if (fromUserClick) {
+      window.prlAudio?.playHazardReveal();
+      if (window.innerWidth < 1024) {
+        this.dom.hazardDetailContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
 
     const isHazard = item.isHazard;
 
@@ -1146,7 +1299,7 @@ class PRLClassroomApp {
           </div>
           ${
             studentsWhoMarked.length > 0
-              ? `<div class="flex flex-wrap gap-1.5">${studentsWhoMarked.map(n => `<span class="px-2 py-0.5 ${isHazard ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-amber-950 text-amber-300 border-amber-500/40'} border rounded-md text-[11px] font-bold">${n}</span>`).join('')}</div>`
+              ? `<div class="flex flex-wrap gap-1.5">${studentsWhoMarked.map(n => `<span class="px-2 py-0.5 ${isHazard ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40' : 'bg-amber-950 text-amber-300 border-amber-500/40'} border rounded-md text-[11px] font-bold">${this.escapeHtml(n)}</span>`).join('')}</div>`
               : `<p class="text-slate-500 text-xs italic">${isHazard ? 'Ningún alumno localizó este peligro.' : 'Ningún alumno cayó en este distractor (¡excelente!).'}</p>`
           }
         </div>
@@ -1158,7 +1311,7 @@ class PRLClassroomApp {
           </span>
           ${
             studentsWhoDidNotMark.length > 0
-              ? `<p class="text-slate-400 text-[11px]">${studentsWhoDidNotMark.join(', ')}</p>`
+              ? `<p class="text-slate-400 text-[11px]">${studentsWhoDidNotMark.map(n => this.escapeHtml(n)).join(', ')}</p>`
               : `<p class="text-slate-500 text-[11px] italic">Todos los alumnos respondieron.</p>`
           }
         </div>
@@ -1188,26 +1341,43 @@ class PRLClassroomApp {
 
     // Podio visual para los 3 primeros
     if (this.dom.podiumContainer) {
-      const top3 = ranking.slice(0, 3);
-      const podiumBadges = ['🥇', '🥈', '🥉'];
+      if (ranking.length === 0) {
+        this.dom.podiumContainer.innerHTML = `
+          <div class="col-span-full py-6 text-center text-slate-400 text-xs italic">
+            No hubo alumnos conectados en esta ronda. Usa "Añadir Alumnos Simulados (Demo)" o invita con el PIN.
+          </div>
+        `;
+      } else {
+        const top3 = ranking.slice(0, 3);
+        const podiumBadges = ['🥇', '🥈', '🥉'];
 
-      this.dom.podiumContainer.innerHTML = top3.map((st, i) => `
-        <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-700 text-center flex flex-col items-center justify-between">
-          <div class="text-3xl mb-1">${podiumBadges[i]}</div>
-          <span class="font-extrabold text-white text-sm truncate max-w-[150px] mb-1">${st.name}</span>
-          <span class="text-lg font-black text-amber-400 font-mono">${st.score} pts</span>
-          <span class="text-[11px] text-slate-400">${st.hits} aciertos / ${st.misses} fallos</span>
-        </div>
-      `).join('');
+        this.dom.podiumContainer.innerHTML = top3.map((st, i) => `
+          <div class="p-4 rounded-2xl bg-slate-900/80 border border-slate-700 text-center flex flex-col items-center justify-between">
+            <div class="text-3xl mb-1">${podiumBadges[i]}</div>
+            <span class="font-extrabold text-white text-sm truncate max-w-[150px] mb-1">${this.escapeHtml(st.name)}</span>
+            <span class="text-lg font-black text-amber-400 font-mono">${st.score} pts</span>
+            <span class="text-[11px] text-slate-400">${st.hits} aciertos / ${st.misses} fallos</span>
+          </div>
+        `).join('');
+      }
     }
 
     // Tabla completa
+    if (ranking.length === 0) {
+      this.dom.leaderboardTbody.innerHTML = `
+        <tr>
+          <td colspan="5" class="py-6 px-4 text-center text-slate-500 text-xs italic">Sin registros en esta ronda.</td>
+        </tr>
+      `;
+      return;
+    }
+
     this.dom.leaderboardTbody.innerHTML = ranking.map((st, i) => {
       const pos = i === 0 ? '🥇 1º' : i === 1 ? '🥈 2º' : i === 2 ? '🥉 3º' : `${i + 1}º`;
       return `
         <tr class="border-b border-slate-800/60 hover:bg-slate-800/30 transition text-xs sm:text-sm">
           <td class="py-3 px-4 font-black font-mono text-amber-400">${pos}</td>
-          <td class="py-3 px-4 font-bold text-white">${st.name}</td>
+          <td class="py-3 px-4 font-bold text-white">${this.escapeHtml(st.name)}</td>
           <td class="py-3 px-4 text-emerald-400 font-bold font-mono">${st.hits}</td>
           <td class="py-3 px-4 text-red-400 font-bold font-mono">${st.misses}</td>
           <td class="py-3 px-4 text-right font-black font-mono text-amber-400 text-base">${st.score} pts</td>
@@ -1221,31 +1391,73 @@ class PRLClassroomApp {
   // =========================================================================
 
   bindNetworkEvents() {
-    // Alumno se une a la sala (Audio Host: Campanilla pop)
+    // Alumno se une a la sala (Audio Host: Campanilla pop + Handshake ROOM_SYNC)
     this.net.on('STUDENT_JOIN', (payload) => {
-      if (this.role === 'host') {
-        this.students.set(payload.studentId, {
-          id: payload.studentId,
-          name: payload.studentName,
-          isFinished: false,
-          markedItemIds: new Set(),
-          hits: new Set(),
-          misses: 0,
-          clicks: []
-        });
+      if (this.role === 'host' && payload && payload.studentId) {
+        const existing = this.students.get(payload.studentId);
+        if (existing) {
+          if (payload.studentName) existing.name = payload.studentName;
+        } else {
+          this.students.set(payload.studentId, {
+            id: payload.studentId,
+            name: payload.studentName || 'Alumno',
+            isFinished: false,
+            markedItemIds: new Set(),
+            hits: new Set(),
+            misses: 0,
+            clicks: []
+          });
+          window.prlAudio?.playStudentJoined();
+        }
         this.renderHostStudentsList();
-        window.prlAudio?.playStudentJoined();
+        if (this.gamePhase === 'playing') {
+          this.updateHostResponseCounter();
+        }
+
+        // Responder al alumno confirmando la sala y el estado actual (soporta reconexión o unión tardía)
+        this.net.emit('ROOM_SYNC', {
+          roomCode: this.roomCode,
+          hostName: this.myName,
+          phase: this.gamePhase,
+          scenarioId: this.currentScenario ? this.currentScenario.id : null,
+          targetStudentId: payload.studentId
+        });
+      }
+    });
+
+    // Alumno recibe confirmación del Host (Handshake y sincronización tardía)
+    this.net.on('ROOM_SYNC', (payload) => {
+      if (this.role === 'student' && payload) {
+        if (payload.targetStudentId && payload.targetStudentId !== this.myId) return;
+        clearTimeout(this.syncRetryTimer);
+
+        if (this.dom.studentLobbyConnection) {
+          const safeHost = this.escapeHtml(payload.hostName || 'Profesor');
+          this.dom.studentLobbyConnection.className = 'mb-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 text-[11px] font-bold';
+          this.dom.studentLobbyConnection.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span><span>Conectado con ${safeHost}</span>`;
+        }
+
+        if (payload.phase === 'playing' && payload.scenarioId) {
+          if (this.gamePhase !== 'playing' || !this.currentScenario || this.currentScenario.id !== payload.scenarioId) {
+            const sc = this.scenarios.find(s => s.id === payload.scenarioId);
+            if (sc) {
+              this.gamePhase = 'playing';
+              this.currentScenario = sc;
+              this.startSimulationView();
+            }
+          }
+        }
       }
     });
 
     // Host inicia el escenario (El alumno lo recibe y se carga en SILENCIO)
     this.net.on('SCENARIO_STARTED', (payload) => {
-      if (this.role === 'student') {
+      if (this.role === 'student' && payload) {
         const sc = this.scenarios.find(s => s.id === payload.scenarioId);
         if (sc) {
+          this.gamePhase = 'playing';
           this.currentScenario = sc;
           this.startSimulationView();
-          // Dispositivo de alumno en riguroso silencio
         }
       }
     });
@@ -1296,18 +1508,22 @@ class PRLClassroomApp {
       }
     });
 
-    // Host finaliza el escenario
+    // Host finaliza el escenario (bloqueo no intrusivo sin alert bloqueante)
     this.net.on('SCENARIO_ENDED', () => {
       if (this.role === 'student') {
-        // Bloquear pantalla del alumno y mostrar mensaje de mirar al proyector
+        this.gamePhase = 'results';
         this.studentHasFinished = true;
-        alert('¡Tiempo finalizado por el profesor! 🛑 Mira la pantalla del aula para ver la resolución técnica y el ranking.');
+        if (this.dom.btnStudentFinish) {
+          this.dom.btnStudentFinish.setAttribute('disabled', 'true');
+          this.dom.btnStudentFinish.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        this.showSceneToast('🛑 Tiempo finalizado por el profesor. Mira la pizarra del aula.');
         if (this.dom.studentStatusBanner) {
           this.dom.studentStatusBanner.classList.remove('hidden');
           this.dom.studentStatusBanner.innerHTML = `
-            <div class="p-6 bg-amber-950/90 border-2 border-amber-500 rounded-2xl text-center text-sm font-extrabold text-amber-200 shadow-2xl">
-              <span class="text-3xl block mb-2">🛑</span>
-              ¡Ronda finalizada! Mira la pantalla del profesor para la explicación técnica de cada riesgo.
+            <div class="p-4 sm:p-5 bg-amber-950/90 border-2 border-amber-500 rounded-2xl text-center text-xs sm:text-sm font-extrabold text-amber-200 shadow-2xl">
+              <span class="text-2xl block mb-1">🛑</span>
+              ¡Ronda finalizada! Mira la pantalla del profesor para la explicación técnica y el ranking.
             </div>
           `;
         }
@@ -1317,12 +1533,15 @@ class PRLClassroomApp {
     // Host vuelve al Lobby
     this.net.on('RETURN_TO_LOBBY', () => {
       if (this.role === 'student') {
+        this.gamePhase = 'lobby';
+        this.studentHasFinished = false;
         this.showScreen('student-lobby');
       }
     });
 
     // Monitor de estado de conexión en la nube global (Permite jugar sin la misma Wi-Fi)
     this.net.on('NETWORK_STATUS', (payload) => {
+      if (!payload || !payload.status) return;
       const badge = document.getElementById('cloud-network-badge');
       if (badge) {
         if (payload.status === 'connected') {

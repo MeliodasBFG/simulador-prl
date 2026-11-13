@@ -89,7 +89,9 @@ class PRLClassroomAudioEngine {
   stopAll() {
     this.stopMusic();
     if (this.ctx && this.ctx.state === 'running') {
-      // Dejar AudioContext en reposo
+      try {
+        this.ctx.suspend();
+      } catch (e) {}
     }
   }
 
@@ -192,6 +194,10 @@ class PRLClassroomAudioEngine {
 
       this.stepIndex++;
     }, stepInterval);
+  }
+
+  playVictory() {
+    this.playVictoryMusic();
   }
 
   playVictoryMusic() {
